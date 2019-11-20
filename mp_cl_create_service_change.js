@@ -57,7 +57,7 @@ function readURL(input) {
 }
 
 // $("#imgInp").change(function() {
-// 	readURL(this);
+//  readURL(this);
 // // });
 
 var item_array = new Array();
@@ -173,6 +173,7 @@ $(document).on('click', '#create_new_service', function(e) {
     $('.price_info').removeClass('hide');
     $('.frequency_info').removeClass('hide');
     $('.row_button').removeClass('hide');
+    $('.add_service').removeClass('hide');
     $('.old_price_section').addClass('hide');
     $('.create_new_service_button').addClass('hide');
     $('.edit_service_section').addClass('hide');
@@ -229,6 +230,7 @@ $(document).on('click', '.edit_class', function(event) {
     $('.add_service_section').addClass('hide');
 
     var servicechangeidid = $(this).attr('data-servicechangeid');
+    var rowid = $(this).attr('data-rowid');
     var service = $(this).closest('tr').find('.service_name').val();
     var servicetypeid = $(this).closest('tr').find('.service_name').attr('data-servicetypeid');
     var serviceid = $(this).closest('tr').find('.service_name').attr('data-serviceid');
@@ -246,6 +248,7 @@ $(document).on('click', '.edit_class', function(event) {
     $('#old_price').val(old_price);
     $('#service_type').val(servicetypeid);
     $('#servicechange_id').val(servicechangeidid);
+    $('#row_id').val(rowid);
     $('#service_id').val(serviceid);
     // $('#date_effective').val(formattedDateEffective);
     $('#service_type').prop('disabled', true);
@@ -300,6 +303,7 @@ $(document).on('click', '#edit_service', function(event) {
     }
 
     var servicechange_id = $('#servicechange_id').val();
+    var rowid = $('#row_id').val();
     var service_id = $('#service_id').val();
     var service_typeid = $('#service_type').val();
     var service_typename = $('#service_type').text();
@@ -329,8 +333,8 @@ $(document).on('click', '#edit_service', function(event) {
     var adhoc_class_elem = document.getElementsByClassName("adhoc_class");
 
     // if (!($('input.monday').is(':checked')) && !($('input.tuesday').is(':checked')) && !($('input.wednesday').is(':checked')) && !($('input.thursday').is(':checked')) && !($('input.friday').is(':checked')) && !($('input.adhoc').is(':checked'))) {
-    // 	alert('Please select the frequency');
-    // 	return false;
+    //  alert('Please select the frequency');
+    //  return false;
     // }
 
 
@@ -380,6 +384,47 @@ $(document).on('click', '#edit_service', function(event) {
 
             }
         }
+    } else {
+        if ($('input.monday').is(':checked')) {
+            monday_class_elem[rowid - 1].checked = true;
+        } else {
+            monday_class_elem[rowid - 1].checked = false;
+        }
+
+        if ($('input.tuesday').is(':checked')) {
+            tuesday_class_elem[rowid - 1].checked = true;
+        } else {
+            tuesday_class_elem[rowid - 1].checked = false;
+        }
+        if ($('input.wednesday').is(':checked')) {
+            wednesday_class_elem[rowid - 1].checked = true;
+        } else {
+            wednesday_class_elem[rowid - 1].checked = false;
+        }
+        if ($('input.thursday').is(':checked')) {
+            thursday_class_elem[rowid - 1].checked = true;
+        } else {
+            thursday_class_elem[rowid - 1].checked = false;
+        }
+        if ($('input.friday').is(':checked')) {
+            friday_class_elem[rowid - 1].checked = true;
+        } else {
+            friday_class_elem[rowid - 1].checked = false;
+        }
+        if ($('input.adhoc').is(':checked')) {
+            adhoc_class_elem[rowid - 1].checked = true;
+        } else {
+            adhoc_class_elem[rowid - 1].checked = false;
+        }
+
+        service_descp_class_elem[rowid - 1].value = descp;
+        old_service_price_class_elem[rowid - 1].value = old_price;
+        new_service_price_class_elem[rowid - 1].value = new_price;
+        date_effective_class[rowid - 1].value = dateEffective;
+        created_by_class[rowid - 1].setAttribute('data-userid', ctx.getUser());
+        last_modified_class[rowid - 1].value = getDate();
+        remove_class_elem[rowid - 1].classList.remove("hide");
+
     }
 
 
@@ -458,9 +503,9 @@ $(document).on('click', '#add_service', function(event) {
     var inlineQty = '';
 
     if (isNullorEmpty(servicechange_id)) {
-
+        var rowCount = $('#services tr').length;
         inlineQty += '<tr>';
-        inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_class glyphicon glyphicon-pencil" data-servicechangeid="' + null + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><br/><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
+        inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_class glyphicon glyphicon-pencil" data-rowid="' + (rowCount - 1) + '" data-servicechangeid="' + null + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><br/><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
 
         inlineQty += '<td><div class="service_name_div"><input id="service_name" class="form-control service_name" data-serviceid="' + null + '" data-servicetypeid="' + service_typeid + '" readonly value="' + service_typename + '" /></div></td>';
         inlineQty += '<td><div class="service_descp_div"><input class="form-control service_descp_class" disabled value="' + descp + '"  type="text" /></div></td>';
@@ -902,8 +947,8 @@ function saveRecord() {
 
         console.log('2nd IF');
         // if (isNullorEmpty(service_change_delete) && isNullorEmpty(comm_reg_delete)) {
-        // 	alert('There has already been a scheduled change');
-        // 	return false;
+        //  alert('There has already been a scheduled change');
+        //  return false;
         // } else {
         console.log(service_change_delete);
         console.log(comm_reg_delete);
@@ -1192,7 +1237,7 @@ function saveRecord() {
 
         return true;
         // } else {
-        // 	//Delete Comm Reg
+        //  //Delete Comm Reg
         // }
 
     } else if (!isNullorEmpty(serviceResult_service_change) && isNullorEmpty(commRegID)) {
@@ -1319,12 +1364,12 @@ function arraysEqual(arr1, arr2) {
 }
 
 /*
-	[Description] : USers need to Fill in 
-	Commencement Date
-	Sign Up Date
-	Sales Rep
-	Inbound/Outbound (custrecord_in_out)
-	
+    [Description] : USers need to Fill in 
+    Commencement Date
+    Sign Up Date
+    Sales Rep
+    Inbound/Outbound (custrecord_in_out)
+    
  */
 
 function createCommReg(customer, dateEffective, zee, state, sendemail, customer_status) {
