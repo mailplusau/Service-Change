@@ -1,4 +1,4 @@
-/**
+    /**
  * Module Description
  * 
  * NSVersion    Date            		Author         
@@ -7,7 +7,7 @@
  * Remarks: Add / Edit Service to create corresponding service change records.       
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2019-11-20 11:07:10
+ * @Last Modified time: 2019-11-22 10:29:30
  *
  */
 
@@ -40,6 +40,8 @@ function serviceChange(request, response) {
         var dateEffective = null;
         var editPage = 'F';
 
+        var closed_won;
+        var opp_with_value;
 
         var params = request.getParameter('custparam_params');
         var salesrep = request.getParameter('salesrep');
@@ -59,13 +61,18 @@ function serviceChange(request, response) {
             dateEffective = (params.date);
             script_id = params.customid;
             deploy_id = params.customdeploy;
-            suspects = params.suspects
+            suspects = params.suspects;
+            closed_won = params.closedwon;
+            opp_with_value = params.oppwithvalue;
+
             var salesrecordid = (params.salesrecordid);
         } else {
             var customer = request.getParameter('custid');
             commReg = request.getParameter('commreg');
             script_id = request.getParameter('customid');
             deploy_id = request.getParameter('customdeploy');
+            closed_won = request.getParameter('closedwon');
+            opp_with_value = request.getParameter('oppwithvalue');
             var salesrecordid = request.getParameter('salesrecordid');
         }
 
@@ -126,6 +133,8 @@ function serviceChange(request, response) {
         form.addField('custpage_salesrecordid', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(salesrecordid);
         form.addField('custpage_scriptid', 'text', 'Script ID').setDisplayType('hidden').setDefaultValue(script_id);
         form.addField('custpage_deployid', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(deploy_id);
+        form.addField('custpage_closed_won', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(closed_won);
+        form.addField('custpage_opp_with_value', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(opp_with_value);
         form.addField('custpage_service_change_delete', 'text', 'Deploy ID').setDisplayType('hidden');
         form.addField('custpage_comm_reg_delete', 'text', 'Deploy ID').setDisplayType('hidden');
 
@@ -459,6 +468,8 @@ function serviceChange(request, response) {
         var salesrep = request.getParameter('custpage_salesrep');
         var sendemail = request.getParameter('custpage_sendemail');
         var salesrecordid = request.getParameter('custpage_salesrecordid');
+        var closed_won = request.getParameter('custpage_closed_won');
+        var opp_with_value = request.getParameter('custpage_opp_with_value');
         var file = request.getFile('upload_file_1');
 
         var suspects = request.getParameter('custpage_suspects')
@@ -566,6 +577,8 @@ function serviceChange(request, response) {
                 var params = {
                     custid: customer,
                     sales_record_id: salesrecordid,
+                    closedwon: closed_won,
+                    oppwithvalue: opp_with_value,
                     script_id: 'customscript_sl_finalise_page',
                     script_deploy: 'customdeploy_sl_finalise_page'
                 };
