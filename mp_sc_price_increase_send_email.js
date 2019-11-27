@@ -4,10 +4,10 @@
  * NSVersion    Date            		Author         
  * 1.00       	2018-04-06 10:55:12   		Ankith 
  *
- * Remarks:         
+ * Remarks: Send email out to customers for price increase         
  * 
- * @Last Modified by:   mailplusar
- * @Last Modified time: 2018-05-24 09:09:19
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2019-11-27 17:11:39
  *
  */
 
