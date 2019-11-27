@@ -1,10 +1,33 @@
+var usage_threshold = 30; //20
+var usage_threshold_invoice = 1000; //1000
+var adhoc_inv_deploy = 'customdeploy2';
+var prev_inv_deploy = null;
+
+var ctx = nlapiGetContext();
+
 function createServiceChange() {
+
+	if (!isNullorEmpty(ctx.getSetting('SCRIPT', 'custscript_prev_deployment'))) {
+		prev_inv_deploy = ctx.getSetting('SCRIPT', 'custscript_prev_deployment');
+	} else {
+		prev_inv_deploy = ctx.getDeploymentId();
+	}
+
+
 	var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_smc_services_2');
 
 	var resultSetService = serviceSearch.runSearch();
 
 
 	resultSetService.forEachResult(function(searchResultService) {
+
+		if (ctx.getRemainingUsage() <= usage_threshold_invoice) {
+			var params = {
+				custscript_prev_deployment_serv_chg: ctx.getDeploymentId(),
+			}
+
+			var reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, params);
+		}
 
 		var serviceID = searchResultService.getValue('internalid');
 		var serviceTypeText = searchResultService.getText("internalid", "CUSTRECORD_SERVICE", null);
@@ -47,13 +70,13 @@ function createServiceChange() {
 			 */
 			if (count_commReg > 1) {
 				//WS Comment: Needs error
-				nlapiCreateError('More than 1 Active CommReg', 'Customer ID: ' + customer_id);
+				nlapiCreateError('More than 1 Active CommReg', 'Customer ID: ' + customerID);
 				return false;
 			}
 			return true;
 		});
 
-		if(count_commReg == 0){
+		if (count_commReg == 0) {
 			var partnerRec = nlapiLoadRecord('partner', partner);
 			var state = partnerRec.getFieldValue('location');
 			nlapiLogExecution('DEBUG', 'customerID', customerID);

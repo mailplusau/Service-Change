@@ -6,8 +6,8 @@
  *
  * Remarks:         
  * 
- * @Last Modified by:   ankith.ravindran
- * @Last Modified time: 2018-08-01 11:19:33
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2019-11-27 10:09:13
  *
  */
 
@@ -56,6 +56,8 @@ function scheduleServiceChange() {
 		var servicePrice = searchResult_service_change.getValue("custrecord_service_price", "CUSTRECORD_SERVICECHG_SERVICE", null);
 
 		nlapiLogExecution('DEBUG', 'serviceChangeCanDate', serviceChangeCanDate);
+		nlapiLogExecution('DEBUG', 'oldCommReg', oldCommReg);
+		nlapiLogExecution('DEBUG', 'serviceChangeCommReg', serviceChangeCommReg);
 
 		if (oldCommReg != serviceChangeCommReg) {
 
@@ -166,6 +168,8 @@ function scheduleServiceChange() {
 
 			var serviceChangeResult_2 = resultSet_service_change_2.getResults(0, 2);
 
+			nlapiLogExecution('DEBUG', 'serviceChangeResult_2.length', serviceChangeResult_2.length)
+
 			if (serviceChangeResult_2.length > 1) {
 
 
@@ -220,8 +224,10 @@ function scheduleServiceChange() {
 
 				scheduledCommReg[scheduledCommReg.length] = serviceChangeCommReg;
 				activeCommReg[activeCommReg.length] = servieChangeCommReg_2;
-			} // } else if (serviceChangeResult_2.length == 0) {
-
+			} else if (serviceChangeResult_2.length == 0) {
+				var currentServicePrice = updateServiceRecord(serviceChangeService, serviceChangeNewPrice, serviceChangeNewFreq);
+				updateScheduledServiceChangeRecord(serviceChangeID, 2, currentServicePrice, freqArray);
+			}
 			// 	var servieChangeServiceAdhoc_2 = serviceChangeResult_2[0].getValue("internalid", "CUSTRECORD_SERVICECHG_SERVICE", null);
 
 			// 	var commReg_search = nlapiLoadSearch('customrecord_commencement_register', 'customsearch_service_commreg_assign');
@@ -317,6 +323,7 @@ function scheduleServiceChange() {
 	var unique_activeCommReg = [];
 
 	if (!isNullorEmpty(oldCommReg)) {
+
 		nlapiLogExecution('DEBUG', 'scheduledCommReg', scheduledCommReg);
 		nlapiLogExecution('DEBUG', 'activeCommReg', activeCommReg);
 
@@ -331,6 +338,7 @@ function scheduleServiceChange() {
 			return index == self.indexOf(elem);
 		});
 
+		nlapiLogExecution('DEBUG', 'unique_scheduledCommReg.length', unique_scheduledCommReg.length);
 
 		if (unique_scheduledCommReg.length == 1) {
 

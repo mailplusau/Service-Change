@@ -1415,7 +1415,7 @@ function loadCommReg(id, dateEffective) {
     customer_comm_reg = nlapiLoadRecord('customrecord_commencement_register', id);
     customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
     customer_comm_reg.setFieldValue('custrecord_comm_date', dateEffective);
-    customer_comm_reg.setFieldValue('custrecord_comm_date_signup', dateEffective);
+    // customer_comm_reg.setFieldValue('custrecord_comm_date_signup', dateEffective);
     var commRegID = nlapiSubmitRecord(customer_comm_reg);
 
     return commRegID;
