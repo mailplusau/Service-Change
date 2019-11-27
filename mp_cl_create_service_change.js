@@ -1,4 +1,17 @@
-var baseURL = 'https://system.netsuite.com';
+/**
+ * Module Description
+ * 
+ * NSVersion    Date                        Author         
+ * 1.00         2019-11-16 08:33:08         Ankith
+ *
+ * Description:         
+ * 
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2019-11-27 17:08:19
+ *
+ */
+
+ var baseURL = 'https://system.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
     baseURL = 'https://system.sandbox.netsuite.com';
 }
