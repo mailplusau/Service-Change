@@ -6,8 +6,8 @@
  *
  * Remarks:         
  * 
- * @Last Modified by:   mailplusar
- * @Last Modified time: 2019-05-07 11:01:14
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2019-12-11 13:30:47
  *
  */
 
@@ -79,6 +79,7 @@ function onclick_reviewPage(custid) {
 
 	var params = {
 		custid: custid,
+		servicechange: 'T'
 	}
 	params = JSON.stringify(params);
 

@@ -4,10 +4,10 @@
  * NSVersion    Date            		Author         
  * 1.00       	2018-04-06 10:55:12   		Ankith 
  *
- * Remarks:         
+ * Remarks: Create services based on scheduled service changes. Either for price increase, new service, service cancellations & price decrease.       
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2019-11-27 10:09:13
+ * @Last Modified time: 2019-11-27 17:10:21
  *
  */
 
