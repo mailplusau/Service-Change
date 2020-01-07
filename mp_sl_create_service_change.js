@@ -7,7 +7,7 @@
  * Remarks: Add / Edit Service to create corresponding service change records.       
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2019-11-27 17:11:02
+ * @Last Modified time: 2020-01-08 08:52:40
  *
  */
 
@@ -148,19 +148,41 @@ function serviceChange(request, response) {
         /**
          * Description - To add all the API's to the begining of the page
          */
-        var inlineQty = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"><link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"><script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script><link rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2060796&c=1048144&h=9ee6accfd476c9cae718&_xt=.css"/><script src="https://1048144.app.netsuite.com/core/media/media.nl?id=2060797&c=1048144&h=ef2cda20731d146b5e98&_xt=.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css"><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css">';
+        var inlineQty = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"><link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"><script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script><link rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2060796&c=1048144&h=9ee6accfd476c9cae718&_xt=.css"/><script src="https://1048144.app.netsuite.com/core/media/media.nl?id=2060797&c=1048144&h=ef2cda20731d146b5e98&_xt=.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css"><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css"><style>.mandatory{color:red;}</style>';
 
         inlineQty += '<div class="container" style="padding-top: 3%;">';
 
         inlineQty += '<div class="form-group container date_effective_section">';
         inlineQty += '<div class="row">';
         if (isNullorEmpty(dateEffective)) {
-            inlineQty += '<div class="col-xs-6 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE</span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
+            inlineQty += '<div class="col-xs-6 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory">*</span></span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
         } else {
             start_date = GetFormattedDate(dateEffective);
-            inlineQty += '<div class="col-xs-6 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE</span><input type="date" id="date_effective" value="' + start_date + '" data-olddate="' + dateEffective + '" class="form-control date_effective"/></div></div>';
+            inlineQty += '<div class="col-xs-6 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory">*</span></span><input type="date" id="date_effective" value="' + start_date + '" data-olddate="' + dateEffective + '" class="form-control date_effective"/></div></div>';
         }
 
+        inlineQty += '</div>';
+        inlineQty += '</div>';
+
+        inlineQty += '<div class="form-group container service_change_type_section ">';
+        inlineQty += '<div class="row">';
+        inlineQty += '<div class="col-xs-6 commencementtype"><div class="input-group"><span class="input-group-addon" id="commencementtype_text">SALE TYPE <span class="mandatory">*</span></span><select id="commencementtype" class="form-control commencementtype" ><option></option>';
+        var col = new Array();
+        col[0] = new nlobjSearchColumn('name');
+        col[1] = new nlobjSearchColumn('internalId');
+        var results = nlapiSearchRecord('customlist_sale_type', null, null, col);
+        for (var i = 0; results != null && i < results.length; i++) {
+            var res = results[i];
+            var listValue = res.getValue('name');
+            var listID = res.getValue('internalId');
+            // if (!isNullorEmpty(sale_type)) {
+            // if (sale_type == listID) {
+            // inlineQty += '<option value="' + listID + '" selected>' + listValue + '</option>';
+            // }
+            // }
+            inlineQty += '<option value="' + listID + '">' + listValue + '</option>';
+        }
+        inlineQty += '</select></div></div>';
         inlineQty += '</div>';
         inlineQty += '</div>';
 
@@ -170,10 +192,13 @@ function serviceChange(request, response) {
         inlineQty += '</div>';
         inlineQty += '</div>';
 
+
+
+
         inlineQty += '<div class="form-group container row_service_type hide">';
         inlineQty += '<div class="row">'
 
-        inlineQty += '<div class="col-xs-6 service_type_section"><div class="input-group"><span class="input-group-addon">SERVICE</span><input type="hidden" id="servicechange_id" value="" /><input type="hidden" id="row_id" value="" /><input type="hidden" id="service_id" value="" /><select class="form-control service_type" id="service_type">';
+        inlineQty += '<div class="col-xs-6 service_type_section"><div class="input-group"><span class="input-group-addon">SERVICE <span class="mandatory">*</span></span><input type="hidden" id="servicechange_id" value="" /><input type="hidden" id="row_id" value="" /><input type="hidden" id="service_id" value="" /><select class="form-control service_type" id="service_type">';
 
         for (var x = 0; x < service_type_search.length; x++) {
             inlineQty += '<option value="' + service_type_search[x].getValue('internalid') + '">' + service_type_search[x].getValue('name') + '</option>';
@@ -194,7 +219,7 @@ function serviceChange(request, response) {
         inlineQty += '<div class=" container price_info hide">'
         inlineQty += '<div class="form-group row">';
 
-        inlineQty += '<div class="col-xs-3"><div class="input-group"><span class="input-group-addon">NEW PRICE</span><input id="new_price" class="form-control new_price" /></div></div>';
+        inlineQty += '<div class="col-xs-3"><div class="input-group"><span class="input-group-addon">NEW PRICE <span class="mandatory">*</span></span><input id="new_price" class="form-control new_price" type="number" /></div></div>';
         inlineQty += '<div class="col-xs-3 old_price_section"><div class="input-group"><span class="input-group-addon">OLD PRICE</span><input id="old_price" readonly class="form-control old_price" /></div></div>';
 
         inlineQty += '</div>';
@@ -271,6 +296,8 @@ function serviceChange(request, response) {
          */
         inlineQty += '<th style="vertical-align: middle;text-align: center;" class=""><b>LAST MODIFIED<span class="modal_display btn-sm glyphicon glyphicon-info-sign" style="cursor: pointer;padding: 3px 3px 3px 3px;color: orange;" data-whatever=""></span></b></th>';
 
+        inlineQty += '<th style="vertical-align: middle;text-align: center;" class=""><b>TYPE<span class="modal_display btn-sm glyphicon glyphicon-info-sign" style="cursor: pointer;padding: 3px 3px 3px 3px;color: orange;" data-whatever=""></span></b></th>';
+
         /**
          * MONDAY ROW
          */
@@ -324,7 +351,7 @@ function serviceChange(request, response) {
 
                 inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_class glyphicon glyphicon-pencil" data-servicechangeid="' + searchResult_service_change.getValue('internalid') + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><br/><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-servicechangeid="' + searchResult_service_change.getValue('internalid') + '" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
 
-                inlineQty += '<td><div class="service_name_div"><input id="service_name" class="form-control service_name" data-serviceid="' + searchResult_service_change.getValue('custrecord_servicechg_service') + '" data-servicetypeid="" readonly value="' + searchResult_service_change.getText('custrecord_servicechg_service') + '" /></div></td>';
+                inlineQty += '<td><div class="service_name_div"><input id="service_name" class="form-control service_name" data-serviceid="' + searchResult_service_change.getValue('custrecord_servicechg_service') + '" data-servicetypeid="' + searchResult_service_change.getValue("custrecord_service", "CUSTRECORD_SERVICECHG_SERVICE", null) + '" readonly value="' + searchResult_service_change.getText('custrecord_servicechg_service') + '" /></div></td>';
                 inlineQty += '<td><div class="service_descp_div"><input class="form-control service_descp_class" disabled value="' + searchResult_service_change.getValue("custrecord_service_description", "CUSTRECORD_SERVICECHG_SERVICE", null) + '"  type="text" /></div></td>';
 
 
@@ -335,6 +362,8 @@ function serviceChange(request, response) {
                 inlineQty += '<td><div class="created_by_div input-group"><input class="form-control created_by_class text-center" disabled data-userid="' + searchResult_service_change.getValue('custrecord_servicechg_created') + '" value="' + searchResult_service_change.getText('custrecord_servicechg_created') + '"  type="text" /></div></td>';
 
                 inlineQty += '<td><div class="last_modified_div input-group"><input class="form-control last_modified_class text-center" disabled value="' + searchResult_service_change.getValue('lastmodified') + '"  type="text" /></div></td>';
+
+                inlineQty += '<td><div class="comm_type_div input-group"><input class="form-control comm_type_class text-center" disabled value="' + searchResult_service_change.getValue('custrecord_servicechg_type') + '" data-commtypeid="" type="text" /></div></td>';
 
 
                 var freq = searchResult_service_change.getValue('custrecord_servicechg_new_freq');
@@ -380,6 +409,8 @@ function serviceChange(request, response) {
                 inlineQty += '<td><div class="date_effective_div input-group"><input class="form-control date_effective_class text-center" disabled value=""  type="text" /></div></td>';
                 inlineQty += '<td><div class="created_by_div input-group"><input class="form-control created_by_class text-center" disabled value=""  type="text" /></div></td>';
                 inlineQty += '<td><div class="last_modified_div input-group"><input class="form-control last_modified_class text-center" disabled value=""  type="text" /></div></td>';
+
+                inlineQty += '<td><div class="comm_type_div input-group"><input class="form-control comm_type_class text-center" disabled value="" data-commtypeid="" type="text" /></div></td>';
 
                 nlapiLogExecution('DEBUG', 'mon', searchResult_service.getText('custrecord_service_day_mon'))
                 nlapiLogExecution('DEBUG', 'mon', searchResult_service.getValue('custrecord_service_day_mon'))
