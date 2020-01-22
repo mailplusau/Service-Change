@@ -7,7 +7,7 @@
  * Remarks: Add / Edit Service to create corresponding service change records.       
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-08 08:52:40
+ * @Last Modified time: 2020-01-09 10:06:01
  *
  */
 
@@ -256,7 +256,7 @@ function serviceChange(request, response) {
         /**
          * Description - To create the table and colums assiocted with the page.
          */
-        inlineQty += '<br><br><style>table#services {font-size:12px; text-align:center; border-color: #24385b}</style><div class="se-pre-con"></div><form id="package_form" class="form-horizontal"><div class="form-group container-fluid"><div><div id="alert" class="alert alert-danger fade in"></div><div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document"><div class="modal-content" style="width: max-content;"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Information</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div><div ng-app="myApp" ng-controller="myCtrl"><table border="0" cellpadding="15" id="services" class="table table-responsive table-striped services tablesorter" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr><th colspan="8" style="background-color: white;"></th><th colspan="6" style="vertical-align: middle;text-align: center;"><b>FREQUENCY</b></th></tr><tr class="text-center">';
+        inlineQty += '<br><br><style>table#services {font-size:12px; text-align:center; border-color: #24385b}</style><div class="se-pre-con"></div><form id="package_form" class="form-horizontal"><div class="form-group container-fluid"><div><div id="alert" class="alert alert-danger fade in"></div><div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document"><div class="modal-content" style="width: max-content;"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Information</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div><div ng-app="myApp" ng-controller="myCtrl"><table border="0" cellpadding="15" id="services" class="table table-responsive table-striped services tablesorter" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr><th colspan="9" style="background-color: white;"></th><th colspan="6" style="vertical-align: middle;text-align: center;"><b>FREQUENCY</b></th></tr><tr class="text-center">';
 
         /**
          * ACTION ROW
