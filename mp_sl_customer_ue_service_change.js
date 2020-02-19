@@ -1,3 +1,16 @@
+/**
+ * Module Description
+ * 
+ * NSVersion    Date                        Author         
+ * 1.00         2020-01-08 13:36:32         Ankith
+ *
+ * Description: Send Email Notification to a person about a Service Change        
+ * 
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2020-02-12 09:38:25
+ *
+ */
+
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
     baseURL = 'https://system.sandbox.netsuite.com';

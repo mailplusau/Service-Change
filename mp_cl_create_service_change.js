@@ -7,7 +7,7 @@
  * Description:         
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-24 11:33:22
+ * @Last Modified time: 2020-01-28 10:43:38
  *
  */
 
@@ -192,6 +192,7 @@ $(document).on('click', '#create_new_service', function(e) {
     $('.create_new_service_button').addClass('hide');
     $('.edit_service_section').addClass('hide');
     $('#service_type').prop('disabled', false);
+    $('.add_service_section').removeClass('hide');
 });
 
 function reset_all() {
