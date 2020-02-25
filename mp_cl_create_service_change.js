@@ -7,7 +7,7 @@
  * Description:         
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-28 10:43:38
+ * @Last Modified time: 2020-02-20 12:18:30
  *
  */
 
@@ -754,7 +754,7 @@ function saveRecord() {
             if (monday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 1;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
 
@@ -763,35 +763,35 @@ function saveRecord() {
             if (tuesday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 2;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (wednesday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 3;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (thursday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 4;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (friday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 5;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (adhoc_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 6;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
@@ -1065,42 +1065,42 @@ function saveRecord() {
             if (monday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 1;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (tuesday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 2;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (wednesday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 3;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (thursday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 4;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (friday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 5;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (adhoc_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 6;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
-                if (sale_type == 'Extra Service') {
+                if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
