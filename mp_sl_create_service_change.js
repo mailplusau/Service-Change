@@ -7,7 +7,7 @@
  * Remarks: Add / Edit Service to create corresponding service change records.       
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-09 10:06:01
+ * @Last Modified time: 2020-02-20 13:51:21
  *
  */
 
@@ -466,7 +466,7 @@ function serviceChange(request, response) {
 
         form.addField('preview_table', 'inlinehtml', '').setLayoutType('startrow').setDefaultValue(inlineQty);
 
-        if (isNullorEmpty(salesrep) && role != 1000 && role != 1032) {
+        if (isNullorEmpty(salesrep) && role != 1000) {
             form.addField('upload_file_1', 'file', 'Service Commencement Form').setLayoutType('outsidebelow', 'startrow').setDisplaySize(40);
 
             if (!isNullorEmpty(commReg)) {
