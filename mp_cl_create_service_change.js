@@ -7,7 +7,7 @@
  * Description:         
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-02-20 12:18:30
+ * @Last Modified time: 2020-02-26 10:56:29
  *
  */
 
@@ -496,8 +496,10 @@ $(document).on('click', '#add_service', function(event) {
     console.log(new_price);
 
     if (isNullorEmpty(new_price) || new_price == 0) {
-        alert('Please Enter the New Price');
-        return false;
+        if (service_typeid != 24) {
+            alert('Please Enter the New Price');
+            return false;
+        }
     }
 
     if (!($('input.monday').is(':checked')) && !($('input.tuesday').is(':checked')) && !($('input.wednesday').is(':checked')) && !($('input.thursday').is(':checked')) && !($('input.friday').is(':checked')) && !($('input.adhoc').is(':checked'))) {
