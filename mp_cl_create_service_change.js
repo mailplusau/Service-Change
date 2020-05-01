@@ -138,6 +138,10 @@ function pageInit() {
         return true;
     });
 
+    if ($('#commencementtype option:selected').val() == 6) {
+        $('.get_services_section').removeClass('hide');
+    }
+
 
 }
 
@@ -1292,7 +1296,7 @@ function saveRecord() {
                 }
 
 
-                if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (!arraysEqual(current_freq_array, freqArray))) {
+                if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (!arraysEqual(current_freq_array, freqArray)) || $('#commencementtype option:selected').val() == 6) {
 
                     console.log('inside create new Service Change record for existing Service');
                     if (isNullorEmpty(commRegID)) {
@@ -1549,4 +1553,54 @@ function getDate() {
     date = nlapiDateToString(date);
 
     return date;
+}
+
+$(document).on('change', '#commencementtype', function(event) {
+    if ($('#commencementtype option:selected').val() == 6) {
+        $('.get_services_section').removeClass('hide');
+    }
+});
+
+function onclick_GetServices(customer_id, old_customer_id, commRegID) {
+    var servicesSearch = nlapiLoadSearch('customrecord_service', 'customsearch_move_digit_services');
+    var filterExpression = [
+        ["custrecord_service_customer", "is", old_customer_id],
+    ];
+    console.log('old_customer_id', old_customer_id);
+    servicesSearch.setFilterExpression(filterExpression);
+    var servicesResult = servicesSearch.runSearch();
+
+    var old_package;
+    var service_count = 0;
+
+    servicesResult.forEachResult(function(serviceResult) {
+        var package = serviceResult.getValue('custrecord_service_package');
+        var service = serviceResult.getValue("internalid");
+
+        if (service_count == 0) {
+            if (!isNullorEmpty(package)) {
+                console.log('package', package);
+                var package_record = nlapiLoadRecord('customrecord_service_package', package);
+                package_record.setFieldValue('custrecord_service_package_customer', customer_id);
+                package_record.setFieldValue('custrecord_service_package_comm_reg', commRegID);
+                nlapiSubmitRecord(package_record);
+            }
+        } else if (!isNullorEmpty(package) && old_package != package) {
+            console.log('package', package);
+            var package_record = nlapiLoadRecord('customrecord_service_package', package);
+            package_record.setFieldValue('custrecord_service_package_customer', customer_id);
+            package_record.setFieldValue('custrecord_service_package_comm_reg', commRegID);
+            nlapiSubmitRecord(package_record);
+        }
+        console.log('service', service);
+        var service_record = nlapiLoadRecord('customrecord_service', service);
+        service_record.setFieldValue('custrecord_service_customer', customer_id);
+        service_record.setFieldValue('custrecord_service_package', package);
+        service_record.setFieldValue('custrecord_service_comm_reg', commRegID);
+        nlapiSubmitRecord(service_record);
+
+        service_count++;
+        return true;
+    })
+    window.location.reload();
 }
