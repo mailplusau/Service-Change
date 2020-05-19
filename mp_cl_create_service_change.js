@@ -1296,7 +1296,7 @@ function saveRecord() {
                 }
 
 
-                if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (!arraysEqual(current_freq_array, freqArray)) || $('#commencementtype option:selected').val() == 6) {
+                if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (!arraysEqual(current_freq_array, freqArray))) {
 
                     console.log('inside create new Service Change record for existing Service');
                     if (isNullorEmpty(commRegID)) {
@@ -1311,6 +1311,7 @@ function saveRecord() {
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
                         if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+
                         } else {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         }
@@ -1333,7 +1334,36 @@ function saveRecord() {
 
                     }
                     new_service_change_record.setFieldValue('custrecord_servicechg_type', comm_type_class_elem[i].value);
+                    if ($('#commencementtype option:selected').val() == 6){
+                        new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+                    }
                     nlapiSubmitRecord(new_service_change_record);
+                } else if ($('#commencementtype option:selected').val() == 6) { //COE - Service imported from old customer and not edited
+                    console.log('inside create new Service Change record for existing Service - COE not edited');
+                    if (isNullorEmpty(commRegID)) {
+                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                    }
+                    var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
+
+                    var service_id = service_name_elem[i].getAttribute('data-serviceid');
+
+                    if (!isNullorEmpty(service_id)) {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_status', 2); //status is active
+                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_new_price', old_service_price_class_elem[i].value); //price remain the same                  
+                        new_service_change_record.setFieldValues('custrecord_servicechg_new_freq', current_freq_array); //frequency remain the same
+                        new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
+                        if (role != 1000) {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_created', ctx.getUser());
+                        }
+
+                    }
+                    new_service_change_record.setFieldValue('custrecord_servicechg_type', 'Change of Entity');
+                    new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+                    nlapiSubmitRecord(new_service_change_record);
+
                 }
             }
         }

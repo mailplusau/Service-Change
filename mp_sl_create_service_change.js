@@ -177,12 +177,11 @@ function serviceChange(request, response) {
             var res = results[i];
             var listValue = res.getValue('name');
             var listID = res.getValue('internalId');
-            if (!isNullorEmpty(sale_type)) {
-                if (sale_type == listID) {
-                    inlineQty += '<option value="' + listID + '" selected>' + listValue + '</option>';
-                }
+            if (!isNullorEmpty(sale_type) && sale_type == listID) {
+                inlineQty += '<option value="' + listID + '" selected>' + listValue + '</option>';
+            } else {
+                inlineQty += '<option value="' + listID + '">' + listValue + '</option>';
             }
-            inlineQty += '<option value="' + listID + '">' + listValue + '</option>';
         }
         inlineQty += '</select></div></div>';
         inlineQty += '</div>';
@@ -190,10 +189,10 @@ function serviceChange(request, response) {
 
         inlineQty += '<div class="form-group container create_new_service_button">';
         inlineQty += '<div class="row">';
-        inlineQty += '<div class="create_new_service_section col-xs-3"><input type="button" value="ADD NEW SERVICE" class="form-control btn btn-primary" id="create_new_service" /></div>';
+        inlineQty += '<div class="create_new_service_section col-xs-2"><input type="button" value="ADD NEW SERVICE" class="form-control btn btn-primary" id="create_new_service" /></div>';
         var old_customer_id = recCustomer.getFieldValue('custentity_old_customer');
         var old_customer_name = recCustomer.getFieldText('custentity_old_customer');
-        inlineQty += '<div class="get_services_section col-xs-3 hide"><input type="button" value="GET SERVICES FROM ' + old_customer_name + '" class="form-control btn btn-info" id="getservices" onclick="onclick_GetServices(' + customer + ',' + old_customer_id + ',' + commReg + ')"/></div>';
+        inlineQty += '<div class="get_services_section col-xs-4 hide"><input type="button" value="GET SERVICES FROM ' + old_customer_name + '" class="form-control btn btn-info" id="getservices" onclick="onclick_GetServices(' + customer + ',' + old_customer_id + ',' + commReg + ')"/></div>';
         inlineQty += '</div>';
         inlineQty += '</div>';
 
