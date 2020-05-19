@@ -157,10 +157,10 @@ function serviceChange(request, response) {
         inlineQty += '<div class="form-group container date_effective_section">';
         inlineQty += '<div class="row">';
         if (isNullorEmpty(dateEffective)) {
-            inlineQty += '<div class="col-xs-6 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory">*</span></span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
+            inlineQty += '<div class="col-xs-7 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory">*</span></span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
         } else {
             start_date = GetFormattedDate(dateEffective);
-            inlineQty += '<div class="col-xs-6 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory">*</span></span><input type="date" id="date_effective" value="' + start_date + '" data-olddate="' + dateEffective + '" class="form-control date_effective"/></div></div>';
+            inlineQty += '<div class="col-xs-7 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory">*</span></span><input type="date" id="date_effective" value="' + start_date + '" data-olddate="' + dateEffective + '" class="form-control date_effective"/></div></div>';
         }
 
         inlineQty += '</div>';
@@ -168,7 +168,7 @@ function serviceChange(request, response) {
 
         inlineQty += '<div class="form-group container service_change_type_section ">';
         inlineQty += '<div class="row">';
-        inlineQty += '<div class="col-xs-6 commencementtype"><div class="input-group"><span class="input-group-addon" id="commencementtype_text">SALE TYPE <span class="mandatory">*</span></span><select id="commencementtype" class="form-control commencementtype" ><option></option>';
+        inlineQty += '<div class="col-xs-7 commencementtype"><div class="input-group"><span class="input-group-addon" id="commencementtype_text">SALE TYPE <span class="mandatory">*</span></span><select id="commencementtype" class="form-control commencementtype" ><option></option>';
         var col = new Array();
         col[0] = new nlobjSearchColumn('name');
         col[1] = new nlobjSearchColumn('internalId');
@@ -192,7 +192,7 @@ function serviceChange(request, response) {
         inlineQty += '<div class="create_new_service_section col-xs-2"><input type="button" value="ADD NEW SERVICE" class="form-control btn btn-primary" id="create_new_service" /></div>';
         var old_customer_id = recCustomer.getFieldValue('custentity_old_customer');
         var old_customer_name = recCustomer.getFieldText('custentity_old_customer');
-        inlineQty += '<div class="get_services_section col-xs-4 hide"><input type="button" value="GET SERVICES FROM ' + old_customer_name + '" class="form-control btn btn-info" id="getservices" onclick="onclick_GetServices(' + customer + ',' + old_customer_id + ',' + commReg + ')"/></div>';
+        inlineQty += '<div class="get_services_section col-xs-5 hide"><input type="button" STYLE="font-size:small; white-space:normal; height:auto" value="GET SERVICES FROM ' + old_customer_name + '" class="form-control btn btn-info" id="getservices" onclick="onclick_GetServices(' + customer + ',' + old_customer_id + ',' + commReg + ')"/></div>';
         inlineQty += '</div>';
         inlineQty += '</div>';
 
