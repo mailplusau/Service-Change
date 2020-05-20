@@ -890,8 +890,6 @@ function saveRecord() {
                     nlapiSubmitField('customrecord_service', new_service_id, 'isinactive', 'T');
                 }
 
-
-
             } else if (!isNullorEmpty(row_service_change_id)) {
 
                 var service_change_record = nlapiLoadRecord('customrecord_servicechg', row_service_change_id);
@@ -1013,6 +1011,46 @@ function saveRecord() {
                     }
                     new_service_change_record.setFieldValue('custrecord_servicechg_type', comm_type_class_elem[i].value);
                     nlapiSubmitRecord(new_service_change_record);
+
+                    //COE - Link the commReg to the services imported
+                    if ($('#commencementtype option:selected').val() == 6) {
+                        if (!isNullorEmpty(service_id)) {
+                            var service_record = nlapiLoadRecord('customrecord_service', service_id);
+                            service_record.setFieldValue('custrecord_service_comm_reg', commRegID);
+                            nlapiSubmitRecord(service_record);
+                        }
+                    }
+
+                } else if ($('#commencementtype option:selected').val() == 6) { //COE - Service imported from old customer and not edited
+                    console.log('inside create new Service Change record for existing Service - COE not edited');
+                    if (isNullorEmpty(commRegID)) {
+                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                    }
+                    var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
+
+                    var service_id = service_name_elem[i].getAttribute('data-serviceid');
+
+                    if (!isNullorEmpty(service_id)) {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_status', 2); //status is active
+                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_new_price', old_service_price_class_elem[i].value); //price remain the same                  
+                        new_service_change_record.setFieldValues('custrecord_servicechg_new_freq', current_freq_array); //frequency remain the same
+                        new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
+                        if (role != 1000) {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_created', ctx.getUser());
+                        }
+
+                        var service_record = nlapiLoadRecord('customrecord_service', service_id);
+                        service_record.setFieldValue('custrecord_service_comm_reg', commRegID);
+                        nlapiSubmitRecord(service_record);
+
+                    }
+                    new_service_change_record.setFieldValue('custrecord_servicechg_type', 'Change of Entity');
+                    new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+                    nlapiSubmitRecord(new_service_change_record);
+
                 }
             }
         }
@@ -1200,8 +1238,6 @@ function saveRecord() {
                     nlapiSubmitField('customrecord_service', new_service_id, 'isinactive', 'T');
                 }
 
-
-
             } else if (!isNullorEmpty(row_service_change_id)) {
 
                 var service_change_record = nlapiLoadRecord('customrecord_servicechg', row_service_change_id);
@@ -1334,7 +1370,7 @@ function saveRecord() {
 
                     }
                     new_service_change_record.setFieldValue('custrecord_servicechg_type', comm_type_class_elem[i].value);
-                    if ($('#commencementtype option:selected').val() == 6){
+                    if ($('#commencementtype option:selected').val() == 6) {
                         new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
                     }
                     nlapiSubmitRecord(new_service_change_record);
