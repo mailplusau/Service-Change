@@ -1009,13 +1009,15 @@ function saveRecord() {
                             new_service_change_record.setFieldValue('custrecord_servicechg_created', user_id);
                         }
 
-                        //COE - Service imported from old customer and not edited - Link the commReg to the service
+                        //COE - Service imported from old customer and edited - Link the commReg to the service
                         if ($('#commencementtype option:selected').val() == 6) {
                             var service_record = nlapiLoadRecord('customrecord_service', service_id);
                             service_record.setFieldValue('custrecord_service_comm_reg', commRegID);
                             nlapiSubmitRecord(service_record);
 
                             new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+                            new_service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value); //SET NEW PRICE VALUE (EVEN IF PRICE HAS NOT CHANGED) SO THAT IT APPEARS ON THE SCF
+
                         }
                     }
                     new_service_change_record.setFieldValue('custrecord_servicechg_type', comm_type_class_elem[i].value);
@@ -1032,7 +1034,7 @@ function saveRecord() {
                     if (!isNullorEmpty(service_id)) {
                         new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
-                        new_service_change_record.setFieldValue('custrecord_servicechg_status', 2); //status is active
+                        new_service_change_record.setFieldValue('custrecord_servicechg_status', 4); //status is Quote
                         new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
                         new_service_change_record.setFieldValue('custrecord_servicechg_new_price', old_service_price_class_elem[i].value); //price remain the same                  
                         new_service_change_record.setFieldValues('custrecord_servicechg_new_freq', current_freq_array); //frequency remain the same
@@ -1373,6 +1375,7 @@ function saveRecord() {
                     //COE - Service imported from old customer and edited
                     if ($('#commencementtype option:selected').val() == 6) {
                         new_service_change_record.setFieldValue('custrecord_default_servicechg_record', 1);
+                        new_service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value); //SET NEW PRICE VALUE (EVEN IF PRICE HAS NOT CHANGED) SO THAT IT APPEARS ON THE SCF
                     }
                     nlapiSubmitRecord(new_service_change_record);
                 } else if ($('#commencementtype option:selected').val() == 6) { //COE - Service imported from old customer and not edited
