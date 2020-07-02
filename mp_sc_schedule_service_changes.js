@@ -44,6 +44,7 @@ function scheduleServiceChange() {
 		var serviceChangeNewPrice = searchResult_service_change.getValue('custrecord_servicechg_new_price');
 		var serviceChangeNewFreq = searchResult_service_change.getValue('custrecord_servicechg_new_freq');
 		var serviceChangeService = searchResult_service_change.getValue('custrecord_servicechg_service');
+		var serviceChangeServiceText = searchResult_service_change.getText('custrecord_servicechg_service');
 		var serviceChangeDefault = searchResult_service_change.getValue('custrecord_default_servicechg_record');
 		serviceChangeCommReg = searchResult_service_change.getValue('custrecord_servicechg_comm_reg');
 		var serviceChangeCanDate = searchResult_service_change.getValue('custrecord_servicechg_cancellation_date');
@@ -54,6 +55,8 @@ function scheduleServiceChange() {
 
 		var serviceZee = searchResult_service_change.getValue("custrecord_service_franchisee", "CUSTRECORD_SERVICECHG_SERVICE", null);
 		var servicePrice = searchResult_service_change.getValue("custrecord_service_price", "CUSTRECORD_SERVICECHG_SERVICE", null);
+
+		var serviceChangeType = searchResult_service_change.getValue('custrecord_servicechg_type');
 
 		nlapiLogExecution('DEBUG', 'serviceChangeCanDate', serviceChangeCanDate);
 		nlapiLogExecution('DEBUG', 'oldCommReg', oldCommReg);
@@ -307,6 +310,20 @@ function scheduleServiceChange() {
 			// }
 		}
 
+		//Remove the Green Tick from Customer if new service or change of frequency
+		nlapiLogExecution('DEBUG','serviceChangeServiceText',serviceChangeServiceText);
+		nlapiLogExecution('DEBUG','serviceChangeType',serviceChangeType);
+		if (serviceChangeServiceText != 'MPEX Pickup' && (serviceChangeType == 'Extra Service' || serviceChangeType == 'Change of Frequency' || serviceChangeType == 'Increase of Frequency' || serviceChangeType == 'Decrease of Frequency')){
+			nlapiLogExecution('DEBUG','editing Green Tick');
+			if (serviceChangeType == 'Change of Frequency' || serviceChangeType == 'Increase of Frequency' || serviceChangeType == 'Decrease of Frequency'){
+				var service_record = nlapiLoadRecord('customrecord_service',serviceChangeService);
+				service_record.setFieldValue('custrecord_service_run_scheduled',2);
+				nlapiSubmitRecord(service_record);
+			}
+			var customer_record = nlapiLoadRecord('customer', customerID);
+			customer_record.setFieldValue('custentity_run_scheduled', 2);
+			nlapiSubmitRecord(customer_record);
+		};
 
 		oldCommReg = serviceChangeCommReg;
 		old_can_date = serviceChangeCanDate;
