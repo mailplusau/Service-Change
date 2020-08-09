@@ -6,8 +6,8 @@
  *
  * Remarks: Send email out to customers for price increase         
  * 
- * @Last Modified by:   Ankith
- * @Last Modified time: 2019-11-27 17:11:39
+ * @Last Modified by:   Ankith Ravindran
+ * @Last Modified time: 2020-08-07 14:05:57
  *
  */
 
@@ -170,7 +170,7 @@ function schedulePriceIncreaseEmail() {
 				message = message.replace(/<NLEMPOSTCODE>/gi, postcode);
 				message = message.replace(/<NLEMDATEEFFECTIVE>/gi, oldDateEffective);
 
-				var records = new Array();
+				var records = new Object();
 				records['entity'] = oldCustomerID;
 
 				nlapiSendEmail(280700, account_email, subject, message, null, null, records, null);
@@ -307,7 +307,7 @@ function schedulePriceIncreaseEmail() {
 		message = message.replace(/<NLEMPOSTCODE>/gi, postcode);
 		message = message.replace(/<NLEMDATEEFFECTIVE>/gi, oldDateEffective);
 
-		var records = new Array();
+		var records = new Object();
 		records['entity'] = oldCustomerID;
 
 		nlapiSendEmail(280700, account_email, subject, message, null, null, records, null);
