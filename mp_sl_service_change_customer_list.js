@@ -6,8 +6,8 @@
  *
  * Remarks:         
  * 
- * @Last Modified by:   Ankith
- * @Last Modified time: 2019-12-11 13:51:22
+ * @Last Modified by:   ankit
+ * @Last Modified time: 2020-10-12 10:24:04
  *
  */
 
@@ -121,6 +121,7 @@ function main(request, response) {
       var entityid = searchResult.getValue('entityid', null, "GROUP");
       var companyname = searchResult.getValue('companyname', null, "GROUP");
       var last_price_increase = searchResult.getValue('custentity_date_of_last_price_increase', null, "GROUP");
+      // var parent_maap_number = searchResult.getValue("custentity_maap_bankacctno_parent",null,"GROUP");
 
       //WS Edit: Retrieve column values to Identify Reviewed Services and Correct CommReg
       var serviceCount = searchResult.getValue("formulanumeric", null, "MAX"); //Count of Reviewed Services

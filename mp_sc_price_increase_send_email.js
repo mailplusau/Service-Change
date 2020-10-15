@@ -6,8 +6,8 @@
  *
  * Remarks: Send email out to customers for price increase         
  * 
- * @Last Modified by:   Ankith Ravindran
- * @Last Modified time: 2020-08-07 14:05:57
+ * @Last Modified by:   ankit
+ * @Last Modified time: 2020-10-14 12:48:45
  *
  */
 
@@ -310,7 +310,7 @@ function schedulePriceIncreaseEmail() {
 		var records = new Object();
 		records['entity'] = oldCustomerID;
 
-		nlapiSendEmail(280700, account_email, subject, message, null, null, records, null);
+		nlapiSendEmail(35031, account_email, subject, message, null, null, records, null);
 
 	}
 }

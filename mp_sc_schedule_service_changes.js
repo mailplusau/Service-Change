@@ -6,8 +6,8 @@
  *
  * Remarks: Create services based on scheduled service changes. Either for price increase, new service, service cancellations & price decrease.       
  * 
- * @Last Modified by:   Ankith
- * @Last Modified time: 2019-11-27 17:10:21
+ * @Last Modified by:   ankit
+ * @Last Modified time: 2020-10-13 11:08:10
  *
  */
 
@@ -323,7 +323,11 @@ function scheduleServiceChange() {
 			var customer_record = nlapiLoadRecord('customer', customerID);
 			customer_record.setFieldValue('custentity_run_scheduled', 2);
 			nlapiSubmitRecord(customer_record);
-		};
+		} else if(serviceChangeType == 'Price Increase'){
+			var customer_record = nlapiLoadRecord('customer', customerID);
+			customer_record.setFieldValue('custentity_date_of_last_price_increase', getDate());
+			nlapiSubmitRecord(customer_record);
+		}
 
 		oldCommReg = serviceChangeCommReg;
 		old_can_date = serviceChangeCanDate;
