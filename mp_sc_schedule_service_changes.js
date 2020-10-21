@@ -6,8 +6,8 @@
  *
  * Remarks: Create services based on scheduled service changes. Either for price increase, new service, service cancellations & price decrease.       
  * 
- * @Last Modified by:   ankit
- * @Last Modified time: 2020-10-13 11:08:10
+ * @Last Modified by:   Ravija
+ * @Last Modified time: 2020-10-22 10:32
  *
  */
 
@@ -64,7 +64,6 @@ function scheduleServiceChange() {
 
 		if (oldCommReg != serviceChangeCommReg) {
 
-
 			var unique_scheduledCommReg = [];
 			var unique_activeCommReg = [];
 
@@ -120,9 +119,9 @@ function scheduleServiceChange() {
 		}
 
 		if (serviceChangeDefault == '1') {
-
 			updateCurrentServiceChangeRecord(serviceChangeID, 2, null, null, null, null);
 			updateCurrentServiceRecord(serviceChangeService)
+			updateFinancialTab(customerID, serviceChangeNewPrice, serviceChangeService);
 			scheduledCommReg[scheduledCommReg.length] = serviceChangeCommReg;
 
 			var commReg_search = nlapiLoadSearch('customrecord_commencement_register', 'customsearch_service_commreg_assign');
@@ -211,25 +210,26 @@ function scheduleServiceChange() {
 				}
 
 				if (!isNullorEmpty(serviceChangeCanDate)) {
-					nlapiLogExecution('DEBUG', 'Inside');
 					inactiveServiceRecord(serviceChangeService);
 					updateCurrentServiceChangeRecord(serviceChangeID_2, 3, serviceChangeCanDate, serviceChangeCanReason, serviceChangeCanNotice, serviceChangeCanComp);
 					updateScheduledServiceChangeRecord(serviceChangeID, 3, null, null);
+					updateFinancialTab(customerID, serviceChangeNewPrice, serviceChangeService);
+				
 				} else {
 					var currentServicePrice = updateServiceRecord(serviceChangeService, serviceChangeNewPrice, serviceChangeNewFreq);
-
 					updateCurrentServiceChangeRecord(serviceChangeID_2, 3, null, null, null, null);
-
 					updateScheduledServiceChangeRecord(serviceChangeID, 2, currentServicePrice, freqArray);
+					updateFinancialTab(customerID, serviceChangeNewPrice, serviceChangeService);
 				}
 
-
+				
 
 				scheduledCommReg[scheduledCommReg.length] = serviceChangeCommReg;
 				activeCommReg[activeCommReg.length] = servieChangeCommReg_2;
 			} else if (serviceChangeResult_2.length == 0) {
 				var currentServicePrice = updateServiceRecord(serviceChangeService, serviceChangeNewPrice, serviceChangeNewFreq);
 				updateScheduledServiceChangeRecord(serviceChangeID, 2, currentServicePrice, freqArray);
+				updateFinancialTab(customerID, serviceChangeNewPrice, serviceChangeService);
 			}
 			// 	var servieChangeServiceAdhoc_2 = serviceChangeResult_2[0].getValue("internalid", "CUSTRECORD_SERVICECHG_SERVICE", null);
 
@@ -574,6 +574,26 @@ function updateCommReg(id, status) {
 
 	}
 
+}
+
+
+function updateFinancialTab(customerID, newPrice, serviceChangeID){
+	nlapiLogExecution('DEBUG', 'Update financial tab', '');	
+	//Load up the Service record with serviceChange ID
+	var serviceRec = nlapiLoadRecord('customrecord_service', serviceChangeID);
+	//Get ID of item corresponding to financial tab
+	var financialItemID = serviceRec.getFieldValue('custrecord_service_ns_item');
+
+	var customerRec = nlapiLoadRecord('customer', customerID);
+	
+	for(var i = 1; i <= customerRec.getLineItemCount('itempricing'); i++){
+		var itemID = customerRec.getLineItemValue('itempricing', 'item', i);
+		if(itemID == financialItemID){
+			//Line item exists in customer record - update price
+			customerRec.setLineItemValue('itempricing', 'price', i , newPrice);
+			nlapiSubmitRecord(customerRec);
+		}
+	}
 }
 
 function getDate() {
