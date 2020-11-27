@@ -14,8 +14,8 @@
  * 
  */
 
-define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/error'],
-    function(ui, runtime, search, record, log, redirect, error) {
+define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/redirect', 'N/error', 'N/currentRecord', 'N/file', 'N/http'],
+    function(ui, runtime, search, record, log, redirect, error, currentRecord, file, http) {
         var zee = 0;
         var role = 0;
 
@@ -157,7 +157,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 form.addField({
                     id: 'upload_file_1',
                     label: 'SERVICE CHANGE PDF UPLOAD',
-                    type: 'file'
+                    type: ui.FieldType.FILE
                 });
                 // .updateLayoutType({
                 //     layoutType: ui.FieldLayoutType.STARTROW
@@ -595,10 +595,14 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                     layoutType: ui.FieldLayoutType.STARTROW
                 }).defaultValue = inlineHtml;
 
-                form.addButton({
-                    id: 'back',
-                    label: 'Reset',
-                    functionName: 'onclick_reset()'
+                // form.addButton({
+                //     id: 'back',
+                //     label: 'Reset',
+                //     functionName: 'onclick_reset()'
+                // });
+
+                form.addResetButton({
+                    label: 'Reset'
                 });
 
                 form.addButton({
@@ -611,36 +615,22 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
 
                 context.response.writePage(form);
             } else {
-                // var entity_id = request.getParameter('customer');
                 var customer = context.request.parameters.custid;
+                var fileObj = context.request.files.upload_file_1;
 
-                context.response.sendRedirect({
-                    identifier: 'RECORD',
-                    type: 'customer',
-                    id: parseInt(customer)
-                });
-
-                var file = context.request.getFile('upload_file_1');
-
-                if (!isNullorEmpty(file)) {
-                    file.setFolder(2562887);
-
-                    var file_type = file.getType();
+                if (!isNullorEmpty(fileObj)) {
+                    fileObj.folder = 2562887;
+                    var file_type = fileObj.fileType;
                     if (file_type == 'PDF') {
                         file_type == 'pdf';
                         var file_name = getDate() + '_' + customer + '.' + file_type;
                         var file_name = 'service_change_notification_' + customer + '.' + file_type;
                     }
-                    // else if (file_type == 'PNGIMAGE') {
-                    //     file_type == 'png';
-                    // } else if (file_type == 'PJPGIMAGE') {
-                    //     file_type == 'png';
-                    // }
-
-                    file.setName(file_name);
+                    fileObj.name = file_name;
 
                     if (file_type == 'PDF') {
-                        var id = file.save(file);
+                        // Create file and upload it to the file cabinet.
+                        var id = fileObj.save();
                     } else {
                         error.create({
                             message: 'Must be in PDF format',
@@ -649,24 +639,24 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                         });
                     }
 
-                    // Create file and upload it to the file cabinet.
-                    // var id = nlapiSubmitFile(file);
+                    // var commRegRecord = record.create({
+                    //     type: 'customrecord_commencement_register' //id: commRegID
+                    // });
+                    // commRegRecord.setValue({
+                    //     fieldId: 'custrecord_scand_form',
+                    //     value: id
+                    // });
+                    // log.audit({
+                    //     title: 'Audit Entry - Document ID',
+                    //     details: 'Document Value / ID is: ' + id
+                    // });
+                    // commRegRecord.save();
 
-                    // commRegRecord.setValue('custrecord_scand_form', id);
-
-                    var commRegRecord = record.create({
-                        type: 'customrecord_commencement_register' //id: commRegID
+                    context.response.sendRedirect({
+                        type: http.RedirectType.RECORD,
+                        identifier: record.Type.CUSTOMER,
+                        id: customer
                     });
-
-                    commRegRecord.setValue({
-                        fieldId: 'custrecord_scand_form',
-                        value: id
-                    });
-                    log.audit({
-                        title: 'Audit Entry - Document ID',
-                        details: 'Document Value / ID is: ' + id
-                    });
-                    commRegRecord.save()
                 }
             }
         }

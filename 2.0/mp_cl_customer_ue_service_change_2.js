@@ -15,8 +15,8 @@
  * @Last Modified time: 2020-10-15 16:49:26
  */
 
-define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentRecord'],
-    function(runtime, search, url, record, format, currentRecord) { //require, factory
+define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentRecord', 'N/email'],
+    function(runtime, search, url, record, format, currentRecord, email) { //require, factory
         var baseURL = 'https://1048144.app.netsuite.com';
         if (runtime.EnvType == "SANDBOX") {
             baseURL = 'https://system.sandbox.netsuite.com';
@@ -94,7 +94,6 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
         }
 
         function pageInit() {
-
             $('#alert').hide();
 
             var scf_upload = document.getElementsByClassName('input');
@@ -123,22 +122,19 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             $('#upload_file_1_fs_lbl_uir_label').attr("style", "padding-left:15%;");
 
             var test_record = currentRecord.get();
-            var customer_id = test_record.getValue({
+            var customer_id = parseInt(test_record.getValue({
                 fieldId: 'custpage_customer_id'
-            });
-
+            }));
             var customer_record = record.load({
                 type: 'customer',
                 id: customer_id
             });
-
             var zeeLocation = record.load({
                 id: customer_record.getValue({
                     fieldId: 'partner'
                 }),
                 type: 'partner'
             });
-
             //Search: SMC - Services
             var searched_jobs_search = search.load({
                 id: 'customsearch_smc_services',
@@ -148,7 +144,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 search.createFilter({
                     name: 'custrecord_service_customer',
                     operator: search.Operator.IS,
-                    values: '1192191'
+                    values: customer_id
                 })
             );
             var searched_jobs = searched_jobs_search.run().getRange({
@@ -786,12 +782,12 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var comm_typeid = $('#commencementtype option:selected').val();
             var send_to = $('#send_to').val();
 
-            console.log(send_to);
-            console.log($('#send_to').val());
+            // console.log(send_to);
+            // console.log($('#send_to').val());
 
             var firstName = $('#first_name').val();
             var lastName = $('#last_name').val();
-            var email = $('#email').val();
+            var email_address = $('#email').val();
             var phone = $('#phone').val();
             var position = $('#position').val();
 
@@ -800,7 +796,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 return false;
             }
 
-            if (isNullorEmpty(email)) {
+            if (isNullorEmpty(email_address)) {
                 alert('Please enter email of requester');
                 return false;
             }
@@ -848,7 +844,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             });
             emailBody += '</br></br><u>Requester Details:</u>' + '</br>';
             emailBody += 'Name: ' + firstName + ' ' + lastName + '</br>';
-            emailBody += 'Email: ' + email + '</br>';
+            emailBody += 'Email: ' + email_address + '</br>';
             emailBody += 'Phone: ' + phone + '</br>';
             if (!isNullorEmpty(position)) {
                 emailBody += 'Position: ' + position + '</br></br>';
@@ -930,15 +926,11 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 fieldId: 'author',
                 value: runtime.getCurrentUser().id
             });
-            console.log('Length: '+ getDate().trim().length);
-            console.log('YEEET: ' + getDate().split(''));
-            console.log(getDate().replace(/\s/g, '').length);
-            console.log(getDate().substr(1,11).split(''));
-            userNoteRecord.setValue({
-                fieldId: 'notedate',
-                value: getDate().trim()
-                // value: '1/2/2020'
-            })
+            // userNoteRecord.setValue({
+            //     fieldId: 'notedate',
+            //     value: getDate().trim()
+            //         // value: '1/2/2020'
+            // })
             userNoteRecord.save();
             email.send({
                 author: 112209,
@@ -958,7 +950,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             }));
             var sales_record = test_record.getValue({
                 fieldId: 'custpage_salesrecordid'
-            })
+            });
 
             var params = {
                 custid: customer,
@@ -969,10 +961,11 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             // window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 
             var upload_url = baseURL + url.resolveScript({
-                deploymentId: ctx.getParameter({ name: 'custpage_deployid' }),
-                scriptId: ctx.getParameter({ name: 'custpage_scriptid' }),
+                deploymentId: test_record.getValue({ fieldId: 'custpage_deployid' }),
+                scriptId: test_record.getValue({ fieldId: 'custpage_scriptid' }),
                 params: params,
             });
+            var upload_url = baseURL + '/app/common/entity/custjob.nl?id=' + customer;
             window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
         }
 
@@ -1036,8 +1029,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var date = new Date();
             date = format.format({
                 value: date,
-                type: format.Type.DATE
-                // timezone: format.Timezone.AUSTRALIA_SYDNEY
+                type: format.Type.DATE,
+                timezone: format.Timezone.AUSTRALIA_SYDNEY
             });
 
             return date;
@@ -1053,6 +1046,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
 
         return {
             pageInit: pageInit,
-            saveRecord: saveRecord
+            saveRecord: saveRecord,
+            onclick_back: onclick_back
         };
     });
