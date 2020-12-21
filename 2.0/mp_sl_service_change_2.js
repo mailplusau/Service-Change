@@ -35,7 +35,6 @@ function(ui, email, runtime, search, record, http, log, redirect, format, curren
 
 
         if(context.request.method === 'GET'){
-
             //Load Jquery
             var inlineQty = '<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>';
 
@@ -58,7 +57,7 @@ function(ui, email, runtime, search, record, http, log, redirect, format, curren
                 params = JSON.parse(params);
                 var customer = parseInt(params.custid);
             }else{
-                var customer = parseInt(context.request.custid);
+                var customer = parseInt(context.request.parameters.custid);
             }
 
             var recCustomer = record.load({
@@ -121,12 +120,16 @@ function(ui, email, runtime, search, record, http, log, redirect, format, curren
             form.clientScriptFileId = 4569927;
             context.response.writePage(form);
         }else{
-            redirect.toSuitelet({
-                scriptId: 'customscript_sl_service_change_list_2',
-                deploymentId: 'customdeploy_service_change_list_2',
-                isExternal: false,
+            redirect.redirect({
+                url: 'https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1093&deploy=1&compid=1048144',
                 parameters: params
-            })
+            });
+            // redirect.toSuitelet({
+            //     scriptId: 'customscript_sl_service_change_list_2',
+            //     deploymentId: 'customdeploy_service_change_list_2',
+            //     isExternal: false,
+            //     parameters: params
+            // });
         }
          
     }
