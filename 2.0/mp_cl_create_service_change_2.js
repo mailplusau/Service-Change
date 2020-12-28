@@ -1331,19 +1331,24 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
      * Takes user back to the Service change list
      */
     function handleBack(){
-        //TODO
-        var params = {
-            custid: currentRecord.get().getValue({fieldId: 'custpage_customer_id'}),
-            sales_record_id: currentRecord.get().getValue({fieldId: 'custpage_salesrecordid'})
-        }
-        params = JSON.stringify(params);
+        // var params = {
+        //     custid: currentRecord.get().getValue({fieldId: 'custpage_customer_id'}),
+        //     sales_record_id: currentRecord.get().getValue({fieldId: 'custpage_salesrecordid'})
+        // }
+        // params = JSON.stringify(params);
 
+        // var output = url.resolveScript({
+        //     deploymentId:  currentRecord.get().getValue({fieldId: 'custpage_deployid'}),
+        //     scriptId: currentRecord.get().getValue({fieldId: 'custpage_scriptid'}),
+        //     returnExternalUrl: false
+        // });
+        
         var output = url.resolveScript({
-            deploymentId:  currentRecord.get().getValue({fieldId: 'custpage_deployid'}),
-            scriptId: currentRecord.get().getValue({fieldId: 'custpage_scriptid'}),
+            deploymentId: 'customdeploy_service_change_list_2' ,
+            scriptId: 'customscript_sl_service_change_list_2',
             returnExternalUrl: false
         });
-        
+
         var upload_url = baseURL + output + '&unlayered=T&custparam_params=' + params;
         window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
     }
