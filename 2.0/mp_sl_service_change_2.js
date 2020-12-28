@@ -120,16 +120,16 @@ function(ui, email, runtime, search, record, http, log, redirect, format, curren
             form.clientScriptFileId = 4569927;
             context.response.writePage(form);
         }else{
-            redirect.redirect({
-                url: 'https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1093&deploy=1&compid=1048144',
-                parameters: params
-            });
-            // redirect.toSuitelet({
-            //     scriptId: 'customscript_sl_service_change_list_2',
-            //     deploymentId: 'customdeploy_service_change_list_2',
-            //     isExternal: false,
+            // redirect.redirect({
+            //     url: 'https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1093&deploy=1&compid=1048144',
             //     parameters: params
             // });
+            redirect.toSuitelet({
+                scriptId: 'customscript_sl_service_change_list_2',
+                deploymentId: 'customdeploy_service_change_list_2',
+                isExternal: false,
+                parameters: params
+            });
         }
          
     }
