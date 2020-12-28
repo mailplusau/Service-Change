@@ -113,7 +113,7 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
         params = JSON.stringify(params);
 
         var output = url.resolveScript({
-            deploymentId: 'customdeploy_sl_service_change',
+            deploymentId: 'customdeploy_sl_service_change_2',
             scriptId: 'customscript_sl_service_change_2',
             returnExternalUrl: false
         });

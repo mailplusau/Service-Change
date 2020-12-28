@@ -49,14 +49,14 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
     function handleAddScheduledChange(){
         var params = {
             custid: parseInt(nlapiGetFieldValue('custpage_customer_id')),
-            customid: 'customscript_sl_service_change',
-            customdeploy: 'customdeploy_sl_create_service_change'
+            customid: 'customscript_sl_create_service_change_2',
+            customdeploy: 'customdeploy_sl_create_service_change_2'
         }
         params = JSON.stringify(params);
 
         var output = url.resolveScript({
-            deploymentId: 'customdeploy_sl_create_service_change',
-            scriptId: 'customscript_sl_create_service_change',
+            deploymentId: 'customdeploy_sl_create_service_change_2',
+            scriptId: 'customscript_sl_create_service_change_2',
             returnExternalUrl: false
         });
 
@@ -74,8 +74,8 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
         params = JSON.stringify(params);
 
         var output = url.resolveScript({
-            deploymentId: 'customdeploy_sl_cancel_service_change',
-            scriptId: 'customscript_sl_cancel_service_change',
+            deploymentId: 'customdeploy_sl_cancel_service_change_2',
+            scriptId: 'customscript_sl_cancel_service_change_2',
             returnExternalUrl: false
         });
 
@@ -94,8 +94,8 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
             custid: parseInt(currentRecord.get().getValue({fieldId: 'custpage_customer_id'})),
             salesrep: null,
             commreg: commregid,
-            customid: 'customscript_sl_service_change',
-            customdeploy: 'customdeploy_sl_service_change',
+            customid: 'customscript_sl_create_service_change_2',
+            customdeploy: 'customdeploy_sl_create_service_change_2',
             date: dateEffective
         }
         params = JSON.stringify(params);
