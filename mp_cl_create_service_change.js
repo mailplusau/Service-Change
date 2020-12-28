@@ -6,8 +6,8 @@
  *
  * Description:         
  * 
- * @Last Modified by:   Ankith
- * @Last Modified time: 2020-02-26 10:56:29
+ * @Last Modified by:   ankit
+ * @Last Modified time: 2020-12-03 11:03:55
  *
  */
 
@@ -873,7 +873,12 @@ function saveRecord() {
                         new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                     }
 
-                    new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                    if (role == 1000) {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', ctx.getUser());
+                    } else {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                    }
+
 
                     new_service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price);
 
@@ -993,7 +998,12 @@ function saveRecord() {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         }
 
-                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        if (role == 1000) {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', ctx.getUser());
+                        } else {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        }
+                        // new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
 
                         if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
                             new_service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
@@ -1221,8 +1231,12 @@ function saveRecord() {
                     } else {
                         new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                     }
-
-                    new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                    if (role == 1000) {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', ctx.getUser());
+                    } else {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                    }
+                    // new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
 
                     new_service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price);
 
@@ -1352,8 +1366,12 @@ function saveRecord() {
                         } else {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         }
-
-                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        if (role == 1000) {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', ctx.getUser());
+                        } else {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        }
+                        // new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
 
                         if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
                             new_service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
@@ -1391,7 +1409,12 @@ function saveRecord() {
                         new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
                         new_service_change_record.setFieldValue('custrecord_servicechg_status', 2); //status is active
-                        new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        if (role == 1000) {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', ctx.getUser());
+                        } else {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
+                        }
+                        // new_service_change_record.setFieldValue('custrecord_servicechg_old_zee', partner);
                         new_service_change_record.setFieldValue('custrecord_servicechg_new_price', old_service_price_class_elem[i].value); //price remain the same                  
                         new_service_change_record.setFieldValues('custrecord_servicechg_new_freq', current_freq_array); //frequency remain the same
                         new_service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
