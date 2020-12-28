@@ -1349,7 +1349,7 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
             returnExternalUrl: false
         });
 
-        var upload_url = baseURL + output + '&unlayered=T&custparam_params=' + params;
+        var upload_url = baseURL + output + '&unlayered=T&custparam_params=';
         window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
     }
 
