@@ -46,8 +46,8 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
             $(this).parent().hide();
         });
 
-        $(".remove_class").on('click', handleDeleteService);
-        $(".unremove_class").on('click', handleUndoDeleteService);
+        $(document).on('click', ".remove_class", handleDeleteService);
+        $(document).on('click', ".unremove_class", handleUndoDeleteService);
         $("#back").on('click', handleBack);
     }
 
@@ -55,7 +55,6 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
     * Fired when the Tick Mark icon is clicked. Undoes deletion.
     */
     function handleUndoDeleteService(){
-        console.log('Inside undo delete');
         var service_change_id = $(this).attr('data-servicechangeid');
         var service_id = $(this).attr('data-serviceid');
 
@@ -81,7 +80,6 @@ function(error, runtime, search, url, record, format, email, currentRecord) {
      * Fired when the Delete icon button is clicked 
      */
     function handleDeleteService(){
-        console.log('Inside delete');
         if (confirm('Are you sure you want to delete this item?\n\nThis action cannot be undone.')) {
 
             var service_change_id = $(this).attr('data-servicechangeid');
