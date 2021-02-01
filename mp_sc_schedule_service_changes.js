@@ -6,8 +6,8 @@
  *
  * Remarks: Create services based on scheduled service changes. Either for price increase, new service, service cancellations & price decrease.       
  * 
- * @Last Modified by:   Ravija
- * @Last Modified time: 2020-10-30 13:04
+ * @Last Modified by:   ankit
+ * @Last Modified time: 2021-01-17 14:09:29
  *
  */
 
@@ -494,6 +494,29 @@ function updateCurrentServiceChangeRecord(id, status, can_date, can_reason, can_
 		activeServiceChangeRecord.setFieldValue('custrecord_servicechg_cancellation_reas', can_reason);
 		activeServiceChangeRecord.setFieldValue('custrecord_servicechg_cancellation_not', can_notice);
 		activeServiceChangeRecord.setFieldValue('custrecord_servicechg_cancellation_comp', can_comp);
+
+		nlapiSubmitRecord(activeServiceChangeRecord);
+	} catch (e) {
+
+		var message = '';
+		message += "Service Change Internal ID: " + id + "</br>";
+		message += "----------------------------------------------------------------------------------</br>";
+		message += e;
+
+
+		nlapiSendEmail(409635, ['ankith.ravindran@mailplus.com.au'], 'Scheduled Service Change: Cannot Update Service Change Record', message, null);
+
+	}
+}
+
+function updateScheduledServiceChangeRecord(id, status, service_price,freq_array) {
+	try {
+		var activeServiceChangeRecord = nlapiLoadRecord('customrecord_servicechg', id);
+
+		activeServiceChangeRecord.setFieldValue('custrecord_servicechg_status', status);
+
+		activeServiceChangeRecord.setFieldValue('custrecord_servicechg_old_price', service_price);
+		activeServiceChangeRecord.setFieldValue('custrecord_servicechg_old_freq', freq_array);
 
 		nlapiSubmitRecord(activeServiceChangeRecord);
 	} catch (e) {
