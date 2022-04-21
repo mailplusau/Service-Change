@@ -7,7 +7,7 @@
  * Remarks: Create services based on scheduled service changes. Either for price increase, new service, service cancellations & price decrease.
  *
  * @Last modified by:   ankithravindran
- * @Last modified time: 2022-01-12T10:55:15+11:00
+ * @Last modified time: 2022-01-13T13:04:29+11:00
  *
  */
 
@@ -150,6 +150,15 @@ function scheduleServiceChange() {
           //THROW ERROR
         }
       }
+
+
+      reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy,
+        null);
+      nlapiLogExecution('EMERGENCY', 'Reschedule Return', reschedule);
+      if (reschedule == false) {
+        return false;
+      }
+
       scheduledCommReg = [];
       activeCommReg = [];
     }
