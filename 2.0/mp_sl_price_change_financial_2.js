@@ -43,7 +43,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 if (!isNullorEmpty(params_params.custparam_params)) {
                     var params = JSON.parse(context.request.parameters.custparam_params);
                 }
-                var zee_id;
+                var zee_id = 0;
 
                 if (!isNullorEmpty(params)) {
                     zee_id = parseInt(params.zeeid);
@@ -109,8 +109,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // inlineHtml += '<h1 style="font-size: 25px; font-weight: 700; color: #103D39; text-align: center">Consolidation Invoicing</h1>';
 
                 // Popup Modal Section
-                inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
-
+                inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service" data-dismiss="modal">Save</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
 
 
                 // Click for Instructions
@@ -132,6 +131,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     // inlineHtml += tableFilters();
 
                     inlineHtml += dataTable();
+
+                    inlineHtml += loadingSection();
 
                     inlineHtml += submit();
                 }
@@ -279,6 +280,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             // inlineQty += '</div></div>';
 
             inlineQty += '<button style="margin-left: 10px; margin-right: 5px; background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="servicesAll" onclick="">Add/Edit All Services</button>';
+            inlineQty += '<button style="margin-left: 10px; margin-right: 5px; background-color: #51fb54; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="servicesAddAll" class="hide" onclick="">Add All Service Inc Amount</button>';
+            inlineQty += '<button style="margin-left: 10px; margin-right: 5px; background-color: #fb7c51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="servicesRemoveAll" class="hide" onclick="">Remove All Service Inc Amount</inp>';
 
             inlineQty += '</div></div>';
 
@@ -339,7 +342,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             // inlineQty += '</div>';
 
             // Date from field
-            inlineQty += '<div class="col-xs-4 date_effective">';
+            inlineQty += '<div class="col-xs-6 date_effective">';
             inlineQty += '<div class="input-group">';
             inlineQty += '<span style="background-color: #379E8F; color: white;" class="input-group-addon" id="date_effective_text">Date Effective</span>';
             inlineQty += '<input id="date_effective" class="form-control date_effective" type="date"/>';
@@ -354,13 +357,26 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
+        function loadingSection() {
+            var inlineQty = '<div class="form-group container loading_section"></div>';
+            inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #379E8F; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
+            inlineQty += 'left: 50%; }' //position: fixed; z-index: 1000; 
+                /* Safari */
+            inlineQty += '@-webkit-keyframes spin {0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }';
+
+            inlineQty += '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+            inlineQty += '</style>';
+
+            return inlineQty;
+        }
+
         function submit() {
             // Save Edit
             var inlineQty = '<div class="container" style="margin-top: 20px;">';
             inlineQty += '<div class="row justify-content-center">';
 
             inlineQty += '<div class="col-4">';
-            inlineQty += '<input type="button" style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;" class="form-control submit_btn" id="submit" value="Submit"></input>';
+            inlineQty += '<input type="button" style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;" class="form-control submit_btn hide" id="submit" value="Submit"></input>';
             inlineQty += '</div>';
 
             inlineQty += '</div></div>';
