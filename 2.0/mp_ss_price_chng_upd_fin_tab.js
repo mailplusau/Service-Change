@@ -24,9 +24,9 @@ define(['N/runtime', 'N/search', 'N/record', 'N/log', 'N/task', 'N/currentRecord
 
         function main() {
             log.debug({
-                title: 'Start'
-            })
-            // Service Type Search and Results
+                    title: 'Start'
+                })
+                // Service Type Search and Results
             var servResult = [];
             var servSearch = search.load({ type: 'customrecord_service_type', id: 'customsearch_rta_service_types_2' })
             servSearch.run().each(function(res) {
@@ -46,17 +46,12 @@ define(['N/runtime', 'N/search', 'N/record', 'N/log', 'N/task', 'N/currentRecord
             // Remove Group If Package Already associated with Customer
             var packResults = [];
             var packgServSearch = search.load({ type: 'customrecord_service', id: 'customsearch_price_chng_new_serv' });
-            packgServSearch.run().each(function(res){
+            packgServSearch.run().each(function(res) {
                 var cust_id = res.getValue({ name: 'internalid', join: 'CUSTRECORD_SERVICE_CUSTOMER' })
-            
+
                 packResults.push(cust_id);
 
                 return true;
-            });
-
-            log.debug({
-                title: 'servResult',
-                details: servResult
             });
             log.debug({
                 title: 'packRes',
@@ -65,35 +60,29 @@ define(['N/runtime', 'N/search', 'N/record', 'N/log', 'N/task', 'N/currentRecord
 
             // Customer Info and Create Service Record
             var custFinTabSearch = search.load({ type: 'customer', id: 'customsearch_package_cust_fin_tab' });
-            custFinTabSearch.run().getRange({ start: 0, end: 1 }).forEach(function(custFinTabRes) {
+            custFinTabSearch.run().getRange({ start: 0, end: 700 }).forEach(function(custFinTabRes) {
 
                 // From Customer Record
                 var cust_id = custFinTabRes.getValue({ name: 'internalid', summary: search.Summary.GROUP });
                 var itemID = custFinTabRes.getValue({ name: 'pricingitem', summary: search.Summary.GROUP });
                 // Service Type Array
                 var servLineItem = servResult.filter(function(el) { if (el.packageID == itemID) { return el } })[0];
+                if (isNullorEmpty(servLineItem)) {
+                    return true;
+                }
                 // From Service Array
                 var serv_type_id = servLineItem.serviceID;
-                
-                log.debug({
-                    title: 'Service ID',
-                    details: serv_type_id
-                })
-                log.debug({
-                    title: 'Customer ID',
-                    details: cust_id
-                })
-                log.debug({
-                    title: 'Customer In List?',
-                    details: packResults.includes(cust_id)
-                })
 
-                // log.debug({
-                //     title: 'Package Search: Result Matching',
-                //     details: packResults.includes(JSON.stringify(cust_id))
-                // })
+                if (!isNullorEmpty(serv_type_id) && packResults.indexOf(cust_id) == -1) {
 
-                if (!isNullorEmpty(serv_type_id) || !isNullorEmpty(packResults.includes(cust_id))) {
+                    log.debug({
+                        title: 'Service ID',
+                        details: serv_type_id
+                    })
+                    log.debug({
+                        title: 'Customer ID',
+                        details: cust_id
+                    });
 
                     var serv_ns_item = servLineItem.packageID;
                     var serv_name = servLineItem.name;
@@ -121,11 +110,11 @@ define(['N/runtime', 'N/search', 'N/record', 'N/log', 'N/task', 'N/currentRecord
                      *          Date Reviewed
                      * 
                      */
-                    
+
                     var zee_id = custFinTabRes.getValue({ name: 'partner', summary: search.Summary.GROUP });
                     var itemPricing = custFinTabRes.getValue({ name: 'itempricingunitprice', summary: search.Summary.GROUP });
                     var commReg = custFinTabRes.getValue({ name: 'internalid', join: 'CUSTRECORD_CUSTOMER', summary: search.Summary.GROUP });
-                    
+
                     // Service Record Info
                     var serv_price = itemPricing;
                     var serv_cat = 1;
@@ -152,15 +141,6 @@ define(['N/runtime', 'N/search', 'N/record', 'N/log', 'N/task', 'N/currentRecord
                         custRec.save();
                     }
 
-                    // log.debug({
-                    //     title: 'End Result: Service ID',
-                    //     details: serv_type_id
-                    // })
-                    // log.debug({
-                    //     title: 'End Result: NetSuite ITEm',
-                    //     details: serv_ns_item
-                    // })
-
                     log.debug({
                         title: "serviceRec: ID Set",
                         details: serviceRec,
@@ -168,11 +148,11 @@ define(['N/runtime', 'N/search', 'N/record', 'N/log', 'N/task', 'N/currentRecord
 
                 } else [
                     log.error({
-                        title: 'Service ID Undefined',
-                        details: cust_id
+                        title: 'Service ID Undefined or Customer Already Allocated Service',
+                        details: serv_type_id + ' & ' + cust_id
                     })
                 ]
-                
+
                 return true;
             });
         }
