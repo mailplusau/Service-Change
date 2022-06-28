@@ -62,7 +62,6 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // Load DataTables
                 // inlineHtml += '<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">';
                 inlineHtml += '<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css">';
-                inlineHtml += '<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/1.0.7/css/responsive.dataTables.min.css">';
                 inlineHtml += '<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>';
                 inlineHtml += '<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/rowgroup/1.1.3/js/dataTables.rowGroup.min.js"></script> '
                 inlineHtml += '<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script> '
@@ -75,10 +74,6 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // Load Bootstrap-Select
                 inlineHtml += '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">';
                 inlineHtml += '<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>';
-
-                // Semantic Select
-                // inlineHtml += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">';
-                // inlineHtml += '<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>';
 
                 // Load Netsuite stylesheet and script
                 inlineHtml += '<link rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2060796&c=1048144&h=9ee6accfd476c9cae718&_xt=.css"/>';
@@ -98,7 +93,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // Text Color: #103D39
 
                 inlineHtml += '<div class="a" style="width: 100%; background-color: #CFE0CE; padding: 20px; min-height: 100vh; height: 100%; ">'; // margin-top: -40px
-                inlineHtml += '<h1 style="text-align: center; color: #103D39; display: inline-block; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px;">Scheduled Price Change: Finance Team</h1>';
+                inlineHtml += '<h1 style="text-align: center; color: #103D39; display: inline-block; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px;">Scheduled Price Change: IT Team</h1>';
                 inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #379E8F; color: #fff }';
                 inlineHtml += '.nav > li > a, .nav > li > a:focus, .nav > li > a:hover { margin-left: 5px; margin-right: 5px; border: 2px solid #379E8F; color: #379E8F; }';
                 inlineHtml += '</style>';
@@ -115,8 +110,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // inlineHtml += '<h1 style="font-size: 25px; font-weight: 700; color: #103D39; text-align: center">Consolidation Invoicing</h1>';
 
                 // Popup Modal Section
-                inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service" data-dismiss="modal">Update All Services</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
-                inlineHtml += '<div id="myModal2" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service_2" data-dismiss="modal">Update  Services For All Franchisees</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
+                inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service" data-dismiss="modal">Save</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
 
 
                 // Click for Instructions
@@ -133,7 +127,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 inlineHtml += zeeDropdownSection(zee_id);
 
                 if (!isNullorEmpty(zee_id)) {
-                    inlineHtml += increaseAmount();
+                    // inlineHtml += increaseAmount();
 
                     inlineHtml += customerListHeader();
 
@@ -141,7 +135,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
                     inlineHtml += loadingSection();
 
-                    inlineHtml += submit();
+                    // inlineHtml += submit();
                 }
 
                 inlineHtml += '</div></div>'
@@ -162,7 +156,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = zee_id;
 
-                form.clientScriptFileId = 5605927; //Sandbox 5605927 // Prod - 5604134
+                form.clientScriptFileId = 5607528 ; //Sandbox 5607528 // Prod - 5787224
 
                 context.response.writePage(form);
             } else {}
@@ -217,7 +211,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
             inlineQty += '<button id="btn-show-all-children" class="hide" type="button">Expand All</button>'
             inlineQty += '<button id="btn-hide-all-children" class="hide" type="button">Collapse All</button>'
-            inlineQty += '<button id="reset-all" class="hide" type="button">Reset All</button>'
+                // inlineQty += '<button id="reset-all" class="hide" type="button">Reset All</button>'
 
             inlineQty += '<table id="debt_preview" class="table table-responsive table-striped customer tablesorter" style="width: 100%; background-color: white;">';
             inlineQty += '<thead style="color: white; background-color: #379E8F;">';
@@ -234,7 +228,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
         function customerListHeader() {
             // Increase Header
-            var inlineQty = '<div class="form-group container cust_list_section">';
+            var inlineQty = '<div class="form-group container date_filter_section">';
             inlineQty += '<div class="row">';
             inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #379E8F; color: white;">Customer List</span></h4></div>';
             inlineQty += '</div>';
@@ -247,13 +241,13 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             var inlineQty = '<style>.green-back { background-color: #379E8F; color: white; }.vl {border-left: 6px solid green;height: 500px; }</style>';
 
             // Increase Header
-            inlineQty += '<div class="form-group container inc_amount_section">';
+            inlineQty += '<div class="form-group container date_filter_section">';
             inlineQty += '<div class="row">';
             inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #379E8F; color: white;">Increase Price on All Services</span></h4></div>';
             inlineQty += '</div>';
             inlineQty += '</div>';
 
-            inlineQty += '<div class="form-group container inc_price_section">';
+            inlineQty += '<div class="container inc_price_section">';
             inlineQty += '<div class="row">';
 
             inlineQty += '<div class="col-xs-3"></div>';
@@ -261,10 +255,6 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="col-xs-6">';
             inlineQty += '<button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="servicesAll" class="col-xs-12" onclick="">Add/Edit All Services</button>';
             inlineQty += '</div>';
-            // Bulk Update
-            // inlineQty += '<div class="col-xs-4">';
-            // inlineQty += '<button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="bulkUpdate" class="col-xs-12">Bulk Update Services</button>';
-            // inlineQty += '</div>';
 
             inlineQty += '<div class="col-xs-3"></div>';
 
@@ -294,7 +284,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="col-xs-4"></div>';
             inlineQty += '<div class="col-4">';
             // inlineQty += '<input type="button" style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;"  id="submit" value=""></input>';
-            inlineQty += '<button style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Save/Update</button>';
+            inlineQty += '<button style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Schedule Emails</button>';
             inlineQty += '</div>';
             inlineQty += '<div class="col-xs-4"></div>';
 
