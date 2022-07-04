@@ -162,7 +162,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = zee_id;
 
-                form.clientScriptFileId = 5605927; //Sandbox 5605927 // Prod - 5604134
+                form.clientScriptFileId = 5604134; //Sandbox 5605927 // Prod - 5604134
 
                 context.response.writePage(form);
             } else {}

@@ -11,11 +11,13 @@
 define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/email', 'N/currentRecord'],
     function(error, runtime, search, url, record, format, email, currentRecord) {
         var baseURL = 'https://1048144.app.netsuite.com';
-        if (runtime.EnvType == "SANDBOX") {
+        if (runtime.envType == "SANDBOX") {
             baseURL = 'https://1048144-sb3.app.netsuite.com';
         }
+        
         var role = runtime.getCurrentUser().role;
         var currRec = currentRecord.get();
+        var ctx = runtime.getCurrentScript();
 
         var zee_id = parseInt(currRec.getValue({ fieldId: 'custpage_price_chng_fin_zee_id' }));
         if (!isNullorEmpty(zee_id)) {
@@ -68,12 +70,27 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         });
         console.log(savedList)
 
-        // Date Today
-        var today_date = new Date();
-        today_date = today_date.toISOString().split('T')[0];
+        // Date Today n Date Tomorrow
+        var today_date = new Date(); // Test Time 6:00pm - '2022-06-29T18:20:00.000+10:00'
+        today_date.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
+        var hour_time = today_date.getHours();
 
+        if (hour_time < 17){ // If Current Time is Before 5:00pm
+            today_date = today_date.toISOString().split('T')[0];
+        } else { // If Current Time is After 5:00pm, Change Date as Tomorrow.
+            var today_year = today_date.getFullYear();
+            var today_month = today_date.getMonth();
+            var today_day = today_date.getDate();
+            var today_in_day = new Date(Date.UTC(today_year, today_month, today_day + 1));
+            today_date = today_in_day.toISOString().split('T')[0]; 
+        }
+        console.log(today_date)
+        
         // Maximum Invoice Search
-        var maxInvList = [];
+        var maxInvID = []; // Max Invoice ID
+        var maxInvItem = [];
+        var cust_index = 0;
+        var maxInvCust = [];
         var maxInvSearch = search.load({
             id: 'customsearch_smc_customer_5_2',
             type: 'customer'
@@ -84,15 +101,40 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             values: zee_id
         }))
         maxInvSearch.run().each(function(res){
-            var internalid = res.getValue({
-                name: 'internalid',
+            var companyname = res.getValue({
+                name: 'item',
                 join: 'transaction',
-                summary: 'MAX'
-            });
-            maxInvList.push(internalid);
-            return true;
+                summary: 'GROUP'
+            }); 
+            var netSuiteItem = res.getValue({
+                name: 'item',
+                join: 'transaction',
+                summary: 'GROUP'
+            }); 
+            if (cust_index == 0){
+                maxInvCust.push(companyname);
+            }
+            if (maxInvCust.indexOf(companyname) == -1){
+                maxInvCust.push(companyname);
+                maxInvItem = [];
+            }
+            if (maxInvItem.indexOf(netSuiteItem) == -1){
+                maxInvItem.push(netSuiteItem);
+
+                var internalid = res.getValue({
+                    name: 'internalid',
+                    join: 'transaction',
+                    summary: 'MAX'
+                });
+                maxInvID.push(internalid);
+                cust_index++;
+                return true;
+            } else {
+                cust_index++;
+                return true;
+            }
         });
-        console.log(maxInvList);
+        console.log(maxInvID);
 
         /**
          * On page initialisation
@@ -148,7 +190,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
                 var dataTable = $("#debt_preview").DataTable({
                     data: dataSet,
-                    pageLength: 3,
+                    pageLength: 100,
                     order: [],
                     columns: [{
                             title: 'Expand',
@@ -157,15 +199,15 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                             data: null,
                             defaultContent: '',
                         },
-                        { title: "Internal ID" }, // 0
-                        { title: "Customer ID" }, // 1
-                        { title: "Company Name" }, // 2
-                        { title: "Franchisee" }, // 3,
-                        { title: "Date Last Price Increase" }, // 4,,
+                        { title: "Internal ID" }, // 1
+                        { title: "Customer ID" }, // 2
+                        { title: "Company Name" }, // 3
+                        { title: "Franchisee" }, // 4,
+                        { title: "Date Last Price Increase" }, // 5,
                         { title: 'Child Object' } // 6 Child Object for Child Table
                     ],
                     columnDefs: [{
-                            targets: [6],
+                            targets: [1, 6],
                             visible: false,
                         }
                     ],
@@ -206,10 +248,29 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
                 // Remove all Increase Amount Data
                 $('#reset-all').on('click', function() {
+                    // Open Data Table
+                    dataTable.page.len(-1).draw();
+                    dataTable.rows().every(function() {
+                        this.child.show();
+                    });
+
                     // Set Values as Null
                     $('.total_amount').val('');
                     $('.increase_amount').text('$0.00')
                     $('.new_date_eff').val('');
+                    
+                    $('.total_amount').closest('tr').css('background-color', ''); // Reset CSS
+
+                    // Redraw Data Table with Rows Closed.
+                    dataTable.page.len(100).draw();
+                    dataTable.rows().every(function() {
+                        // If row has details expanded
+                        if (this.child.isShown()) {
+                            // Collapse row details
+                            this.child.hide();
+                            $(this.node()).removeClass('shown');
+                        }
+                    });
                 });
 
                 // Add event listener for opening and closing child table details on button.
@@ -499,7 +560,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 }
             });
             // On Change of Total Amount or Date Effective
-            $('.total_amount, .new_date_eff').change(function(){
+            $(document).on('change', '.total_amount, .new_date_eff', function() {
+            // $('.total_amount, .new_date_eff').change(function(){
                 if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())){
                     if ($(this).hasClass('odd')) {
                         $(this).closest('tr').css('background-color', 'rgba(255, 249, 190, 1)'); // LightGoldenRodYellow
@@ -510,6 +572,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     $(this).closest('tr').css('background-color', '');
                 }
             })
+
+            console.log(ctx.getRemainingUsage())
         }
 
         function createChild(row) {
@@ -518,22 +582,24 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             var childSet = [];
             row.data()[6].forEach(function(el) {
                 if (el.approved == true){
-                    childSet.push([el.item, 
-                        '<label id="' + el.item + '" class="services" data-servid="' + el.id + '" data-servtypeid="'+el.type_id+'" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>',
-                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>',
-                        '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '" disabled/>',
-                        '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '" disabled/>',
-                        el.complete,
-                        el.approved
+                    childSet.push([el.item, //0
+                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
+                        '<label id="' + el.item + '" class="services" data-servid="' + el.id + '" data-servtypeid="'+el.type_id+'" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>', //2
+                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
+                        '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '" disabled/>', //4
+                        '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '" disabled/>', //5
+                        el.complete, //6
+                        el.approved //7
                     ]);
                 } else {
-                    childSet.push([el.item,
-                        '<label id="' + el.item + '" class="services" data-servid="' + el.id + '" data-servtypeid="'+el.type_id+'" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>',
-                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>',
-                        '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>',
-                        '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>',
-                        el.complete,
-                        el.approved
+                    childSet.push([el.item, //0
+                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
+                        '<label id="' + el.item + '" class="services" data-servid="' + el.id + '" data-servtypeid="'+el.type_id+'" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>', //2
+                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
+                        '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>', //4
+                        '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>', //5 
+                        el.complete, //6
+                        el.approved //7
                     ]);
                 }
             });
@@ -551,19 +617,20 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 data: childSet,
                 columns: [
                     { title: 'Item' }, //0
-                    { title: 'Current Invoice Price' }, //1
-                    { title: 'Increase Amount' }, //2
-                    { title: 'New Total Price' }, //3
-                    { title: 'Date Effective' }, //4
-                    { title: 'Complete?' }, //5
-                    { title: 'Approved By IT?'} //6
+                    { title: 'Latest Invoice Date'}, // 1
+                    { title: 'Latest Invoice Price' }, //2
+                    { title: 'Increase Amount' }, //3
+                    { title: 'New Total Price' }, //4
+                    { title: 'Date Effective' }, //5
+                    { title: 'Complete?' }, //6
+                    { title: 'Approved By IT?'} //7
                 ],
                 columnDefs: [{
-                    targets: [5,6],
+                    targets: [6,7],
                     visible: false
                 }, ],
                 rowCallback: function(row, data) {
-                    if (data[5] == true) {
+                    if (data[6] == true) {
                         if ($(row).hasClass('odd')) {
                             $(row).css('background-color', 'rgba(144, 238, 144, 0.75)'); // LightGreen
                         } else {
@@ -592,6 +659,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             var childObject = [];
 
+            var serv_id_list = []
+
             //Search: SMC - Customer
             var customerSearch = search.load({
                 type: "customer",
@@ -602,15 +671,15 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 operator: search.Operator.ANYOF,
                 values: zee_id,
             }));
-            if (maxInvList.length > 0){
+            if (maxInvID.length > 0){
                 customerSearch.filters.push(search.createFilter({
                     name: "internalid",
                     operator: search.Operator.ANYOF,
                     join: 'transaction',
-                    values: maxInvList,
+                    values: maxInvID,
                 }));
             } else {
-                console.log('Missing Invoices. Maximum Invoice Length: ' + maxInvList.length)
+                console.log('Missing Invoices. Maximum Invoice Length: ' + maxInvID.length)
             }
             var customerSearchResLength = customerSearch.runPaged().count;
             customerSearch.run().each(function(searchResult) {
@@ -645,6 +714,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     join: 'CUSTRECORD_SERVICE_CUSTOMER',
                     summary: "GROUP"
                 });
+                if (serv_id_list.indexOf(service_id) != -1){ // If Service ID has already been pushed, Skip
+                    return true;
+                }
+                serv_id_list.push(service_id);
+                
                 var service = searchResult.getText({
                     name: "custrecord_service",
                     join: 'CUSTRECORD_SERVICE_CUSTOMER',
@@ -664,11 +738,22 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 /**
                  *  Transaction Record: Invoice Price
                  */
+                var inv_id = searchResult.getValue({
+                    name: "internalid",
+                    join: "transaction",
+                    summary: search.Summary.GROUP
+                });
                 var inv_price = '$' + searchResult.getValue({
                     name: "rate",
                     join: "transaction",
                     summary: search.Summary.GROUP
                 });
+                var inv_date = searchResult.getValue({
+                    name: "trandate",
+                    join: "transaction",
+                    summary: search.Summary.GROUP
+                });
+
                 var service_type_id = serviceTypeList.filter(function(el) { if (el.name == service) { return el } })[0].id;
                 if (!isNullorEmpty(savedList)) {
                     var savedListFiltered = savedList.filter(function(el) { if (el.custid == custid && el.servtypeid == service_type_id) { return el } });
@@ -681,17 +766,17 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
                             var approved = res.approved;
 
-                            childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: (parseFloat(res.incval) - parseFloat(inv_price_val)), tot_price: res.incval, date_eff: res.date, serv_price: service_price, custid: custid, complete: true, approved: approved });
+                            childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: (parseFloat(res.incval) - parseFloat(inv_price_val)), tot_price: res.incval, date_eff: res.date, serv_price: service_price, custid: custid, complete: true, approved: approved, inv_date: inv_date, inv_id: inv_id });
 
                             return true;
                         })
                     } else {
                         // console.log('Finance Allocate Record Not Created - List Length = 0')
-                        childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, complete: false, approved: false });
+                        childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                     }
                 } else {
                     // console.log('Finance Allocate Record Not Created')
-                    childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, complete: false, approved: false });
+                    childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                 }
 
                 console.log('Index: ' + index)
@@ -820,167 +905,165 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             $('#myModal').modal("show");
         }
 
-        function onclick_bulkUpdate() {
-            // Header Information
-            var service_html = '<table id= "service_table" class="table table-responsive table-striped"><thead><tr class="info"><th><b>ACTION</b></th><th><b>FRANCHISEE</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th>';
-            service_html += '</thead><tbody>';
+        // function onclick_bulkUpdate() {
+        //     // Header Information
+        //     var service_html = '<table id= "service_table" class="table table-responsive table-striped"><thead><tr class="info"><th><b>ACTION</b></th><th><b>FRANCHISEE</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th>';
+        //     service_html += '</thead><tbody>';
 
-            // Load Zee Services
-            var searchSet = search.load({ type: 'customrecord_spc_zee_serv_list', id: 'customsearch_spc_zee_serv_list' });
-            searchSet.filters.push(search.createFilter({
-                name: 'custrecord_spc_zee_serv_zee',
-                operator: search.Operator.IS,
-                values: zee_id
-            }));
-            var resultSet_Service = searchSet.run();
+        //     // Load Zee Services
+        //     var searchSet = search.load({ type: 'customrecord_spc_zee_serv_list', id: 'customsearch_spc_zee_serv_list' });
+        //     searchSet.filters.push(search.createFilter({
+        //         name: 'custrecord_spc_zee_serv_zee',
+        //         operator: search.Operator.IS,
+        //         values: zee_id
+        //     }));
+        //     var resultSet_Service = searchSet.run();
 
-            /**
-             *  Add New Service
-             */
-            service_html += '<tr>';
+        //     /**
+        //      *  Add New Service
+        //      */
+        //     service_html += '<tr>';
 
-            // Add Button
-            service_html += '<td class="first_col"><button class="btn btn-success btn-sm add_class glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button><input type="hidden" class="delete_service" value="F" /></td>';
+        //     // Add Button
+        //     service_html += '<td class="first_col"><button class="btn btn-success btn-sm add_class glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button><input type="hidden" class="delete_service" value="F" /></td>';
 
-            service_html += '<td><select id="zee_bulk_dropdown" class="form-control" multiple="">';
-            service_html += '<option></option>';
-            var zeesSearch = search.load({ type: 'partner', id: 'customsearch_smc_franchisee' });
-            // zeesSearch.filters.push(search.createFilter({
-            //     name: 'entityid',
-            //     operator: search.Operator.DOESNOTSTARTWITH,
-            //     values: 'Test'
-            // }))
-            var zeesSearchResults = zeesSearch.run();
-            zeesSearchResults.each(function(zeesSearchResult) {
-                var zeeid = zeesSearchResult.getValue({ name: 'internalid', summmary: search.Summary.GROUP });
-                var zeename = zeesSearchResult.getValue({ name: 'companyname', summmary: search.Summary.GROUP });
-                var zeestate = zeesSearchResult.getText({ name: 'location' });
+        //     service_html += '<td><select id="zee_bulk_dropdown" class="form-control" multiple="">';
+        //     service_html += '<option></option>';
+        //     var zeesSearch = search.load({ type: 'partner', id: 'customsearch_smc_franchisee' });
+        //     // zeesSearch.filters.push(search.createFilter({
+        //     //     name: 'entityid',
+        //     //     operator: search.Operator.DOESNOTSTARTWITH,
+        //     //     values: 'Test'
+        //     // }))
+        //     var zeesSearchResults = zeesSearch.run();
+        //     zeesSearchResults.each(function(zeesSearchResult) {
+        //         var zeeid = zeesSearchResult.getValue({ name: 'internalid', summmary: search.Summary.GROUP });
+        //         var zeename = zeesSearchResult.getValue({ name: 'companyname', summmary: search.Summary.GROUP });
+        //         var zeestate = zeesSearchResult.getText({ name: 'location' });
 
-                service_html += '<option value="' + zeeid + '" state="' + zeestate + '">' + zeename + '</option>';
+        //         service_html += '<option value="' + zeeid + '" state="' + zeestate + '">' + zeename + '</option>';
 
-                return true;
-            });
-            service_html += '</select></td>';
+        //         return true;
+        //     });
+        //     service_html += '</select></td>';
 
-            // Service Name
-            service_html += '<td><select class="form-control service_name" >';
-            service_html += '<option></option>';
-            serviceTypeList.forEach(function(searchResult) {
-                var operator_internal_id = searchResult.id;
-                var operator_name = searchResult.name;
-                service_html += '<option value="' + operator_internal_id + '">' + operator_name + '</option>';
+        //     // Service Name
+        //     service_html += '<td><select class="form-control service_name" >';
+        //     service_html += '<option></option>';
+        //     serviceTypeList.forEach(function(searchResult) {
+        //         var operator_internal_id = searchResult.id;
+        //         var operator_name = searchResult.name;
+        //         service_html += '<option value="' + operator_internal_id + '">' + operator_name + '</option>';
 
-                return true;
-            })
-            service_html += '</select></td>';
-            // Increase Amount
-            service_html += '<td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
+        //         return true;
+        //     })
+        //     service_html += '</select></td>';
+        //     // Increase Amount
+        //     service_html += '<td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
 
-            service_html += '<td><input class="form-control date_eff_all" type="date" min="'+today_date+'"/></td>';
+        //     service_html += '<td><input class="form-control date_eff_all" type="date" min="'+today_date+'"/></td>';
 
-            service_html += '</tr>';
+        //     service_html += '</tr>';
 
-            // Create Modal
-            service_html += '</tbody></table>';
+        //     // Create Modal
+        //     service_html += '</tbody></table>';
 
-            $('#myModal2 .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Add/Edit List of Services for Franchisees</label></h4></div>');
-            $('#myModal2 .modal-body').html("");
-            $('#myModal2 .modal-body').html(service_html);
-            $('#myModal2').modal("show");
+        //     $('#myModal2 .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Add/Edit List of Services for Franchisees</label></h4></div>');
+        //     $('#myModal2 .modal-body').html("");
+        //     $('#myModal2 .modal-body').html(service_html);
+        //     $('#myModal2').modal("show");
 
-            $('select').selectpicker();
-        }
+        //     $('select').selectpicker();
+        // }
 
         function saveRecord(context) {
+            // Run Loading Function
+            $('.loading_section').appendTo('.debt_preview_wrapper');
+            $('.loading_section').show();
+            $('.submit_btn').hide();
+
+            /** Dynamic Update of DataTable to Display all Line Items */
             var dataTable = $("#debt_preview").DataTable();
             dataTable.page.len(-1).draw();
             dataTable.rows().every(function() {
                 this.child.show();
             });
 
-            $('.loading_section').appendTo('.debt_preview_wrapper');
-            $('.loading_section').show();
-            $('.submit_btn').hide();
-
-            /** 
-             *  Data in Table 
-             */
+            /** Data in Table */
             var date_eff_elem = document.getElementsByClassName('new_date_eff');
             var inc_am_elem = document.getElementsByClassName('total_amount');
             var inv_price_elem = document.getElementsByClassName('services');
 
-            for (var x = 0; x < inv_price_elem.length - 1; x++) {
-                
-                var date_eff = date_eff_elem[x].value;
-                var inc_am = inc_am_elem[x].value;
+            if (inv_price_elem.length > 0){
+                var cust_id_list = [];
+                for (var x = 0; x < inv_price_elem.length - 1; x++) {
+                    
+                    var date_eff = date_eff_elem[x].value;
+                    var inc_am = inc_am_elem[x].value;
 
-                if (!isNullorEmpty(inc_am) && inc_am != 0) {
-                    var service_type_id = inv_price_elem[x].getAttribute('data-servtypeid');
-                    var cust_id = inv_price_elem[x].getAttribute('data-custid');
-                    // var inc_price_assigned = inc_am_elem[x].getAttribute('data-inc-amount');
-                    var service_id = inv_price_elem[x].getAttribute('data-servid');
+                    if (!isNullorEmpty(inc_am) && inc_am != 0) {
+                        var service_type_id = inv_price_elem[x].getAttribute('data-servtypeid');
+                        var cust_id = inv_price_elem[x].getAttribute('data-custid');
+                        cust_id_list.push(cust_id);
+                        // var inc_price_assigned = inc_am_elem[x].getAttribute('data-inc-amount');
+                        var service_id = inv_price_elem[x].getAttribute('data-servid');
 
-                    console.log('Customer ID: ' + cust_id + ' Service Type ID ' + service_type_id + ' Service ID ' + service_id + ' Date ' + date_eff + ' Increase Amount ' + inc_am);
-                    /**
-                     *  Customer ID
-                     *  Franchisee
-                     *  Date Effective
-                     *  Service
-                     *  New Price
-                     */
-                    var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servtypeid == service_type_id) { return el } });
-                    console.log('Saved List: ' + JSON.stringify(savedListFiltered))
-                    if (savedListFiltered.length > 0) {
-                        savedListFiltered.forEach(function(res) {
-                            var recID = res.id;
+                        console.log('Customer ID: ' + cust_id + ' Service Type ID ' + service_type_id + ' Service ID ' + service_id + ' Date ' + date_eff + ' Increase Amount ' + inc_am);
+                        /**
+                         *  Customer ID
+                         *  Franchisee
+                         *  Date Effective
+                         *  Service
+                         *  New Price
+                         */
+                        var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servtypeid == service_type_id) { return el } });
+                        console.log('Saved List: ' + JSON.stringify(savedListFiltered))
+                        if (savedListFiltered.length > 0) {
+                            savedListFiltered.forEach(function(res) {
+                                var recID = res.id;
 
-                            var rec = record.load({
-                                type: 'customrecord_spc_finance_alloc',
-                                id: recID
+                                var rec = record.load({
+                                    type: 'customrecord_spc_finance_alloc',
+                                    id: recID
+                                });
+                                rec.setValue({ fieldId: 'custrecord_price_chg_fin_date_eff', value: date_eff })
+                                rec.setValue({ fieldId: 'custrecord_price_chg_fin_inc_am', value: inc_am })
+                                rec.setValue({ fieldId: 'custrecord_price_chg_fin_serv', value: service_id })
+                                rec.setValue({ fieldId: 'custrecord_price_chg_fin_serv_type_id', value: service_type_id })
+                                rec.save();
+
+                                return true;
                             });
+                        } else {
+                            var rec = record.create({
+                                type: 'customrecord_spc_finance_alloc',
+                                isDynamic: true
+                            });
+                            rec.setValue({ fieldId: 'name', value: zee_name });
+                            rec.setValue({ fieldId: 'custrecord_price_chg_fin_cust_id', value: cust_id })
+                            rec.setValue({ fieldId: 'custrecord_price_chg_fin_zee', value: zee_id })
                             rec.setValue({ fieldId: 'custrecord_price_chg_fin_date_eff', value: date_eff })
-                            rec.setValue({ fieldId: 'custrecord_price_chg_fin_inc_am', value: inc_am })
                             rec.setValue({ fieldId: 'custrecord_price_chg_fin_serv', value: service_id })
                             rec.setValue({ fieldId: 'custrecord_price_chg_fin_serv_type_id', value: service_type_id })
+                            rec.setValue({ fieldId: 'custrecord_price_chg_fin_inc_am', value: inc_am })
                             rec.save();
-
-                            return true;
-                        });
-                    } else {
-                        var rec = record.create({
-                            type: 'customrecord_spc_finance_alloc',
-                            isDynamic: true
-                        });
-                        rec.setValue({ fieldId: 'name', value: zee_name });
-                        rec.setValue({ fieldId: 'custrecord_price_chg_fin_cust_id', value: cust_id })
-                        rec.setValue({ fieldId: 'custrecord_price_chg_fin_zee', value: zee_id })
-                        rec.setValue({ fieldId: 'custrecord_price_chg_fin_date_eff', value: date_eff })
-                        rec.setValue({ fieldId: 'custrecord_price_chg_fin_serv', value: service_id })
-                        rec.setValue({ fieldId: 'custrecord_price_chg_fin_serv_type_id', value: service_type_id })
-                        rec.setValue({ fieldId: 'custrecord_price_chg_fin_inc_am', value: inc_am })
-                        rec.save();
+                        }
                     }
                 }
+                // Run Email Script to notify IT Team
+                email.send({
+                    author: 112209, // 25537
+                    body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + ' . Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1448&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: '+JSON.stringify(cust_id_list)+'</p1></body></html>',
+                    subject: 'Scheduled Price Increase (Updated) for ' + zee_name,
+                    recipients: ['anesu.chakaingesu@mailplus.com.au'],
+                    cc: ['popie.popie@mailplus.com.au', 'ankith.ravindran@mailplus.com.au']
+                });
+                alert('Records have been Saved');
+                location.reload();
+            } else {
+                alert('No Records have been Saved. Please Fill Out Valid Price Increases')
             }
-            // Run Email Script to notify IT Team
-            email.send({
-                author: 112209, // 25537
-                body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + ' . Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1448&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1></body></html>',
-                subject: 'Scheduled Price Increase (Updated) for ' + zee_name,
-                recipients: ['anesu.chakaingesu@mailplus.com.au'],
-                // cc: ['']
-            });
-            alert('Records have been Saved');
-            location.reload();
-
             return true;
-        }
-
-        function selectOptions() {
-            // var rangeArray = rangeSelection();
-            var range_filter = $('#zee_bulk_dropdown option:selected').map(function() { return $(this).val() });
-            range_filter = $.makeArray(range_filter);
-            $('#zee_bulk_dropdown').selectpicker('val', range_filter);
         }
 
         /**

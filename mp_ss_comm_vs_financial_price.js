@@ -6,7 +6,7 @@
  *
  * Remarks: 
  * 
- * @Last Modified by:   Ravija
+ * @Last Modified by:   Anesu Chakaingesu
  * @Last Modified time: 11:07
  *
  */
@@ -14,18 +14,18 @@
 var indexInCallback = 0;
 var ctx = nlapiGetContext();
 
-function scheduleFinancialUpdate() {
+function scheduleFinancialUpdate() { 
 
 	//Index to control the rescheduling of SS
-	var mainIndex = parseInt(ctx.getSetting('SCRIPT', 'custscript_main_index'));
+	var mainIndex = parseInt(ctx.getSetting('SCRIPT', 'custscript_comm_vs_fin_main_index'));
 	
 	if(isNaN(mainIndex)){
 		mainIndex = 0;
 	}
 
 	//Load search - Customers Commenced (November 1st, 2020)
-	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch3500'); 
-	var resultSet = commencedCustomers.runSearch().getResults(mainIndex, mainIndex + 1000);
+	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch_comm_vs_fin_price'); // customsearch3500 
+	var resultSet = commencedCustomers.runSearch().getResults(mainIndex, mainIndex + 10);
 
 	resultSet.forEach(function(customer, index) {
 		indexInCallback = index;
@@ -34,7 +34,7 @@ function scheduleFinancialUpdate() {
 		if(usageLimit < 500 || index == 999){
 			// Reschedule script
 			params = {
-				custscript_main_index : mainIndex + index
+				custscript_comm_vs_fin_main_index : mainIndex + index
 			};
 
 			reschedule = nlapiScheduleScript(ctx.getScriptId(), ctx.getDeploymentId(), params);
