@@ -6,7 +6,7 @@
  *
  * Remarks: 
  * 
- * @Last Modified by:   Anesu Chakaingesu
+ * @Last Modified by:   Anesu
  * @Last Modified time: 11:07
  *
  */
@@ -138,10 +138,10 @@ function scheduleFinancialUpdate() {
 	var will_reschedule = (indexInCallback < 999) ? false : true;
 	if (will_reschedule) {
 		// If the script will be rescheduled, we look for the element 999 of the loop to see if it is empty or not.
-		var resultSet = commencedCustomers.runSearch().getResults(main_index + index_in_callback, main_index + index_in_callback + 1);
+		var resultSet = commencedCustomers.runSearch().getResults(mainIndex + indexInCallback, mainIndex + indexInCallback + 1);
 	} else {
 		// If the script will not be rescheduled, we make sure we didn't miss any results in the search.
-		var resultSet = commencedCustomers.runSearch().getResults(main_index + index_in_callback + 1, main_index + index_in_callback + 2);
+		var resultSet = commencedCustomers.runSearch().getResults(mainIndex + indexInCallback + 1, mainIndex + indexInCallback + 2);
     }
 }
 

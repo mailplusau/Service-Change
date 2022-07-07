@@ -3,7 +3,7 @@
  * @NApiVersion 2.0
  * @NScriptType ClientScript
  * 
- * Description: 
+ * Description: ID: 1572
  * @Last Modified by: Anesu Chakaingesu
  * 
  */
@@ -278,6 +278,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     window.open(upload_url, '_blank');
                 });
 
+                // Create New Price Increase Value for Finance Allocate Record.
                 $(document).on("click", ".miss_inc", function() {
                     var date_eff = $(this).closest('tr').find('.new_date_eff').val();
                     var inc_am = $(this).closest('tr').find('.total_amount').val();
@@ -335,7 +336,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + ' . Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1448&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: ' + cust_id + '</p1></body></html>',
                                 subject: 'Scheduled Price Increase (Updated) for ' + zee_name,
                                 recipients: ['anesu.chakaingesu@mailplus.com.au'],
-                                // cc: ['']
+                                cc: ['popie.popie@mailplus.com.au', 'ankith.ravindran@mailplus.com.au']
                             });
                             alert('Record have been Saved');
                             location.reload();
@@ -414,7 +415,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         servChgRecord.setValue({ fieldId: 'custrecord_servicechg_created', value: user_id });
                     }
                     servChgRecord.setValue({ fieldId: 'custrecord_servicechg_type', value: 'Price Increase' });
-                    servChgRecord.setValue({ fieldId: 'custrecord_default_servicechg_record', value: 1 });
+                    // servChgRecord.setValue({ fieldId: 'custrecord_default_servicechg_record', value: 1 });
                     servChgRecord.setValue({ fieldId: 'custrecord_servicechg_fin_alloc', value: inc_id }); // Store Finance Allocate Record ID
                     var servChgRecordSaveID = servChgRecord.save();
                     // var servChgRecordSaveID = 72212; // Test with Servce Chg
@@ -489,9 +490,6 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             var customerSearchResLength = customerSearch.runPaged().count;
             customerSearch.run().each(function(searchResult) {
                 // console.log('Index: ' + index)
-                /**
-                 *  Parent Table: Customer List
-                 */
                 var custid = searchResult.getValue({
                     name: "internalid",
                     summary: "GROUP"
@@ -502,23 +500,23 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 });
                 var companyname = searchResult.getValue({
                     name: "companyname",
-                    summary: "GROUP"
+                    summary: "GROUP",
+                    sort: search.Sort.ASC,
                 });
                 if (index == 0) {
                     prev_cust_id.push(custid) // Push First Iteration of Customer ID.
                     prev_entity_id.push(entityid);
                     prev_comp_name.push(companyname);
                 }
-
                 var last_price_increase = searchResult.getValue({
                     name: "custentity_date_of_last_price_increase",
                     summary: "GROUP"
                 });
 
                 /**
-                 *  Child Table: List of Services
+                 *  List of Services
                  */
-                var service_id = searchResult.getValue({
+                 var service_id = searchResult.getValue({
                     name: "internalid",
                     join: 'CUSTRECORD_SERVICE_CUSTOMER',
                     summary: "GROUP"
@@ -589,12 +587,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
                 console.log('Index: ' + index)
                 console.log(prev_cust_id)
-                console.log(prev_cust_id.length)
                 console.log('Cust ID ' + custid)
                 console.log('Service ' + service_id)
                 console.log(childObject)
-
-                console.log(customerSearchResLength)
 
                 if (prev_cust_id.indexOf(custid) == -1) {
                     console.log('New Customer. Save Child Object and Reset')
@@ -604,12 +599,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     childObject.pop();
 
                     dataSet.push(['',
-                    '<p id="internalID" class="internalID">' + prev_cust_id[prev_cust_id.length-1] + '</p>',
-                    '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + prev_cust_id[prev_cust_id.length-1] + '"><p class="entityid">' +  prev_entity_id[prev_entity_id.length-1] + "</p></a>",
-                    '<p internalid="companyname" class="companyname">' +  prev_comp_name[prev_comp_name.length-1] + '</p>',
-                    zee_name,
-                    last_price_increase,
-                    childObject
+                        '<p id="internalID" class="internalID">' + prev_cust_id[prev_cust_id.length-1] + '</p>',
+                        '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + prev_cust_id[prev_cust_id.length-1] + '"><p class="entityid">' +  prev_entity_id[prev_entity_id.length-1] + "</p></a>",
+                        '<p internalid="companyname" class="companyname">' +  prev_comp_name[prev_comp_name.length-1] + '</p>',
+                        zee_name,
+                        last_price_increase,
+                        childObject
                     ]);
 
                     childObject = [tempChildObj];
@@ -628,7 +623,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         last_price_increase,
                         childObject
                     ]);
-                }
+                } 
                 index++;
 
                 return true;
@@ -640,24 +635,45 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             var table = $('<table class="display" width="50%"/>');
             var childSet = [];
             row.data()[6].forEach(function(el) {
-                    childSet.push([el.item, //'<a href="' + baseURL + "/app/common/custom/custrecordentry.nl?rectype=1135&id=" + el.internalid + '"><p class="entityid">' + el.item + "</p></a>",
-                    '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
-                    '<label id="' + el.item + '" class="services" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>',
-                    '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>',
-                    ' <input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>',
-                    '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>',
-                    '<label id="' + el.item + '" class="services" data-custid="' + el.custid + '" type="text">' + el.serv_price + '</label>',
-                    '',
-                    el.internalid,
-                    el.custid,
-                    el.tot_price,
-                    el.date_eff,
-                    el.approved, // Approved
-                    el.commreg,
-                    el.serv_chg_id,
-                    el.id, // Service ID
-                    el.type_id, // Service Type ID
-                ]);
+                if (el.approved == true){
+                    childSet.push([el.item,
+                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
+                        '<label id="' + el.item + '" class="services" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>',
+                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>',
+                        ' <input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '" disabled/>',
+                        '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '" disabled/>',
+                        '<label id="' + el.item + '" class="services" data-custid="' + el.custid + '" type="text">' + el.serv_price + '</label>',
+                        '',
+                        el.internalid,
+                        el.custid,
+                        el.tot_price,
+                        el.date_eff,
+                        el.approved, // Approved
+                        el.commreg,
+                        el.serv_chg_id,
+                        el.id, // Service ID
+                        el.type_id, // Service Type ID
+                    ]);
+                } else {
+                    childSet.push([el.item,
+                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
+                        '<label id="' + el.item + '" class="services" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>',
+                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>',
+                        ' <input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>',
+                        '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>',
+                        '<label id="' + el.item + '" class="services" data-custid="' + el.custid + '" type="text">' + el.serv_price + '</label>',
+                        '',
+                        el.internalid,
+                        el.custid,
+                        el.tot_price,
+                        el.date_eff,
+                        el.approved, // Approved
+                        el.commreg,
+                        el.serv_chg_id,
+                        el.id, // Service ID
+                        el.type_id, // Service Type ID
+                    ]);
+                }
             });
 
             // Display it the child row
@@ -675,20 +691,20 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     { title: 'Item' }, //0
                     { title: 'Latest Invoice Date'}, // 1
                     { title: 'Latest Invoice Price' }, //2
-                    { title: 'Increase Amount' }, //2
-                    { title: 'New Price' }, //3
-                    { title: 'Date Effective' }, //4
-                    { title: 'Current Service Price' }, //5
-                    { title: 'Action' }, // 6,
-                    { title: 'Internal ID'}, // 7
-                    { title: 'Customer ID' }, // 8
-                    { title: 'New Price Val' }, // 9
-                    { title: 'Date Val' }, //10
-                    { title: 'Status'}, // 11,
-                    { title: 'Comm Reg ID'}, //12
-                    { title: 'Service Change ID'}, // 13
-                    { title: 'Service ID' }, // 14
-                    { title: 'Service Type ID' }, // 15
+                    { title: 'Increase Amount' }, //3
+                    { title: 'New Price' }, //4
+                    { title: 'Date Effective' }, //5
+                    { title: 'Current Service Price' }, //6
+                    { title: 'Action' }, // 7,
+                    { title: 'Internal ID'}, // 8
+                    { title: 'Customer ID' }, // 9
+                    { title: 'New Price Val' }, // 10
+                    { title: 'Date Val' }, //11
+                    { title: 'Status'}, // 12,
+                    { title: 'Comm Reg ID'}, //13
+                    { title: 'Service Change ID'}, // 14
+                    { title: 'Service ID' }, // 15
+                    { title: 'Service Type ID' }, // 16
                 ],
                 columnDefs: [
                     { 
@@ -787,9 +803,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             customer_comm_reg.setValue({ fieldId: 'custrecord_comm_date', value: dateEffective });
             customer_comm_reg.setValue({ fieldId: 'custrecord_sale_type', value: 10 })
             // customer_comm_reg.setValue({ fieldId: 'custrecord_comm_date_signup', value:dateEffective);
-            // var commRegID = customer_comm_reg.save();
-            var commRegID = '0' //Test
-        
+            var commRegID = customer_comm_reg.save();
+            // var commRegID = '0' //Test
+    
             return commRegID;
         }
 
