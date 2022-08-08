@@ -445,6 +445,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     //     body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>Email Scripts are being generated for ' + zee_name + ' list of customers. Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1452&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Team</a> to view/ the list of customers.</p1></body></html>',
                     //     subject: 'Scheduled Price Increase: Emails being Generated | ' + zee_name,
                     //     recipients: ['anesu.chakaingesu@mailplus.com.au'],
+                    //     cc: ['popie.popie@mailplus.com.au', 'ankith.ravindran@mailplus.com.au']
                     // });
                     alert('Price Increase Scheduled');
                 });
@@ -721,7 +722,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 $(row).css('background-color', 'rgba(255, 255, 240, 1)'); // Ivory
                             }
 
-                            $(row).find("td").eq(7).replaceWith('<td><button class="miss_inc btn btn-sm btn-warning glyphicon glyphicon-flag" data-custid="'+data[9]+'" data-servid="'+data[15]+'" data-servtypeid="'+data[16]+'" title="Missing Price Increase" type="button"/></td>') // Yellow Minus
+                            $(row).find("td").eq(7).replaceWith('<td><button class="miss_inc btn btn-sm btn-warning glyphicon glyphicon-plus" data-custid="'+data[9]+'" data-servid="'+data[15]+'" data-servtypeid="'+data[16]+'" title="New Price Increase" type="button"/></td>') // Yellow Minus
                         } else { // Set to Green if New Price & Date Exist, and Current Service / Invoice Prices Match
                             if ($(row).hasClass('odd')) {
                                 $(row).css('background-color', 'rgba(144, 238, 144, 0.75)'); // LightGreen
@@ -729,7 +730,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 $(row).css('background-color', 'rgba(152, 251, 152, 0.75)'); // YellowGreen
                             }
 
-                            $(row).find("td").eq(7).replaceWith('<td><button class="miss_inc btn btn-sm btn-warning glyphicon glyphicon-flag" data-custid="'+data[9]+'" data-servid="'+data[15]+'" data-servtypeid="'+data[16]+'" title="Missing Price Increase" type="button"/><button class="save_inc btn btn-sm btn-success glyphicon glyphicon-ok" data-custid="'+data[9]+'" data-incid="'+data[8]+'" data-commreg="'+data[13]+'" title="Schedule Email" type="button"/></td>') // Green Tick
+                            $(row).find("td").eq(7).replaceWith('<td><button class="miss_inc btn btn-sm btn-warning glyphicon glyphicon-plus" data-custid="'+data[9]+'" data-servid="'+data[15]+'" data-servtypeid="'+data[16]+'" title="New Price Increase" type="button"/><button class="save_inc btn btn-sm btn-success glyphicon glyphicon-ok" data-custid="'+data[9]+'" data-incid="'+data[8]+'" data-commreg="'+data[13]+'" title="Schedule Email" type="button"/></td>') // Green Tick
                         }
                         if (data[12] == true){ // If Approved.
                             $(row).css('background-color', '');

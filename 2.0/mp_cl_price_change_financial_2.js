@@ -102,10 +102,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         }))
         maxInvSearch.run().each(function(res){
             var companyname = res.getValue({
-                name: 'item',
-                join: 'transaction',
+                name: 'internalid',
                 summary: 'GROUP'
-            }); 
+            });
             var netSuiteItem = res.getValue({
                 name: 'item',
                 join: 'transaction',
@@ -1053,8 +1052,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 // Run Email Script to notify IT Team
                 email.send({
                     author: 112209, // 25537
-                    body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + ' . Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1448&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: '+JSON.stringify(cust_id_list)+'</p1></body></html>',
-                    subject: 'Scheduled Price Increase (Updated) for ' + zee_name,
+                    body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + '. Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1448&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: '+JSON.stringify(cust_id_list)+'</p1></body></html>',
+                    subject: 'Scheduled Price Increase Amounts Added for ' + zee_name + ' (Finance Page)',
                     recipients: ['anesu.chakaingesu@mailplus.com.au'],
                     cc: ['popie.popie@mailplus.com.au', 'ankith.ravindran@mailplus.com.au']
                 });
