@@ -18,7 +18,6 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         var user_id = runtime.getCurrentUser().id;
 
         var currRec = currentRecord.get();
-        
         var ctx = runtime.getCurrentScript();
 
         var zee_id = parseInt(currRec.getValue({ fieldId: 'custpage_price_chng_fin_zee_id' }));
@@ -73,6 +72,10 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         });
         console.log(savedList);
 
+        // List of Customer IDs who have an active Allocated Price Increase Value from Finance Team Page. 
+        var cust_finAllocatedList = savedList.map(function(el){return el.custid});
+        console.log(cust_finAllocatedList);
+
         // Date Today n Date Tomorrow
         var today_date = new Date(); // Test Time 6:00pm - '2022-06-29T18:20:00.000+10:00'
         today_date.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
@@ -98,44 +101,51 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             id: 'customsearch_smc_customer_5_2',
             type: 'customer'
         });
-        maxInvSearch.filters.push(search.createFilter({
-            name: 'partner',
-            operator: search.Operator.ANYOF,
-            values: zee_id
-        }))
-        maxInvSearch.run().each(function(res){
-            var companyname = res.getValue({
+        if (cust_finAllocatedList.length > 0){
+            maxInvSearch.filters.push(search.createFilter({
                 name: 'internalid',
-                summary: 'GROUP'
-            });
-            var netSuiteItem = res.getValue({
-                name: 'item',
-                join: 'transaction',
-                summary: 'GROUP'
-            }); 
-            if (cust_index == 0){
-                maxInvCust.push(companyname);
-            }
-            if (maxInvCust.indexOf(companyname) == -1){
-                maxInvCust.push(companyname);
-                maxInvItem = [];
-            }
-            if (maxInvItem.indexOf(netSuiteItem) == -1){
-                maxInvItem.push(netSuiteItem);
-
-                var internalid = res.getValue({
+                operator: search.Operator.ANYOF,
+                values: cust_finAllocatedList
+            }))
+            maxInvSearch.filters.push(search.createFilter({
+                name: 'partner',
+                operator: search.Operator.ANYOF,
+                values: zee_id
+            }))
+            maxInvSearch.run().each(function(res){
+                var companyname = res.getValue({
                     name: 'internalid',
-                    join: 'transaction',
-                    summary: 'MAX'
+                    summary: 'GROUP'
                 });
-                maxInvID.push(internalid);
-                cust_index++;
-                return true;
-            } else {
-                cust_index++;
-                return true;
-            }
-        });
+                var netSuiteItem = res.getValue({
+                    name: 'item',
+                    join: 'transaction',
+                    summary: 'GROUP'
+                }); 
+                if (cust_index == 0){
+                    maxInvCust.push(companyname);
+                }
+                if (maxInvCust.indexOf(companyname) == -1){
+                    maxInvCust.push(companyname);
+                    maxInvItem = [];
+                }
+                if (maxInvItem.indexOf(netSuiteItem) == -1){
+                    maxInvItem.push(netSuiteItem);
+
+                    var internalid = res.getValue({
+                        name: 'internalid',
+                        join: 'transaction',
+                        summary: 'MAX'
+                    });
+                    maxInvID.push(internalid);
+                    cust_index++;
+                    return true;
+                } else {
+                    cust_index++;
+                    return true;
+                }
+            });
+        }
         console.log(maxInvID);
 
         /**
@@ -157,16 +167,21 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             // Bulk Update Zee Dropdown
             $('select').selectpicker();
 
+            // Define URL
+            var resolvedURL = baseURL + url.resolveScript({
+                deploymentId: "customdeploy_sl_price_change_it_2",
+                scriptId: "customscript_sl_price_change_it_2",
+            })
+
             $(document).on("change", "#zee_filter_dropdown", function() {
                 var zee_id_dropdown = $(this).find("option:selected").val();
                 var params = {
                     zeeid: zee_id_dropdown,
                 };
                 params = JSON.stringify(params);
-                var upload_url = baseURL + url.resolveScript({
-                    deploymentId: "customdeploy_sl_price_change_it_2",
-                    scriptId: "customscript_sl_price_change_it_2",
-                }) + "&custparam_params=" + params;
+                
+
+                var upload_url = resolvedURL + "&custparam_params=" + params;
                 currRec.setValue({
                     fieldId: "custpage_price_chng_fin_zee_id",
                     value: zee_id,
@@ -208,6 +223,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         { title: "Date Last Price Increase" }, // 5
                     ],
                     autoWidth: false,
+                    "language": {
+                        "emptyTable": '<div>There are Currently No Customers Allocated with a Price Increase. Please fill Data via Finance Team Page<div><div style="margin: 20px;"><form action="'+resolvedURL+'"><input style="background-color: #FBEA51; color: #103D39; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="submit" value="Finance Team Page"/></form><div>'
+                    },
                 });
 
                 // Load with All Child Cells Open
@@ -466,7 +484,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             var prev_comp_name = [];
 
             var childObject = [];
-            var serv_id_list = []
+            var serv_id_list = [];
 
             //Search: SMC - Customer
             var customerSearch = search.load({
@@ -488,147 +506,154 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             } else {
                 console.log('Missing Invoices. Maximum Invoice Length: ' + maxInvID.length)
             }
-            var customerSearchResLength = customerSearch.runPaged().count;
-            customerSearch.run().each(function(searchResult) {
-                // console.log('Index: ' + index)
-                var custid = searchResult.getValue({
+            if (cust_finAllocatedList.length > 0){
+                customerSearch.filters.push(search.createFilter({
                     name: "internalid",
-                    summary: "GROUP"
-                });
-                var entityid = searchResult.getValue({
-                    name: "entityid",
-                    summary: "GROUP"
-                });
-                var companyname = searchResult.getValue({
-                    name: "companyname",
-                    summary: "GROUP",
-                    sort: search.Sort.ASC,
-                });
-                if (index == 0) {
-                    prev_cust_id.push(custid) // Push First Iteration of Customer ID.
-                    prev_entity_id.push(entityid);
-                    prev_comp_name.push(companyname);
-                }
-                var last_price_increase = searchResult.getValue({
-                    name: "custentity_date_of_last_price_increase",
-                    summary: "GROUP"
-                });
-
-                /**
-                 *  List of Services
-                 */
-                 var service_id = searchResult.getValue({
-                    name: "internalid",
-                    join: 'CUSTRECORD_SERVICE_CUSTOMER',
-                    summary: "GROUP"
-                });
-                if (serv_id_list.indexOf(service_id) != -1){ // If Service ID has already been pushed, Skip
-                    return true;
-                }
-                serv_id_list.push(service_id);
-                var service = searchResult.getText({
-                    name: "custrecord_service",
-                    join: 'CUSTRECORD_SERVICE_CUSTOMER',
-                    summary: "GROUP"
-                });
-                var service_lower = service.toLowerCase();
-
-                /**
-                 *  List of Current Service Inline HTML
-                 */
-                var service_price = '$' + searchResult.getValue({
-                    name: "custrecord_service_price",
-                    join: 'CUSTRECORD_SERVICE_CUSTOMER',
-                    summary: "GROUP"
-                });
-                var inv_id = searchResult.getValue({
-                    name: "internalid",
-                    join: "transaction",
-                    summary: search.Summary.GROUP
-                });
-                var inv_price = '$' + searchResult.getValue({
-                    name: "rate",
-                    join: "transaction",
-                    summary: search.Summary.GROUP
-                });
-                var inv_date = searchResult.getValue({
-                    name: "trandate",
-                    join: "transaction",
-                    summary: search.Summary.GROUP
-                });
-                var comm_reg_id = searchResult.getValue({
-                    name: "custrecord_service_comm_reg",
-                    join: 'CUSTRECORD_SERVICE_CUSTOMER',
-                    summary: "GROUP"
-                });
-
-                var service_type_id = serviceTypeList.filter(function(el) { if (el.name == service) { return el } })[0].id;
-
-                if (!isNullorEmpty(savedList)) {
-                    var savedListFiltered = savedList.filter(function(el) { if (el.custid == custid && el.servtypeid == service_type_id) { return el } });
-
-                    if (savedListFiltered.length > 0) {
-                        savedListFiltered.forEach(function(res) {
-                            var inv_price_val = inv_price.split('$')[1];
-                            inv_price_val = Number(inv_price_val.replace(/[^0-9.-]+/g, ""));
-
-                            var approved = res.approved;
-                            var fin_alloc_record_id = res.id;
-
-                            childObject.push({ internalid: fin_alloc_record_id, id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: (parseFloat(res.incval) - parseFloat(inv_price_val)), tot_price: res.incval, date_eff: res.date, serv_price: service_price, custid: custid, commreg: comm_reg_id, approved: approved, serv_chg_id: res.serv_chg_id, inv_date:inv_date, inv_id: inv_id  });
-
-                            return true;
-                        })
-                    } else {
-                        childObject.push({ internalid: 0, id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, commreg: comm_reg_id, approved: false, serv_chg_id: null, inv_date:inv_date, inv_id: inv_id  });
+                    operator: search.Operator.ANYOF,
+                    values: cust_finAllocatedList,
+                }));
+                var customerSearchResLength = customerSearch.runPaged().count;
+                customerSearch.run().each(function(searchResult) {
+                    // console.log('Index: ' + index)
+                    var custid = searchResult.getValue({
+                        name: "internalid",
+                        summary: "GROUP"
+                    });
+                    var entityid = searchResult.getValue({
+                        name: "entityid",
+                        summary: "GROUP"
+                    });
+                    var companyname = searchResult.getValue({
+                        name: "companyname",
+                        summary: "GROUP",
+                        sort: search.Sort.ASC,
+                    });
+                    if (index == 0) {
+                        prev_cust_id.push(custid) // Push First Iteration of Customer ID.
+                        prev_entity_id.push(entityid);
+                        prev_comp_name.push(companyname);
                     }
-                } else {
-                    childObject.push({ internalid: 0, id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, commreg: comm_reg_id, approved: false, serv_chg_id: null, inv_date:inv_date, inv_id: inv_id });
-                }
+                    var last_price_increase = searchResult.getValue({
+                        name: "custentity_date_of_last_price_increase",
+                        summary: "GROUP"
+                    });
 
-                console.log('Index: ' + index)
-                console.log(prev_cust_id)
-                console.log('Cust ID ' + custid)
-                console.log('Service ' + service_id)
-                console.log(childObject)
+                    /**
+                     *  List of Services
+                     */
+                    var service_id = searchResult.getValue({
+                        name: "internalid",
+                        join: 'CUSTRECORD_SERVICE_CUSTOMER',
+                        summary: "GROUP"
+                    });
+                    if (serv_id_list.indexOf(service_id) != -1){ // If Service ID has already been pushed, Skip
+                        return true;
+                    }
+                    serv_id_list.push(service_id);
+                    var service = searchResult.getText({
+                        name: "custrecord_service",
+                        join: 'CUSTRECORD_SERVICE_CUSTOMER',
+                        summary: "GROUP"
+                    });
+                    var service_lower = service.toLowerCase();
 
-                if (prev_cust_id.indexOf(custid) == -1) {
-                    console.log('New Customer. Save Child Object and Reset')
+                    /**
+                     *  List of Current Service Inline HTML
+                     */
+                    var service_price = '$' + searchResult.getValue({
+                        name: "custrecord_service_price",
+                        join: 'CUSTRECORD_SERVICE_CUSTOMER',
+                        summary: "GROUP"
+                    });
+                    var inv_id = searchResult.getValue({
+                        name: "internalid",
+                        join: "transaction",
+                        summary: search.Summary.GROUP
+                    });
+                    var inv_price = '$' + searchResult.getValue({
+                        name: "rate",
+                        join: "transaction",
+                        summary: search.Summary.GROUP
+                    });
+                    var inv_date = searchResult.getValue({
+                        name: "trandate",
+                        join: "transaction",
+                        summary: search.Summary.GROUP
+                    });
+                    var comm_reg_id = searchResult.getValue({
+                        name: "custrecord_service_comm_reg",
+                        join: 'CUSTRECORD_SERVICE_CUSTOMER',
+                        summary: "GROUP"
+                    });
 
-                    const tempChildObj = childObject[childObject.length - 1];
-                    console.log(tempChildObj)
-                    childObject.pop();
+                    var service_type_id = serviceTypeList.filter(function(el) { if (el.name == service) { return el } })[0].id;
 
-                    dataSet.push(['',
-                        '<p id="internalID" class="internalID">' + prev_cust_id[prev_cust_id.length-1] + '</p>',
-                        '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + prev_cust_id[prev_cust_id.length-1] + '"><p class="entityid">' +  prev_entity_id[prev_entity_id.length-1] + "</p></a>",
-                        '<p internalid="companyname" class="companyname">' +  prev_comp_name[prev_comp_name.length-1] + '</p>',
-                        zee_name,
-                        last_price_increase,
-                        childObject
-                    ]);
+                    if (!isNullorEmpty(savedList)) {
+                        var savedListFiltered = savedList.filter(function(el) { if (el.custid == custid && el.servtypeid == service_type_id) { return el } });
 
-                    childObject = [tempChildObj];
+                        if (savedListFiltered.length > 0) {
+                            savedListFiltered.forEach(function(res) {
+                                var inv_price_val = inv_price.split('$')[1];
+                                inv_price_val = Number(inv_price_val.replace(/[^0-9.-]+/g, ""));
 
-                    prev_cust_id.push(custid);
-                    prev_entity_id.push(entityid);
-                    prev_comp_name.push(companyname);
-                }
-                if (index == (customerSearchResLength - 1)){
-                    console.log('Last Index')
-                    dataSet.push(['',
-                        '<p id="internalID" class="internalID">' + custid + '</p>',
-                        '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + custid + '"><p class="entityid">' + entityid + "</p></a>",
-                        '<p internalid="companyname" class="companyname">' + companyname + '</p>',
-                        zee_name,
-                        last_price_increase,
-                        childObject
-                    ]);
-                } 
-                index++;
+                                var approved = res.approved;
+                                var fin_alloc_record_id = res.id;
 
-                return true;
-            });
+                                childObject.push({ internalid: fin_alloc_record_id, id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: (parseFloat(res.incval) - parseFloat(inv_price_val)), tot_price: res.incval, date_eff: res.date, serv_price: service_price, custid: custid, commreg: comm_reg_id, approved: approved, serv_chg_id: res.serv_chg_id, inv_date:inv_date, inv_id: inv_id  });
+
+                                return true;
+                            })
+                        } else {
+                            childObject.push({ internalid: 0, id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, commreg: comm_reg_id, approved: false, serv_chg_id: null, inv_date:inv_date, inv_id: inv_id  });
+                        }
+                    } else {
+                        childObject.push({ internalid: 0, id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, commreg: comm_reg_id, approved: false, serv_chg_id: null, inv_date:inv_date, inv_id: inv_id });
+                    }
+
+                    console.log('Index: ' + index)
+                    console.log(prev_cust_id)
+                    console.log('Cust ID ' + custid)
+                    console.log('Service ' + service_id)
+                    console.log(childObject)
+
+                    if (prev_cust_id.indexOf(custid) == -1) {
+                        console.log('New Customer. Save Child Object and Reset')
+
+                        const tempChildObj = childObject[childObject.length - 1];
+                        console.log(tempChildObj)
+                        childObject.pop();
+
+                        dataSet.push(['',
+                            '<p id="internalID" class="internalID">' + prev_cust_id[prev_cust_id.length-1] + '</p>',
+                            '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + prev_cust_id[prev_cust_id.length-1] + '"><p class="entityid">' +  prev_entity_id[prev_entity_id.length-1] + "</p></a>",
+                            '<p internalid="companyname" class="companyname">' +  prev_comp_name[prev_comp_name.length-1] + '</p>',
+                            zee_name,
+                            last_price_increase,
+                            childObject
+                        ]);
+
+                        childObject = [tempChildObj];
+
+                        prev_cust_id.push(custid);
+                        prev_entity_id.push(entityid);
+                        prev_comp_name.push(companyname);
+                    }
+                    if (index == (customerSearchResLength - 1)){
+                        console.log('Last Index')
+                        dataSet.push(['',
+                            '<p id="internalID" class="internalID">' + custid + '</p>',
+                            '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + custid + '"><p class="entityid">' + entityid + "</p></a>",
+                            '<p internalid="companyname" class="companyname">' + companyname + '</p>',
+                            zee_name,
+                            last_price_increase,
+                            childObject
+                        ]);
+                    } 
+                    index++;
+
+                    return true;
+                });
+            }
         }
 
         function createChild(row) {
