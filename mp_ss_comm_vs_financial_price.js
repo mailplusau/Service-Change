@@ -23,9 +23,9 @@ function scheduleFinancialUpdate() {
 		mainIndex = 0;
 	}
 
-	//Load search - Customers Commenced (November 1st, 2020)
-	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch_comm_vs_fin_price'); // customsearch3500 
-	var resultSet = commencedCustomers.runSearch().getResults(mainIndex, mainIndex + 10);
+	//Load search - Customers Commenced (July 31st, 2022)
+	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch_comm_vs_fin_price'); // customsearch3500 - Customers Commenced (November 1st, 2020)
+	var resultSet = commencedCustomers.runSearch().getResults(mainIndex, mainIndex + 999); //10
 
 	resultSet.forEach(function(customer, index) {
 		indexInCallback = index;
