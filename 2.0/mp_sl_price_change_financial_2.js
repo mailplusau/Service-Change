@@ -92,15 +92,16 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 inlineHtml += '<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />'
 
                 // New Website Color Schemes
-                // Main Color: #379E8F
-                // Background Color: #CFE0CE
-                // Button Color: #FBEA51
-                // Text Color: #103D39
+                // Old Main Color: ##379E8F (Green)
+                // New Main Color: #095C7B (Blue)
+                // Background Color: #CFE0CE (Light Green)
+                // Button Color: #FBEA51 (Yellow)
+                // Text Color: #103D39 (Dark Green)
 
                 inlineHtml += '<div class="a" style="width: 100%; background-color: #CFE0CE; padding: 20px; min-height: 100vh; height: 100%; ">'; // margin-top: -40px
-                inlineHtml += '<h1 style="text-align: center; color: #103D39; display: inline-block; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px;">Scheduled Price Change: Finance Team</h1>';
-                inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #379E8F; color: #fff }';
-                inlineHtml += '.nav > li > a, .nav > li > a:focus, .nav > li > a:hover { margin-left: 5px; margin-right: 5px; border: 2px solid #379E8F; color: #379E8F; }';
+                inlineHtml += '<h1 style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change: Finance Team</h1>';
+                inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #095C7B; color: #fff }';
+                inlineHtml += '.nav > li > a, .nav > li > a:focus, .nav > li > a:hover { margin-left: 5px; margin-right: 5px; border: 2px solid #095C7B; color: #095C7B; }';
                 inlineHtml += '</style>';
 
                 // Define alert window.
@@ -117,17 +118,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // Popup Modal Section
                 inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service" data-dismiss="modal">Update All Services</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
                 inlineHtml += '<div id="myModal2" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service_2" data-dismiss="modal">Update  Services For All Franchisees</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
-
-
-                // Click for Instructions
-                // inlineHtml += '<button type="button" class="btn btn-sm btn-info instruction_button" data-toggle="collapse" data-target="#demo" style="background-color: #FBEA51; color: #103D39;">Click for Instructions</button><div id="demo" style="background-color: #cfeefc !important;border: 1px solid #417ed9;padding: 10px 10px 10px 20px;width:96%;position:absolute" class="collapse"><b><u>IMPORTANT INSTRUCTIONS:</u></b>';
-                // inlineHtml += '<ul><li><input type="button" class="btn-xs" style="background-color: #fff; color: black;" disabled value="Submit Search" /> - <ul><li>Click "Submit Search" to load Datatable using current parameters</li></ul></li>'
-                // inlineHtml += '<li>Functionalities available on the Debt Collections Table:<ul><li><b>Sort</b><ul><li>Click on column headers to sort collections invoices according to the values in the columns. This is default to "Days Overdue".</li><li>Hold "Shift" and click another column to sort according to multiple columns.</li></ul></li><li><b>Search</b><ul><li>You can search for specific Customer or Invoice by typing into the "Search" field</li></ul></li></ul></li>';
-                // inlineHtml += '<li>Table Filters:<ul><li><b>Matching MAAP Allocation</b><ul><li><button type="button" class="btn-xs btn-success " disabled><span class="glyphicon glyphicon-plus"></span></button> - Click to apply MAAP Allocation filters search filters on table. ONLY click once. </li><li><button type="button" class="btn-xs btn-danger " disabled><span class="glyphicon glyphicon-minus"></span></button> - Click to remove MAAP Allocation search filter from table. This is set default to "Days Overdue".</li></ul></li> <li><b>MP Ticket Column</b><ul><button type="button" class="btn-xs btn-success" disabled><span class="glyphicon glyphicon-plus"></span></button> - Click to apply MAAP Allocation filters search filters on table. ONLY click once. </li></ul></li></ul></li><li>Clickable Actions Available Per Invoice in DataTable:</li>';
-                // inlineHtml += '<ul><li><button type="button" class="btn-xs" disabled><span class="span_class glyphicon glyphicon-pencil"></span></button> - Click to open Notes Section for Selected Invoice. (Notes Section is seperate from User Notes)</li>';
-                // inlineHtml += '<li><button type="button" class="btn-xs btn-secondary" disabled><span class="glyphicon glyphicon-eye-open"></span></button> - Click to Set Invoice has "Viewed" by a member of the Finance Team.</li>';
-                // inlineHtml += '<li><button type="button" class="btn-xs btn-info" disabled><span class="glyphicon glyphicon-time"></span></button> - Click to view Snooze Timers</li><li><button type="button" class="timer-1day form=control btn-xs btn-info" disabled><span class="span_class">1 Day</span></button> - Click to select Snooze duration of invoice from Debt Collections Page.</li>';
-                // inlineHtml += '</li></ul></div>';
+                inlineHtml += '<div id="myModal3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br></div><div class="modal-body">'+instructions()+'</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
 
                 inlineHtml += '<br>';
                 inlineHtml += zeeDropdownSection(zee_id);
@@ -162,6 +153,14 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = zee_id;
 
+                form.addField({
+                    id: 'custpage_table_csv',
+                    label: 'CSV Export',
+                    type: ui.FieldType.TEXT
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN
+                });
+
                 form.clientScriptFileId = 5604134; //Sandbox 5605927 // Prod - 5604134
 
                 context.response.writePage(form);
@@ -173,7 +172,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="row col-xs-6" style="left: 25%; margin-top: 20px;">'; //col-xs-6 d-flex justify-content-center
 
             inlineQty += '<div class="input-group">';
-            inlineQty += '<span style="background-color: #379E8F; color: white;" class="input-group-addon">Franchisee</span>';
+            inlineQty += '<span style="background-color: #095C7B; color: white;" class="input-group-addon">Franchisee</span>';
             inlineQty += '<select id="zee_filter_dropdown" class="form-control" required>';
             inlineQty += '<option></option>';
             var zeesSearch = search.load({ type: 'partner', id: 'customsearch_smc_franchisee' });
@@ -215,12 +214,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             var inlineQty = '';
             inlineQty += '<style>table#debt_preview {font-size: 12px;text-align: center;border: none;}.dataTables_wrapper {font-size: 14px;}table#debt_preview th{text-align: center;} .bolded{font-weight: bold;} /* Chrome, Safari, Edge, Opera */input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}/* Firefox */input[type=number] {-moz-appearance: textfield;} table#debt_preview.table-striped.DTFC_Cloned tbody tr:nth-of-type(even) { background-color: white; }</style>';
 
-            inlineQty += '<button id="btn-show-all-children" class="hide" type="button">Expand All</button>'
-            inlineQty += '<button id="btn-hide-all-children" class="hide" type="button">Collapse All</button>'
-            inlineQty += '<button id="reset-all" class="hide" type="button">Reset All</button>'
-
             inlineQty += '<table id="debt_preview" class="table table-responsive table-striped customer tablesorter" style="width: 100%; background-color: white;">';
-            inlineQty += '<thead style="color: white; background-color: #379E8F;">';
+            inlineQty += '<thead style="color: white; background-color: #095C7B;">';
             inlineQty += '<tr class="text-center">';
             inlineQty += '</tr>';
             inlineQty += '</thead>';
@@ -232,24 +227,13 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function customerListHeader() {
-            // Increase Header
-            var inlineQty = '<div class="form-group container cust_list_section">';
-            inlineQty += '<div class="row">';
-            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #379E8F; color: white;">Customer List</span></h4></div>';
-            inlineQty += '</div>';
-            inlineQty += '</div>';
-
-            return inlineQty;
-        }
-
         function increaseAmount() {
-            var inlineQty = '<style>.green-back { background-color: #379E8F; color: white; }.vl {border-left: 6px solid green;height: 500px; }</style>';
+            var inlineQty = '<style>.green-back { background-color: #095C7B; color: white; }.vl {border-left: 6px solid green;height: 500px; }</style>';
 
             // Increase Header
             inlineQty += '<div class="form-group container inc_amount_section">';
             inlineQty += '<div class="row">';
-            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #379E8F; color: white;">Increase Price on All Services</span></h4></div>';
+            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #095C7B; color: white;">Change Price on All Services</span></h4></div>';
             inlineQty += '</div>';
             inlineQty += '</div>';
 
@@ -273,15 +257,50 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function loadingSection() {
-            var inlineQty = '<div class="form-group container loading_section"></div>';
-            inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #379E8F; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
-            inlineQty += 'left: 50%; }' //position: fixed; z-index: 1000; 
-                /* Safari */
-            inlineQty += '@-webkit-keyframes spin {0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }';
+        function customerListHeader() {
+            // Customer List Header
+            var inlineQty = '<div class="form-group container cust_list_section">';
+            inlineQty += '<div class="row">';
+            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #095C7B; color: white;">Customer List</span></h4></div>';
+            inlineQty += '</div>';
+            inlineQty += '</div>';
 
-            inlineQty += '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
-            inlineQty += '</style>';
+            // Customer List Filters
+            inlineQty += '<div class="form-group container cust_list_section">';
+            inlineQty += '<div class="row">';
+
+            // Instructions
+            inlineQty += '<div class="col-xs-2">';
+            inlineQty += '<button id="btn-instructions" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Instructions</button>' // 
+            inlineQty += '</div>';
+
+            // Export CSV
+            inlineQty += '<div class="col-xs-2">';
+            inlineQty += '<button id="btn-export-csv" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Export CSV</button>';
+            inlineQty += '</div>';
+
+            // Gap
+            inlineQty += '<div class="col-xs-2"><hl/></div>';
+
+            // Expand All
+            inlineQty += '<div class="col-xs-2">';
+            inlineQty += '<button id="btn-show-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>' // 
+            inlineQty += '</div>';
+
+            // Collapse All
+            inlineQty += '<div class="col-xs-2">';
+            inlineQty += '<button id="btn-hide-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>'
+            inlineQty += '</div>';
+
+            // Reset All
+            inlineQty += '<div class="col-xs-2">';
+            inlineQty += '<button id="reset-all" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Reset All</button>';
+            inlineQty += '</div>';
+
+            
+            
+            inlineQty += '</div>';
+            inlineQty += '</div>';
 
             return inlineQty;
         }
@@ -293,12 +312,63 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
             inlineQty += '<div class="col-xs-4"></div>';
             inlineQty += '<div class="col-4">';
-            // inlineQty += '<input type="button" style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;"  id="submit" value=""></input>';
-            inlineQty += '<button style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Save/Update</button>';
+            // inlineQty += '<input type="button" style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;"  id="submit" value=""></input>';
+            inlineQty += '<button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Save/Update</button>';
             inlineQty += '</div>';
             inlineQty += '<div class="col-xs-4"></div>';
 
             inlineQty += '</div></div>';
+
+            return inlineQty;
+        }
+
+        function loadingSection() {
+            var inlineQty = '<div class="form-group container loading_section"></div>';
+            inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #095C7B; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
+            inlineQty += 'left: 50%; }' //position: fixed; z-index: 1000; 
+                /* Safari */
+            inlineQty += '@-webkit-keyframes spin {0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }';
+
+            inlineQty += '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+            inlineQty += '</style>';
+
+            return inlineQty;
+        }
+
+        function instructions(){
+            var inlineQty = '<div id="demo" class=""> '; //style="background-color: #cfeefc !important;border: 1px solid #417ed9;padding: 10px 10px 10px 20px;width:96%;position:absolute"
+            inlineQty += '<h1><u>SCHEDULED PRICE CHANGE INSTRUCTIONS:</u></h1>';
+            inlineQty += '<br>';
+            inlineQty += '<b><u>Submit</u></b>';
+            inlineQty += '<ul><li><button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="" class="col-xs-4" onclick="">Save/Update</button>';
+            inlineQty += '<ul><li>Click to Submit all Services Data which has been filled. This will be sent to IT team to verify and schedule all services for price increase.</li></ul>';
+            inlineQty += '</li></ul>';
+            inlineQty += '<b><u>Change Price on All Services</u></b>';
+            inlineQty += '<ul><li><button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="" class="col-xs-4" onclick="">Add/Edit All Services</button>';
+            inlineQty += '<ul><li>Click on "Add/Edit All Services" button to open a popup to add/remove increase amounts on all services.</li></ul>';
+            inlineQty += '<!-- Table for Add/Edit List of Services --> <li>  <table id="" class="table table-responsive table-striped"><thead><tr class=""><th><b>ACTION</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th></thead><tbody>';
+            inlineQty += '<td class=""><button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button><input type="hidden" class="" value="F" /></td>';
+            inlineQty += '<td><select class="form-control" ><option></option></select></td><td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
+            inlineQty += '<td><input class="form-control" type="date"/></td>';
+            inlineQty += '</tr> </tbody></table></li>';
+            inlineQty += '<ul><li>Click on Service Name Dropdown to select corresponding service</li></ul>';
+            inlineQty += '<ul><li>Add an Increase Amount Greater Than 0 in "Increase Amount" input field</li></ul>';
+            inlineQty += '<ul><li>Add a Date Effective under "Date Effective" input field</li></ul>';
+            inlineQty += '<ul><li>Lastly, Click on "Add New Service" button to add a new service.</li></ul>';
+            inlineQty += '</li></ul>';
+            inlineQty += '<b><u>Customer List</u></b>';
+            inlineQty += '<li><button id="" class="col-xs-4" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Instructions</button></li>';
+            inlineQty += '<ul><li>Click to Open These Instructions</li></ul>';
+            inlineQty += '<li><button id="" class="col-xs-4" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Export CSV</button></li>';
+            inlineQty += '<ul><li>Click to Export Customer List to CSV</li></ul>';
+            inlineQty += '<li><button id="" class="col-xs-4" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button></li>';
+            inlineQty += '<ul><li>Click to Expand All Customer Rows to Show Services</li></ul>';
+            inlineQty += '<li><button id="" class="col-xs-4" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button></li>';
+            inlineQty += '<ul><li>Click to Collapse All Customer Rows to Hide Services</li></ul>';
+            inlineQty += '<li><button id="" class="col-xs-4" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Reset All</button></li>';
+            inlineQty += '<ul><li>Click to Reset All Service Rows to Default/$0 Increase Amount</li></ul>';
+            inlineQty += '</ul></li>';
+            inlineQty += '</div>';
 
             return inlineQty;
         }

@@ -147,12 +147,34 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             // Hide/UnHide Elements
             $('.loading_section').hide();
             $('#reset-all').removeClass('hide')
+            $('#btn-export-csv').removeClass('hide');
+            $('#btn-instructions').removeClass('hide');
             $('#btn-show-all-children').removeClass('hide')
             $('#btn-hide-all-children').removeClass('hide')
             $('#submit').removeClass('hide');
 
             // Bulk Update Zee Dropdown
             $('select').selectpicker();
+
+            // If Logged in As Zee, Hide Zee Dropdown and Redirect to Zee's Page
+            if (role == 1000) { // Page has not be assigned to Zee yet
+                $('.zeeDropdown').addClass('hide');
+                if (zee_id == 0) {
+                    var params = {
+                        zeeid: runtime.getCurrentUser().id,
+                    };
+                    params = JSON.stringify(params);
+                    var upload_url = baseURL + url.resolveScript({
+                        deploymentId: "customdeploy_sl_price_change_financial_2",
+                        scriptId: "customscript_sl_price_change_financial_2",
+                    }) + "&custparam_params=" + params;
+                    currRec.setValue({
+                        fieldId: "custpage_price_chng_fin_zee_id",
+                        value: zee_id,
+                    });
+                    window.location.href = upload_url;
+                }
+            }
 
             $(document).on("change", "#zee_filter_dropdown", function() {
                 var zee_id_dropdown = $(this).find("option:selected").val();
@@ -272,6 +294,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     });
                 });
 
+                // CSV Export Button
+                $('#btn-export-csv').on('click', function() {
+                    downloadCsv();
+                });
+
                 // Add event listener for opening and closing child table details on button.
                 $('#debt_preview tbody').on('click', 'td.dt-control', function() {
                     var tr = $(this).closest('tr');
@@ -304,6 +331,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             });
             $(document).on('click', '#bulkUpdate', function() {
                 onclick_bulkUpdate();
+            });
+            $(document).on('click', '#btn-instructions', function() {
+                onclick_instructions();
             });
             /* On click of the Add button */
             $(document).on('click', '.add_class', function(event) {
@@ -658,7 +688,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             var childObject = [];
 
-            var serv_id_list = []
+            var serv_id_list = [];
+
+            var csvSet = []; // CSV Export Set
 
             //Search: SMC - Customer
             var customerSearch = search.load({
@@ -753,6 +785,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     summary: search.Summary.GROUP
                 });
 
+                // Default Values to be updated later by Savedlist data if Price Increase Already Scheduled.
+                var inc_price = '';
+                var tot_price = '';
+                var saved_date_eff = '';
+
                 var service_type_id = serviceTypeList.filter(function(el) { if (el.name == service) { return el } })[0].id;
                 if (!isNullorEmpty(savedList)) {
                     var savedListFiltered = savedList.filter(function(el) { if (el.custid == custid && el.servtypeid == service_type_id) { return el } });
@@ -763,6 +800,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                             var inv_price_val = inv_price.split('$')[1];
                             inv_price_val = Number(inv_price_val.replace(/[^0-9.-]+/g, ""));
 
+                            // Update Values
+                            inc_price = (parseFloat(res.incval) - parseFloat(inv_price_val))
+                            tot_price = res.incval;
+                            stored_date_eff = res.date;
+
                             var approved = res.approved;
 
                             childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: (parseFloat(res.incval) - parseFloat(inv_price_val)), tot_price: res.incval, date_eff: res.date, serv_price: service_price, custid: custid, complete: true, approved: approved, inv_date: inv_date, inv_id: inv_id });
@@ -771,11 +813,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         })
                     } else {
                         // console.log('Finance Allocate Record Not Created - List Length = 0')
-                        childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
+                        childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: saved_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                     }
                 } else {
                     // console.log('Finance Allocate Record Not Created')
-                    childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: '', tot_price: '', date_eff: '', serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
+                    childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: saved_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                 }
 
                 console.log('Index: ' + index)
@@ -817,10 +859,16 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         childObject
                     ]);
                 } 
+
+                // Push Invoice Line Item to CSV Set
+                csvSet.push([custid, entityid, companyname, zee_name, last_price_increase, service, service_price, inv_price, inv_date, inv_id, tot_price, inc_price, saved_date_eff]);
+
                 index++;            
 
                 return true;
             });
+
+            saveCsv(csvSet);
         }
 
         function onclick_listOfServices() {
@@ -975,6 +1023,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         //     $('select').selectpicker();
         // }
 
+        function onclick_instructions(){
+            $('#myModal3 .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Instructions for Scheduled Price Change</label></h4></div>');
+            // $('#myModal3 .modal-body').html(instructions());
+            $('#myModal3').modal("show");
+        }
+
         function saveRecord(context) {
             // Run Loading Function
             $('.loading_section').appendTo('.debt_preview_wrapper');
@@ -1063,6 +1117,52 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 alert('No Records have been Saved. Please Fill Out Valid Price Increases')
             }
             return true;
+        }
+
+        /**
+         * Create the CSV and store it in the hidden field 'custpage_table_csv' as a string.
+         * @param {Array} invDataSet The `invDataSet` created in `loadDatatable()`.
+         */
+        function saveCsv(csvDataSet) { //exportDataSet
+            // csvDataSet = csvDataSet[0];
+            var title = 'Scheduled Price Change - ' + zee_name;
+
+            var headers = ['Customer ID', 'Customer Name', 'Company Name', 'Franchisee', 'Last Price Increase', 'Service', 'Service Price', 'Invoice Price', 'Invoice Date', 'Invoice ID', 'New TotalPrice', 'Increase Amount', 'Date Effective'];
+            var csv = title;
+            csv += "\n\n";
+
+            console.log('CSV Data Set (STRING): ' + JSON.stringify(csvDataSet));
+
+            csv += headers + "\n";
+            csvDataSet.forEach(function (row) { // Table Data Set
+                csv += row.join(',');
+                csv += "\n";
+            });
+            currRec.setValue({ fieldId: 'custpage_table_csv', value: csv })
+            // downloadCsv();
+
+            return true;
+        }
+
+        /**
+         * Load the string stored in the hidden field 'custpage_table_csv'.
+         * Converts it to a CSV file.
+         * Creates a hidden link to download the file and triggers the click of the link.
+         */
+         function downloadCsv() {
+            // var csv = nlapiGetFieldValue('custpage_table_csv');
+            var csv = currRec.getValue({ fieldId: 'custpage_table_csv' })
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            var content_type = 'text/csv';
+            var csvFile = new Blob([csv], { type: content_type });
+            var url = window.URL.createObjectURL(csvFile);
+            var filename = 'Scheduled Price Change ' + zee_name + '.csv';
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
 
         /**
