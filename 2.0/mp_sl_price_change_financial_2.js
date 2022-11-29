@@ -44,9 +44,15 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     var params = JSON.parse(context.request.parameters.custparam_params);
                 }
                 var zee_id = 0;
+                var zee_name = '';
 
                 if (!isNullorEmpty(params)) {
                     zee_id = parseInt(params.zeeid);
+                }
+
+                if (!isNullorEmpty(zee_id) && zee_id != 0) {
+                    var zee_rec = record.load({ type: 'partner', id: zee_id });
+                    zee_name = zee_rec.getValue({ fieldId: 'companyname' });
                 }
 
                 var form = ui.createForm({ title: ' ' });
@@ -99,7 +105,12 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // Text Color: #103D39 (Dark Green)
 
                 inlineHtml += '<div class="a" style="width: 100%; background-color: #CFE0CE; padding: 20px; min-height: 100vh; height: 100%; ">'; // margin-top: -40px
-                inlineHtml += '<h1 style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change: Finance Team</h1>';
+                if (role != 1000) { // If Page is not Opened By Zee, Name Finance Team. Else if Zee. Use Zee Name
+                    inlineHtml += '<h1 id="title"style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change: Finance Team</h1>';
+                } else {
+                    inlineHtml += '<h1 id="title"style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change '+zee_name+'</h1>';
+                }
+                
                 inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #095C7B; color: #fff }';
                 inlineHtml += '.nav > li > a, .nav > li > a:focus, .nav > li > a:hover { margin-left: 5px; margin-right: 5px; border: 2px solid #095C7B; color: #095C7B; }';
                 inlineHtml += '</style>';
@@ -121,7 +132,10 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 inlineHtml += '<div id="myModal3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br></div><div class="modal-body">'+instructions()+'</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
 
                 inlineHtml += '<br>';
-                inlineHtml += zeeDropdownSection(zee_id);
+
+                if (role != 1000){ // Only Show Dropdown if Not a Zee
+                    inlineHtml += zeeDropdownSection(zee_id);
+                }
 
                 if (!isNullorEmpty(zee_id)) {
                     inlineHtml += increaseAmount();
@@ -132,7 +146,16 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
                     inlineHtml += loadingSection();
 
+                    inlineHtml += '<div class="loading_section_text"><p style="color: red; text-align: center;">Please note this page may take up to 2 minutes to load. Do not refresh!</p></div>'
+
                     inlineHtml += submit();
+                } else {
+                    if (role != 1000) { // Only Show if Not a Zee
+                        inlineHtml += '<h1 style="font-size: 12px; font-weight: 700; color: #103D39; text-align: center">Please select a Franchisee</h1>';
+                    } else {
+                        inlineHtml += loadingSection();
+                        inlineHtml += '<div class="loading_section_text"><h1 style="font-size: 10px; font-weight: 700; color: red; text-align: center">Redirecting... Please wait.</h1></div>';
+                    }
                 }
 
                 inlineHtml += '</div></div>'
@@ -145,6 +168,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     layoutType: ui.FieldLayoutType.STARTROW
                 }).defaultValue = inlineHtml;
 
+                // Zee ID
                 form.addField({
                     id: "custpage_price_chng_fin_zee_id",
                     label: "Zee ID",
@@ -152,6 +176,74 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 }).updateDisplayType({
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = zee_id;
+
+                // Zee Name
+                form.addField({
+                    id: "custpage_price_chng_fin_zee_name",
+                    label: "Zee Name",
+                    type: ui.FieldType.TEXT,
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN,
+                }).defaultValue = zee_name;
+
+                // Load Service Type Object
+                var serviceTypeObj = loadServiceType();
+                form.addField({
+                    id: "custpage_price_chng_fin_service_type_obj",
+                    label: "Service Type Object",
+                    type: ui.FieldType.LONGTEXT,
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN,
+                }).defaultValue = JSON.stringify(serviceTypeObj);
+
+                // Load Allocated Zee Service Record
+                var allocatedZeeServiceRecord = loadAllocatedZeeServiceRecord(zee_id);
+                form.addField({
+                    id: "custpage_price_chng_fin_allocated_zee_service_record",
+                    label: "Allocated Zee Service Record",
+                    type: ui.FieldType.LONGTEXT,
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN,    
+                }).defaultValue = JSON.stringify(allocatedZeeServiceRecord);
+
+                // Load Max Invoice (Most Recent Invoice of Customer) from Search Result
+                // Create For Loop to Create Multiple Load Max Invoice Fields given number of characters above 10000 (Max Number of Characters for Long Text Field)
+                var maxInvoice = loadMaxInvoice(zee_id);
+                var maxInvoiceString = JSON.stringify(maxInvoice);
+                var maxInvoiceStringArray = [];
+                var maxInvoiceStringArrayIndex = 0;
+                var maxInvoiceStringArrayLength = 0;
+                var maxInvoiceStringArrayLength = Math.ceil(maxInvoiceString.length / 10000);
+                for (var i = 0; i < maxInvoiceStringArrayLength; i++) {
+                    maxInvoiceStringArray[i] = maxInvoiceString.substring(maxInvoiceStringArrayIndex, maxInvoiceStringArrayIndex + 10000);
+                    maxInvoiceStringArrayIndex += 10000;
+                }
+                for (var i = 0; i < maxInvoiceStringArrayLength; i++) {
+                    form.addField({
+                        id: "custpage_price_chng_fin_max_invoice_" + i,
+                        label: "Max Invoice",
+                        type: ui.FieldType.LONGTEXT,
+                    }).updateDisplayType({
+                        displayType: ui.FieldDisplayType.HIDDEN,
+                    }).defaultValue = maxInvoiceStringArray[i];
+                };
+                // Create Field for number of maxInvoiceStringArray
+                form.addField({
+                    id: "custpage_price_chng_fin_max_invoice_array_length",
+                    label: "Max Invoice Array Length",
+                    type: ui.FieldType.INTEGER,
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN,
+                }).defaultValue = maxInvoiceStringArrayLength;
+
+                // Load Today Date
+                form.addField({
+                    id: "custpage_price_chng_fin_today_date",
+                    label: "Date Today",
+                    type: ui.FieldType.TEXT,
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN,
+                }).defaultValue = todayDate();
 
                 form.addField({
                     id: 'custpage_table_csv',
@@ -322,6 +414,111 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
+        function loadMaxInvoice(zee_id){
+            var maxInvID = []; // Max Invoice ID
+            var maxInvItem = [];
+            var maxInvCust = [];
+            var maxInvVal = [];
+            var cust_index = 0;
+            // Get Most Recent Invoice and Services Within.
+            var maxInvSearch = search.load({
+                id: 'customsearch_smc_customer_5_2',
+                type: 'customer'
+            });
+            maxInvSearch.filters.push(search.createFilter({
+                name: 'partner',
+                operator: search.Operator.ANYOF,
+                values: zee_id
+            }))
+            maxInvSearch.run().each(function(res){
+                var companyname = res.getValue({
+                    name: 'internalid',
+                    summary: 'GROUP'
+                });
+                var netSuiteItem = res.getValue({
+                    name: 'item',
+                    join: 'transaction',
+                    summary: 'GROUP'
+                });
+                if (maxInvCust.indexOf(companyname) == -1 || cust_index == 0){
+                    maxInvCust.push(companyname);
+                    maxInvItem = [];
+                }
+                if (maxInvItem.indexOf(netSuiteItem) == -1){
+                    maxInvItem.push(netSuiteItem);
+
+                    var internalid = res.getValue({
+                        name: 'internalid',
+                        join: 'transaction',
+                        summary: 'MAX'
+                    });
+                    var item_rate = res.getValue({ // Get Item Rate / Service Price
+                        name: 'rate',
+                        join: 'transaction',
+                        summary: 'GROUP'
+                    });
+                    maxInvID.push(internalid);
+
+                    maxInvVal.push({ custid: companyname, itemid: netSuiteItem, invid: internalid, itemrate: item_rate });
+                    cust_index++;
+                    return true;
+                }
+                cust_index++;
+                return true;
+            });
+
+            return maxInvVal;
+        }
+
+        function loadAllocatedZeeServiceRecord(zee_id){
+            var savedList = [];
+            var currAllocatedSearch = search.load({
+                id: 'customsearch_spc_finance_alloc',
+                type: 'customrecord_spc_finance_alloc'
+            });
+            currAllocatedSearch.filters.push(search.createFilter({
+                name: 'custrecord_price_chg_fin_zee',
+                operator: search.Operator.IS,
+                values: zee_id
+            }));
+            currAllocatedSearch.run().each(function(res) {
+                var internalid = res.getValue({ name: 'internalid' });
+                var date_eff = res.getValue({ name: 'custrecord_price_chg_fin_date_eff' });
+                var cust_id = res.getValue({ name: 'custrecord_price_chg_fin_cust_id' });
+                var service_id = res.getValue({ name: 'custrecord_price_chg_fin_serv' });
+                var service_type_id = res.getValue({ name: 'custrecord_price_chg_fin_serv_type_id' });
+                var inc_price = res.getValue({ name: 'custrecord_price_chg_fin_inc_am' });
+                
+                /** IT Page List */
+                var approved = res.getValue({ name: 'custrecord_price_chg_it_approve' });
+                var emailed = res.getValue({ name: 'custrecord_price_chg_it_email_sent' });
+                var serv_chg_id = res.getValue({ name: 'custrecord_price_chg_it_serv_chg_id' });
+
+                savedList.push({ id: internalid, custid: cust_id, zeeid: zee_id, servid: service_id, servtypeid: service_type_id, date: date_eff, incval: inc_price, approved: approved, emailed: emailed, serv_chg_id: serv_chg_id });
+                return true;
+            });
+
+            return savedList;
+        }
+
+        function loadServiceType(){
+            // Load Service Record
+            var serviceTypeSea = search.load({ type: 'customrecord_service_type', id: 'customsearch_rta_service_types_2' })
+            var serviceTypeRes = serviceTypeSea.run();
+            var serviceTypeList = [];
+            serviceTypeRes.each(function(res) {
+                var internalid = res.getValue({ name: 'internalid' });
+                var name = res.getValue({ name: 'name' })
+                serviceTypeList.push({
+                    id: internalid,
+                    name: name
+                });
+                return true;
+            });
+
+            return serviceTypeList;
+        }
+
         function loadingSection() {
             var inlineQty = '<div class="form-group container loading_section"></div>';
             inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #095C7B; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
@@ -331,6 +528,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
             inlineQty += '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
             inlineQty += '</style>';
+
+            // inlineQty += '<div class="loading_section_text"><p style="color: red; text-align: center;">Please note this page may take up to 2 minutes to load. Do not refresh!</p></div>'
 
             return inlineQty;
         }
@@ -371,6 +570,25 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '</div>';
 
             return inlineQty;
+        }
+
+        function todayDate(){
+            // Date Today n Date Tomorrow
+            var today_date = new Date(); // Test Time 6:00pm - '2022-06-29T18:20:00.000+10:00'
+            today_date.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
+            var hour_time = today_date.getHours();
+
+            if (hour_time < 17){ // If Current Time is Before 5:00pm
+                today_date = today_date.toISOString().split('T')[0];
+            } else { // If Current Time is After 5:00pm, Change Date as Tomorrow.
+                var today_year = today_date.getFullYear();
+                var today_month = today_date.getMonth();
+                var today_day = today_date.getDate();
+                var today_in_day = new Date(Date.UTC(today_year, today_month, today_day + 1));
+                today_date = today_in_day.toISOString().split('T')[0]; 
+            }
+
+            return today_date;
         }
 
         /**

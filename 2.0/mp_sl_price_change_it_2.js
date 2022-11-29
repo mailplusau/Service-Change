@@ -87,15 +87,16 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 inlineHtml += '<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />'
 
                 // New Website Color Schemes
-                // Main Color: #379E8F
-                // Background Color: #CFE0CE
-                // Button Color: #FBEA51
-                // Text Color: #103D39
+                // Old Main Color: #379E8F (Green)
+                // New Main Color: #095C7B (Blue)
+                // Background Color: #CFE0CE (Light Green)
+                // Button Color: #FBEA51 (Yellow)
+                // Text Color: #103D39 (Dark Green)
 
                 inlineHtml += '<div class="a" style="width: 100%; background-color: #CFE0CE; padding: 20px; min-height: 100vh; height: 100%; ">'; // margin-top: -40px
-                inlineHtml += '<h1 style="text-align: center; color: #103D39; display: inline-block; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px;">Scheduled Price Change: IT Team</h1>';
-                inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #379E8F; color: #fff }';
-                inlineHtml += '.nav > li > a, .nav > li > a:focus, .nav > li > a:hover { margin-left: 5px; margin-right: 5px; border: 2px solid #379E8F; color: #379E8F; }';
+                inlineHtml += '<h1 style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px;">Scheduled Price Change: IT Team</h1>';
+                inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #095C7B; color: #fff }';
+                inlineHtml += '.nav > li > a, .nav > li > a:focus, .nav > li > a:hover { margin-left: 5px; margin-right: 5px; border: 2px solid #095C7B; color: #095C7B; }';
                 inlineHtml += '</style>';
 
                 // Define alert window.
@@ -167,7 +168,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="row col-xs-6" style="left: 25%; margin-top: 20px;">'; //col-xs-6 d-flex justify-content-center
 
             inlineQty += '<div class="input-group">';
-            inlineQty += '<span style="background-color: #379E8F; color: white;" class="input-group-addon">Franchisee</span>';
+            inlineQty += '<span style="background-color: #095C7B; color: white;" class="input-group-addon">Franchisee</span>';
             inlineQty += '<select id="zee_filter_dropdown" class="form-control" required>';
             inlineQty += '<option></option>';
             var zeesSearch = search.load({ type: 'partner', id: 'customsearch_smc_franchisee' });
@@ -209,12 +210,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             var inlineQty = '';
             inlineQty += '<style>table#debt_preview {font-size: 12px;text-align: center;border: none;}.dataTables_wrapper {font-size: 14px;}table#debt_preview th{text-align: center;} .bolded{font-weight: bold;} /* Chrome, Safari, Edge, Opera */input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}/* Firefox */input[type=number] {-moz-appearance: textfield;} table#debt_preview.table-striped.DTFC_Cloned tbody tr:nth-of-type(even) { background-color: white; }</style>';
 
-            inlineQty += '<button id="btn-show-all-children" class="hide" type="button">Expand All</button>'
-            inlineQty += '<button id="btn-hide-all-children" class="hide" type="button">Collapse All</button>'
-                // inlineQty += '<button id="reset-all" class="hide" type="button">Reset All</button>'
-
             inlineQty += '<table id="debt_preview" class="table table-responsive table-striped customer tablesorter" style="width: 100%; background-color: white;">';
-            inlineQty += '<thead style="color: white; background-color: #379E8F;">';
+            inlineQty += '<thead style="color: white; background-color: #095C7B;">';
             inlineQty += '<tr class="text-center">';
             inlineQty += '</tr>';
             inlineQty += '</thead>';
@@ -228,9 +225,36 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
         function customerListHeader() {
             // Increase Header
-            var inlineQty = '<div class="form-group container date_filter_section">';
+            var inlineQty = '<div class="form-group container cust_filter_section">';
             inlineQty += '<div class="row">';
-            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #379E8F; color: white;">Customer List</span></h4></div>';
+            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #095C7B; color: white;">Customer List</span></h4></div>';
+            inlineQty += '</div>';
+            inlineQty += '</div>';
+
+            // Customer List Filters
+            inlineQty += '<div class="form-group container cust_list_section">';
+            inlineQty += '<div class="row">';
+
+            // Instructions
+            inlineQty += '<div class="col-xs-2">';
+            inlineQty += '<button id="btn-instructions" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Instructions</button>' // 
+            inlineQty += '</div>';
+
+            // Expand All
+            inlineQty += '<div class="col-xs-3">';
+            inlineQty += '<button id="btn-show-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>'
+            inlineQty += '</div>';
+
+            // Collapse All
+            inlineQty += '<div class="col-xs-3">';
+            inlineQty += '<button id="btn-hide-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>'
+            inlineQty += '</div>';
+
+            // Reset All
+            // inlineQty += '<div class="col-xs-2">';
+            // inlineQty += '<button id="reset-all" class="hide" type="button">Reset All</button>'
+            // inlineQty += '</div>';
+
             inlineQty += '</div>';
             inlineQty += '</div>';
 
@@ -238,12 +262,12 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
         }
 
         function increaseAmount() {
-            var inlineQty = '<style>.green-back { background-color: #379E8F; color: white; }.vl {border-left: 6px solid green;height: 500px; }</style>';
+            var inlineQty = '<style>.green-back { background-color: #095C7B; color: white; }.vl {border-left: 6px solid green;height: 500px; }</style>';
 
             // Increase Header
             inlineQty += '<div class="form-group container date_filter_section">';
             inlineQty += '<div class="row">';
-            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #379E8F; color: white;">Increase Price on All Services</span></h4></div>';
+            inlineQty += '<div class="col-xs-12 heading1"><h4><span class="label label-default col-xs-12" style="background-color: #095C7B; color: white;">Increase Price on All Services</span></h4></div>';
             inlineQty += '</div>';
             inlineQty += '</div>';
 
@@ -265,7 +289,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
         function loadingSection() {
             var inlineQty = '<div class="form-group container loading_section"></div>';
-            inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #379E8F; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
+            inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #095C7B; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
             inlineQty += 'left: 50%; }' //position: fixed; z-index: 1000; 
                 /* Safari */
             inlineQty += '@-webkit-keyframes spin {0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }';
@@ -283,8 +307,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
             inlineQty += '<div class="col-xs-4"></div>';
             inlineQty += '<div class="col-4">';
-            // inlineQty += '<input type="button" style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;"  id="submit" value=""></input>';
-            inlineQty += '<button style="background-color: #379E8F; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Schedule Emails</button>';
+            // inlineQty += '<input type="button" style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;"  id="submit" value=""></input>';
+            inlineQty += '<button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Schedule Emails</button>';
             inlineQty += '</div>';
             inlineQty += '<div class="col-xs-4"></div>';
 

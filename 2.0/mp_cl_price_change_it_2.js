@@ -361,8 +361,24 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         } else {
                             alert('Scheduled Increase Cancelled')
                         }
+                    } else if (isNullorEmpty(inc_am) && isNullorEmpty(date_eff)) {
+                        var service_type_id = inv_price_elem[x].getAttribute('data-servtypeid');
+                        var cust_id = inv_price_elem[x].getAttribute('data-custid');
+                        var service_id = inv_price_elem[x].getAttribute('data-servid');
+
+                        var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servtypeid == service_type_id) { return el } });
+                        if (savedListFiltered.length > 0) {
+                            savedListFiltered.forEach(function(res) {
+                                var recID = res.id;
+                                record.delete({
+                                    type: 'customrecord_spc_finance_alloc',
+                                    id: recID
+                                });
+                            });
+                        }
                     } else {
-                        alert('Please Fill out New Price and Date Effective')
+                        alert('Please fill out all fields');
+                        return false;
                     }
                 });
 
