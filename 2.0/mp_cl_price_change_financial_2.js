@@ -744,7 +744,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     // Default Values to be updated later by Savedlist data if Price Increase Already Scheduled.
                     var inc_price = '';
                     var tot_price = '';
-                    var saved_date_eff = '';
+                    var stored_date_eff = '';
 
                     var service_type_id = serviceTypeList.filter(function(el) { if (el.name == service) { return el } })[0].id;
                     if (!isNullorEmpty(savedList)) {
@@ -767,10 +767,10 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 return true;
                             })
                         } else {
-                            childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: saved_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
+                            childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                         }
                     } else {
-                        childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: saved_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
+                        childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                     }
                     
                     console.log('Index: ' + index)
@@ -805,7 +805,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     } 
 
                     // Push Invoice Line Item to CSV Set
-                    csvSet.push([custid, entityid, companyname, zee_name, last_price_increase, service, service_price, inv_price, inv_date, inv_id, tot_price, inc_price, saved_date_eff]);
+                    csvSet.push([custid, entityid, companyname, zee_name, last_price_increase, service, service_price, inv_price, inv_date, inv_id, tot_price, inc_price, stored_date_eff]);
 
                     index++;            
 
