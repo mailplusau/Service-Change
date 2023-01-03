@@ -200,13 +200,40 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
                 // Load Allocated Zee Service Record
                 var allocatedZeeServiceRecord = loadAllocatedZeeServiceRecord(zee_id);
+                // form.addField({
+                //     id: "custpage_price_chng_fin_allocated_zee_service_record",
+                //     label: "Allocated Zee Service Record",
+                //     type: ui.FieldType.LONGTEXT,
+                // }).updateDisplayType({
+                //     displayType: ui.FieldDisplayType.HIDDEN,    
+                // }).defaultValue = JSON.stringify(allocatedZeeServiceRecord);
+                // Create For Loop to Create Multiple Load Max Invoice Fields given number of characters above 10000 (Max Number of Characters for Long Text Field)
+                var allocatedZeeServiceRecordString = JSON.stringify(allocatedZeeServiceRecord);
+                var allocatedZeeServiceRecordStringArray = [];
+                var allocatedZeeServiceRecordStringArrayIndex = 0;
+                var allocatedZeeServiceRecordStringArrayLength = 0; 
+                var allocatedZeeServiceRecordStringArrayLength = Math.ceil(allocatedZeeServiceRecordString.length / 10000);
+                for (var i = 0; i < allocatedZeeServiceRecordStringArrayLength; i++) {
+                    allocatedZeeServiceRecordStringArray[i] = allocatedZeeServiceRecordString.substring(allocatedZeeServiceRecordStringArrayIndex, allocatedZeeServiceRecordStringArrayIndex + 10000);
+                    allocatedZeeServiceRecordStringArrayIndex += 10000;
+                }
+                for (var i = 0; i < allocatedZeeServiceRecordStringArrayLength; i++) {
+                    form.addField({
+                        id: "custpage_price_chng_fin_allocated_zee_service_record_" + i,
+                        label: "Allocated Zee Service Record",
+                        type: ui.FieldType.LONGTEXT,
+                    }).updateDisplayType({
+                        displayType: ui.FieldDisplayType.HIDDEN,
+                    }).defaultValue = allocatedZeeServiceRecordStringArray[i];
+                }
+                // Create Field for number of allocatedZeeServiceRecord
                 form.addField({
-                    id: "custpage_price_chng_fin_allocated_zee_service_record",
-                    label: "Allocated Zee Service Record",
-                    type: ui.FieldType.LONGTEXT,
+                    id: "custpage_price_chng_fin_allocated_zee_service_record_length",
+                    label: "Allocated Zee Service Record Length",
+                    type: ui.FieldType.INTEGER,
                 }).updateDisplayType({
-                    displayType: ui.FieldDisplayType.HIDDEN,    
-                }).defaultValue = JSON.stringify(allocatedZeeServiceRecord);
+                    displayType: ui.FieldDisplayType.HIDDEN,
+                }).defaultValue = allocatedZeeServiceRecordStringArrayLength;
 
                 // Load Max Invoice (Most Recent Invoice of Customer) from Search Result
                 // Create For Loop to Create Multiple Load Max Invoice Fields given number of characters above 10000 (Max Number of Characters for Long Text Field)
@@ -337,7 +364,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="col-xs-3"></div>';
             // Increase Button
             inlineQty += '<div class="col-xs-6">';
-            inlineQty += '<button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="servicesAll" class="col-xs-12" onclick="">Add/Edit All Services</button>';
+            inlineQty += '<input style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="servicesAll" class="col-xs-12" onclick="" value="Add/Edit All Services"></input>';
             inlineQty += '</div>';
             // Bulk Update
             // inlineQty += '<div class="col-xs-4">';
@@ -365,22 +392,22 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
             // Export CSV
             inlineQty += '<div class="col-xs-3">';
-            inlineQty += '<button id="btn-export-csv" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Export CSV</button>';
+            inlineQty += '<input id="btn-export-csv" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;" value="Export CSV"></input>';
             inlineQty += '</div>';
 
             // Expand All
-            inlineQty += '<div class="col-xs-3">';
-            inlineQty += '<button id="btn-show-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>' // 
-            inlineQty += '</div>';
+            // inlineQty += '<div class="col-xs-3">';
+            // inlineQty += '<button id="btn-show-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>' // 
+            // inlineQty += '</div>';
 
             // Collapse All
-            inlineQty += '<div class="col-xs-3">';
-            inlineQty += '<button id="btn-hide-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>'
-            inlineQty += '</div>';
+            // inlineQty += '<div class="col-xs-3">';
+            // inlineQty += '<button id="btn-hide-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>'
+            // inlineQty += '</div>';
 
             // Reset All
             inlineQty += '<div class="col-xs-3">';
-            inlineQty += '<button id="reset-all" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Reset All</button>';
+            inlineQty += '<input type="button" id="reset-all" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;" value="Reset All"></input>';
             inlineQty += '</div>';
 
             
@@ -533,7 +560,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             var inlineQty = '<div class="row" style="margin-top: 20px; margin-bottom: 20px;">';
             inlineQty += '<div class="col-md-4"></div>';
             inlineQty += '<div class="col-md-4" style="text-align: center;">';
-            inlineQty += '<button id="btn-instructions" class="col-xs-12" style="background-color: #FBEA51; border-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;">Instructions</button>';
+            inlineQty += '<input type="button" id="btn-instructions" class="col-xs-12" style="background-color: #FBEA51; border-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;" value="Instructions"></input>';
             inlineQty += '</div>';
             inlineQty += '<div class="col-md-4"></div>';
             inlineQty += '</div>';
@@ -545,11 +572,11 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             var inlineQty = '';
 
             inlineQty += '<b><u>Scheduled Price Change Page Description</u></b>';
-            inlineQty += '<br>Purpose of this page is to schedule price change on services for some customers under a Franchisee (Excluding customers such as AP, SC, NeoPost)<br>';
+            inlineQty += role == 1000 ? '<br>Purpose of this page is to schedule price change on services for some  of your customers' : '<br>Purpose of this page is to schedule price change on services for some customers under a Franchisee' +' (Excluding customers such as AP, SC, NeoPost)<br>';
             inlineQty += '<br><b>There are two options:</b><br>Complete a Bulk Update of All Services under All Customers in List using: <button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" onclick="">Add/Edit All Services</button>';
-            inlineQty += '<li>Add Services, how much you want to Increase and date effective. Make sure to click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button> button to add into the list.</li>';
-            inlineQty += '<li>To Edit Bulk Update Service Existing click on <button class="btn btn-warning btn-sm edit_service_class glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button> to submit any changes made on field.<li>';
-            inlineQty += '<li>To Delete Bulk Update Service click <button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button> to remove. Then click <button type="button" class="btn btn-primary save_service" data-dismiss="modal">Update All Services</button>  to update table.<li>';
+            inlineQty += '<li>Add Services, how much you want to increase the service by (ie +$1) and date effective. Make sure to click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button> button to add into the list.</li>';
+            inlineQty += '<li>To Edit Bulk Update Service Existing click on <button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button> to submit any changes made on field.<li>';
+            inlineQty += '<li>To Delete Bulk Update Service click <button class="btn btn-danger btn-sm glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button> to remove. Then click <button type="button" class="btn btn-primary" >Update All Services</button>  to update table.<li>';
             inlineQty += '<br>OR<br>';
             inlineQty += '<br>Update Each Customer Separately by Service in the Customer List Table below:';
             inlineQty += '<li>Add a New Total Amount Price and Date Effective in the Fields Respective</li>';
@@ -558,13 +585,13 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<b><u>Page Functionality</u></b>';
             inlineQty += '<br>';
             inlineQty += '<b>Change Price on All Services (Bulk Updated All Services)</b>';
-            inlineQty += '<br>On click of button a popup appears showing a table listing services used for a bulk update of all associated services in customer list table below. Select the services, increase amount, and date effective you would like to apply to all services and click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button>. These can be amended or deleted if you do not want to bulk update services with that amount or date effective. Once happy, click <button type="button" class="btn btn-primary save_service" data-dismiss="modal">Update All Services</button> to apply to all services.<br>';
+            inlineQty += '<br>On click of button a popup appears showing a table listing services used for a bulk update of all associated services in customer list table below. Select the services, increase amount, and date effective you would like to apply to all services and click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button>. These can be amended or deleted if you do not want to bulk update services with that amount or date effective. Once happy, click <button type="button" class="btn btn-primary">Update All Services</button> to apply to all services.<br>';
             
             // Table Section;
             inlineQty += '<br>';
             inlineQty += '<!-- Table for Add/Edit List of Services --> <li> Row appears for when you add a new bulk update service. <table class="table table-responsive table-striped"><thead><tr class=""><th><b>ACTION</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th></thead><tbody>';
             inlineQty += '<td class=""><button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button><input type="hidden" class="" value="F" /></td>';
-            inlineQty += '<td><select class="form-control"><option></option>AMPO<option></option>PMPO<option></option></select></td><td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
+            inlineQty += '<td><select class="form-control"><option></option>AMPO<option></option>PMPO<option></option></select></td><td><input class="form-control" placeholder="$" type="number"/></td>';
             inlineQty += '<td><input class="form-control" type="date"/></td>';
             inlineQty += '</tr></tbody></table></li>';
             inlineQty += '<br>';
@@ -572,8 +599,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             // Edit Section;
             inlineQty += '<br>';
             inlineQty += '<!-- Table for Add/Edit List of Services --> <li> When a bulk update service exists, you can edit it to change the increase amount or date effective. <table class="table table-responsive table-striped"><thead><tr class=""><th><b>ACTION</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th></thead><tbody>';
-            inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_service_class glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
-            inlineQty += '<td><select class="form-control"><option></option>AMPO<option></option>PMPO<option></option></select></td><td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
+            inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><button class="btn btn-danger btn-sm glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="" value="F" /></td>';
+            inlineQty += '<td><select class="form-control"><option></option>AMPO<option></option>PMPO<option></option></select></td><td><input class="form-control" placeholder="$" type="number"/></td>';
             inlineQty += '<td><input class="form-control" type="date"/></td>';
             inlineQty += '</tr></tbody></table></li>';
             inlineQty += '<br>';
@@ -587,17 +614,17 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<br>';
             inlineQty += '<b>Customer List: Filters</b>';
             inlineQty += '<br>';
-            inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>';
-            inlineQty += '<ul><li>Expand all Customer rows to show all services for customer based on most recent invoice.</li>';
-            inlineQty += '</ul>';
-            inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>';
-            inlineQty += '<ul><li>Collapse all Customer rows to show only customer name.</li></ul>';
+            // inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>';
+            // inlineQty += '<ul><li>Expand all Customer rows to show all services for customer based on most recent invoice.</li>';
+            // inlineQty += '</ul>';
+            // inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>';
+            // inlineQty += '<ul><li>Collapse all Customer rows to show only customer name.</li></ul>';
             inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Reset All</button>';
             inlineQty += '<ul><li>Reset all services to default/blank.</li></ul>';
             inlineQty += '<br>';
             inlineQty += '<b>Submit</b>';
             inlineQty += '<br>';
-            inlineQty += '<button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-3" onclick="">Save/Update</button>';
+            inlineQty += '<button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" class="col-xs-3" onclick="">Save/Update</button>';
             inlineQty += '<ul><li>Click to Submit all Services Data which has been filled. This will be sent to IT team to verify and schedule all services for price increase.</li></ul>';
 
             return inlineQty;

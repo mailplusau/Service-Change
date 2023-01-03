@@ -132,11 +132,13 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
                     inlineHtml += customerListHeader();
 
+                    inlineHtml += submitAll();
+
                     inlineHtml += dataTable();
 
                     inlineHtml += loadingSection();
 
-                    // inlineHtml += submit();
+                    inlineHtml += submitAll();
                 }
 
                 inlineHtml += '</div></div>'
@@ -241,14 +243,14 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '</div>';
 
             // Expand All
-            inlineQty += '<div class="col-xs-3">';
-            inlineQty += '<button id="btn-show-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>'
-            inlineQty += '</div>';
+            // inlineQty += '<div class="col-xs-3">';
+            // inlineQty += '<button id="btn-show-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Expand All</button>'
+            // inlineQty += '</div>';
 
             // Collapse All
-            inlineQty += '<div class="col-xs-3">';
-            inlineQty += '<button id="btn-hide-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>'
-            inlineQty += '</div>';
+            // inlineQty += '<div class="col-xs-3">';
+            // inlineQty += '<button id="btn-hide-all-children" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Collapse All</button>'
+            // inlineQty += '</div>';
 
             // Reset All
             // inlineQty += '<div class="col-xs-2">';
@@ -300,7 +302,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function submit() {
+        function submitAll() {
             // Save Edit
             var inlineQty = '<div class="container">'; //style="margin-top: 20px;"
             inlineQty += '<div class="row justify-content-center">';
@@ -308,7 +310,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="col-xs-4"></div>';
             inlineQty += '<div class="col-4">';
             // inlineQty += '<input type="button" style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;"  id="submit" value=""></input>';
-            inlineQty += '<button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submit" class="col-xs-4 submit_btn hide" onclick="">Schedule Emails</button>';
+            inlineQty += '<button style="background-color: #FBEA51; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" id="submitAll" class="col-xs-4 submit_btn" onclick="">Schedule Emails for All</button>';
             inlineQty += '</div>';
             inlineQty += '<div class="col-xs-4"></div>';
 

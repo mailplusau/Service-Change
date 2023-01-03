@@ -19,24 +19,36 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         var currRec = currentRecord.get();
         var ctx = runtime.getCurrentScript();
 
+        var userName = runtime.getCurrentUser().name;
+        var userID = runtime.getCurrentUser().id;
+
         var zee_id = parseInt(currRec.getValue({ fieldId: 'custpage_price_chng_fin_zee_id' }));
         var zee_name = currRec.getValue({ fieldId: 'custpage_price_chng_fin_zee_name' });
         // var zee_email = currRec.getValue({ fieldId: 'custpage_price_chng_fin_zee_email' });
 
-        var dataSet = []
+        var dataSet = [];
 
         // Load Service Record
         const serviceTypeList = JSON.parse(currRec.getValue({ fieldId: 'custpage_price_chng_fin_service_type_obj' }));
         console.log(serviceTypeList);
 
         // Load Allocated Zee Service Record
-        const savedList = JSON.parse(currRec.getValue({ fieldId: 'custpage_price_chng_fin_allocated_zee_service_record' }));
-        console.log(savedList)
+        // const savedList = JSON.parse(currRec.getValue({ fieldId: 'custpage_price_chng_fin_allocated_zee_service_record' }));
+        // console.log(savedList);
+        // Saved Array Field Length 
+        var savedListLength = currRec.getValue({ fieldId: 'custpage_price_chng_fin_allocated_zee_service_record_length' });
+        var savedListArray = [];
+        for (var i = 0; i < savedListLength; i++) {
+            var savedListString = currRec.getValue({ fieldId: 'custpage_price_chng_fin_allocated_zee_service_record_' + i });
+            savedListArray.push(savedListString);
+        }
+        savedList = JSON.parse(savedListArray.join(''));
+        console.log(savedList);
 
         // Load Max Invoice (Most Recent Invoice from Customers Under Zee
         // var maxInvVal = loadMaxInvoice();
         var maxInvoiceArrayLength = currRec.getValue({ fieldId: 'custpage_price_chng_fin_max_invoice_array_length' });
-        console.log('maxInvoiceArrayLength: ' + maxInvoiceArrayLength);
+        // console.log('maxInvoiceArrayLength: ' + maxInvoiceArrayLength);
         // Loop through Max Invoice Array and Populate maxInvVal
         var maxInvVal = '';
         for (var i = 0; i < maxInvoiceArrayLength; i++) {
@@ -157,7 +169,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         { title: 'Child Object' } // 6 Child Object for Child Table
                     ],
                     columnDefs: [{
-                            targets: [1, 6],
+                            targets: [0, 1, 6], // Hide Expand
                             visible: false,
                         }
                     ],
@@ -212,7 +224,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     $('.total_amount').closest('tr').css('background-color', ''); // Reset CSS
 
                     // Redraw Data Table with Rows Closed.
-                    dataTable.page.len(100).draw();
+                    dataTable.page.len(1000).draw();
                     dataTable.rows().every(function() {
                         // If row has details expanded
                         if (this.child.isShown()) {
@@ -444,10 +456,10 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     })
                 };
 
-                dataTable.page.len(100).draw();
+                dataTable.page.len(1000).draw();
 
                 // Update Increase Amounts
-                alert('All Service Increase Amounts have been Updated')
+                console.log('All Service Increase Amounts have been Updated')
             });
             // Save Bulk Service Update - Modal 2
             $(document).on('click', '.save_service_2', function(event) {
@@ -522,6 +534,20 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             // $('.total_amount, .new_date_eff').change(function(){
                 if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())){
                     if ($(this).hasClass('odd')) {
+                        // $(this).closest('tr').css('background-color', 'rgba(255, 249, 190, 1)'); // LightGoldenRodYellow 
+                        $(this).closest('tr').css('background-color', 'rgba(144, 238, 144, 0.75)'); // LightGreen
+                    } else {
+                        // $(this).closest('tr').css('background-color', 'rgba(255, 249, 210, 1)'); // Ivory
+                        $(this).closest('tr').css('background-color', 'rgba(152, 251, 152, 0.75)'); // YellowGreen
+                    }
+                } else if (isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())){ 
+                    if ($(this).hasClass('odd')) {
+                        $(this).closest('tr').css('background-color', 'rgba(255, 249, 190, 1)'); // LightGoldenRodYellow
+                    } else {
+                        $(this).closest('tr').css('background-color', 'rgba(255, 249, 210, 1)'); // Ivory
+                    }
+                } else if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && isNullorEmpty($(this).closest('tr').find('.total_amount').val())){
+                    if ($(this).hasClass('odd')) {
                         $(this).closest('tr').css('background-color', 'rgba(255, 249, 190, 1)'); // LightGoldenRodYellow
                     } else {
                         $(this).closest('tr').css('background-color', 'rgba(255, 249, 210, 1)'); // Ivory
@@ -530,6 +556,13 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     $(this).closest('tr').css('background-color', '');
                 }
             })
+
+            // Remove total amount and date effective on child row on click of delete button
+            $(document).on('click', '.remove_service_row', function() {
+                $(this).closest('tr').find('.total_amount').val('');
+                $(this).closest('tr').find('.new_date_eff').val('');
+                $(this).closest('tr').css('background-color', '');
+            });
 
             console.log(ctx.getRemainingUsage())
         }
@@ -546,8 +579,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
                         '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '" disabled/>', //4
                         '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '" disabled/>', //5
-                        el.complete, //6
-                        el.approved //7
+                        '<input type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></input>', //6
+                        el.complete, //7
+                        el.approved //8
                     ]);
                 } else {
                     childSet.push([el.item, //0
@@ -556,8 +590,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
                         '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>', //4
                         '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>', //5 
-                        el.complete, //6
-                        el.approved //7
+                        '<input type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></input>', //6
+                        el.complete, //7
+                        el.approved //8
                     ]);
                 }
             });
@@ -580,15 +615,16 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     { title: 'Increase Amount' }, //3
                     { title: 'New Total Price' }, //4
                     { title: 'Date Effective' }, //5
-                    { title: 'Complete?' }, //6
-                    { title: 'Approved By IT?'} //7
+                    { title: 'Action' }, //6
+                    { title: 'Complete?' }, //7
+                    { title: 'Approved By IT?'} //8
                 ],
                 columnDefs: [{
-                    targets: [6,7],
+                    targets: [7,8],
                     visible: false
                 }, ],
                 rowCallback: function(row, data) {
-                    if (data[6] == true) {
+                    if (data[7] == true) {
                         if ($(row).hasClass('odd')) {
                             $(row).css('background-color', 'rgba(144, 238, 144, 0.75)'); // LightGreen
                         } else {
@@ -609,8 +645,6 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         }
 
         function loadCustomers(zee_id) {
-            var index = 0;
-            
             var prev_cust_id = [];
             var prev_entity_id = [];
             var prev_comp_name = [];
@@ -642,6 +676,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 console.log('Missing Invoices. Maximum Invoice Length: ' + maxInvID.length)
             }
             var customerSearchResLength = customerSearch.runPaged().count;
+            console.log(customerSearchResLength) // Get Result Length
 
             var customerServiceList = [];
             for (var i = 0; i < customerSearchResLength; i += 1000) {
@@ -651,8 +686,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 }))
             }
 
+            var total_index = 0;
             for (var x = 0; x < customerServiceList.length; x++) {
-                customerServiceList[x].forEach(function(searchResult) {
+                customerServiceList[x].forEach(function(searchResult, index, arr) {
+                    total_index++;
+                    // console.log('Index: ' + index);
+                    console.log("Total Index: " + total_index);
                     var custid = searchResult.getValue({
                         name: "internalid",
                         summary: "GROUP"
@@ -709,7 +748,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     /**
                      *  Transaction Record: Invoice Price
                      */
-                     var inv_id = searchResult.getValue({
+                    var inv_id = searchResult.getValue({
                         name: "internalid",
                         join: "transaction",
                         summary: search.Summary.GROUP
@@ -724,7 +763,15 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         join: "transaction",
                         summary: search.Summary.GROUP
                     });
-                    
+                    service_price = financial(service_price); // Add $ Formatting to Service Price
+
+                    if (serv_id_list.indexOf(parseInt(service_id)) != -1 && (index != customerSearchResLength-1) && total_index != (customerSearchResLength)){ //  If Service ID has already been pushed, Skip | Unless it is the last iteration
+                        // index++;
+                        return true;
+                    }
+                    serv_id_list.push(service_id);
+                    console.log(service_id);
+
                     // Number of Services Matches that on Invoice.
                     // var nonmatching_ServiceOnInvoice = maxInvVal.filter(function(el) { if (inv_id == el.invid && service_netsuite_item == parseInt(el.itemid) && service_price != parseFloat(el.itemrate)) { return el } });
                     // console.log(service_netsuite_item, service_price)
@@ -733,13 +780,6 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     //     console.log('Match Service with Different Price Found');
                     //     return;
                     // }
-
-                    service_price = financial(service_price); // Add $ Formatting to Service Price
-
-                    if (serv_id_list.indexOf(service_id) != -1){ // If Service ID has already been pushed, Skip
-                        return true;
-                    }
-                    serv_id_list.push(service_id);
 
                     // Default Values to be updated later by Savedlist data if Price Increase Already Scheduled.
                     var inc_price = '';
@@ -764,7 +804,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
                                 childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: (parseFloat(res.incval) - parseFloat(inv_price_val)), tot_price: res.incval, date_eff: res.date, serv_price: service_price, custid: custid, complete: true, approved: approved, inv_date: inv_date, inv_id: inv_id });
 
-                                return true;
+                                // return true;
                             })
                         } else {
                             childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
@@ -773,7 +813,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id });
                     }
                     
-                    console.log('Index: ' + index)
+                    // console.log('Index: ' + index);
+                    console.log('Cust ID ' + custid);
                     if (prev_cust_id.indexOf(custid) == -1) {
                         const tempChildObj = childObject[childObject.length - 1];
                         childObject.pop();
@@ -793,7 +834,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         prev_entity_id.push(entityid);
                         prev_comp_name.push(companyname);
                     }
-                    if (index == (customerSearchResLength - 1)){
+                    if (index == (customerSearchResLength - 1) || (total_index == (customerSearchResLength))){ // Index of Last Item in List if Ran Once, or Total Index of Last Item in List if Ran Multiple Times
+                        console.log('Last Index: ' + index);
                         dataSet.push(['',
                             '<p id="internalID" class="internalID">' + custid + '</p>',
                             '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + custid + '" target="_blank"><p class="entityid">' + entityid + "</p></a>",
@@ -807,11 +849,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     // Push Invoice Line Item to CSV Set
                     csvSet.push([custid, entityid, companyname, zee_name, last_price_increase, service, service_price, inv_price, inv_date, inv_id, tot_price, inc_price, stored_date_eff]);
 
-                    index++;            
+                    // index++;            
 
                     return true;
                 });
-
+                
                 saveCsv(csvSet);
             }
         }
@@ -992,7 +1034,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             var inc_am_elem = document.getElementsByClassName('total_amount');
             var inv_price_elem = document.getElementsByClassName('services');
 
+            var service_id_list = [];
+
             if (inv_price_elem.length > 0){
+                
+            // Try Catch Error and Display Error Message
+            try {                 
                 var cust_id_list = [];
                 for (var x = 0; x < inv_price_elem.length - 1; x++) {
                     
@@ -1012,6 +1059,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         
                         // var inc_price_assigned = inc_am_elem[x].getAttribute('data-inc-amount');
                         var service_id = inv_price_elem[x].getAttribute('data-servid');
+                        if (service_id_list.indexOf(service_id) > -1){ 
+                            continue;
+                        } else {
+                            service_id_list.push(service_id);
+                        }
 
                         console.log('Customer ID: ' + cust_id + ' Service Type ID ' + service_type_id + ' Service ID ' + service_id + ' Date ' + date_eff + ' Increase Amount ' + inc_am);
                         /**
@@ -1022,7 +1074,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                          *  New Price
                          */
                         var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servtypeid == service_type_id) { return el } });
-                        if (savedListFiltered.length > 0) {
+                        if (savedListFiltered.length > 0) { // Update Existing Record
                             savedListFiltered.forEach(function(res) {
                                 var recID = res.id;
 
@@ -1061,12 +1113,26 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         if (savedListFiltered.length > 0) {
                             savedListFiltered.forEach(function(res) {
                                 var recID = res.id;
-                                record.delete({
-                                    type: 'customrecord_spc_finance_alloc',
-                                    id: recID
-                                });
+
+                                try {
+                                    var record_exist = record.load({
+                                        type: 'customrecord_spc_finance_alloc',
+                                        id: recID
+                                    });
+                                } catch (e){
+                                    console.log(e);
+                                }
+
+                                if (record_exist){
+                                    record.delete({
+                                        type: 'customrecord_spc_finance_alloc',
+                                        id: recID
+                                    });
+                                }
+
                             });
                         }
+                        // console.log('Price Increase Field Empty')
                     } else {
                         alert('Please fill out all fields');
                         
@@ -1079,13 +1145,16 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 // Run Email Script to notify IT Team
                 email.send({
                     author: 112209, // 25537
-                    body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + '. Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1448&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: '+JSON.stringify(cust_id_list)+'</p1></body></html>',
+                    body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + '. Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1465&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: '+JSON.stringify(cust_id_list)+'</p1><br><p1>Price Change Processed by: '+userName+' '+userID+'</p1></body></html>',
                     subject: 'Scheduled Price Increase Added for ' + zee_name + ' (Finance Page)',
-                    recipients: ['anesu.chakaingesu@mailplus.com.au', 'popie.popie@mailplus.com.au'], //
-                    cc: ['fiona.harrison@mailplus.com.au', 'ankith.ravindran@mailplus.com.au']
+                    recipients: ['anesu.chakaingesu@mailplus.com.au', 'popie.popie@mailplus.com.au'], // , 
+                    cc: ['ankith.ravindran@mailplus.com.au', 'fiona.harrison@mailplus.com.au'] //,
                 });
-                alert('Records have been Saved');
+                alert('Records have been Saved. Please wait for reload.');
                 location.reload();
+            } catch (e) {
+                alert('Please Contact IT with Copy of Error Message if Issue Persists \n' + e);
+            }
             } else {
                 alert('No Records have been Saved. Please Fill Out Valid Price Increases')
             }
@@ -1124,7 +1193,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
          * Converts it to a CSV file.
          * Creates a hidden link to download the file and triggers the click of the link.
          */
-         function downloadCsv() {
+        function downloadCsv() {
             // var csv = nlapiGetFieldValue('custpage_table_csv');
             var csv = currRec.getValue({ fieldId: 'custpage_table_csv' })
             var a = document.createElement("a");
