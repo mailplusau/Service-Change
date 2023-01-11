@@ -9,6 +9,15 @@
  *
  * Description: xxxxxxxx
  * 
+ * Associated Scripts with Process: 
+ * Finance Page - Client: 1449
+ * Finance Page - Suitelet: 1448
+ * IT Page - Client: 1572
+ * IT Page - Suitelet: 1465
+ * 
+ * Scheduled Service Change: 730
+ * Automated Finance Tab Price Updated from Commenced Service Price: 1081
+ * 
  * @Last Modified by:   Anesu
  * @Last Modified time: 2021-09-20 09:33:08 
  * 
@@ -45,6 +54,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 }
                 var zee_id = 0;
                 var zee_name = '';
+                var zee_state = '';
 
                 if (!isNullorEmpty(params)) {
                     zee_id = parseInt(params.zeeid);
@@ -53,6 +63,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 if (!isNullorEmpty(zee_id) && zee_id != 0) {
                     var zee_rec = record.load({ type: 'partner', id: zee_id });
                     zee_name = zee_rec.getValue({ fieldId: 'companyname' });
+                    zee_state = zee_rec.getValue({ fieldId: 'location' })
                 }
 
                 var form = ui.createForm({ title: ' ' });
@@ -178,7 +189,6 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 }).updateDisplayType({
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = zee_id;
-
                 // Zee Name
                 form.addField({
                     id: "custpage_price_chng_fin_zee_name",
@@ -187,6 +197,14 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 }).updateDisplayType({
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = zee_name;
+                // Zee State
+                form.addField({
+                    id: "custpage_price_chng_fin_zee_state",
+                    label: "Zee State",
+                    type: ui.FieldType.TEXT,
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN,
+                }).defaultValue = zee_state;
 
                 // Load Service Type Object
                 var serviceTypeObj = loadServiceType();
@@ -504,11 +522,14 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             }));
             currAllocatedSearch.run().each(function(res) {
                 var internalid = res.getValue({ name: 'internalid' });
-                var date_eff = res.getValue({ name: 'custrecord_price_chg_fin_date_eff' });
                 var cust_id = res.getValue({ name: 'custrecord_price_chg_fin_cust_id' });
                 var service_id = res.getValue({ name: 'custrecord_price_chg_fin_serv' });
                 var service_type_id = res.getValue({ name: 'custrecord_price_chg_fin_serv_type_id' });
-                var inc_price = res.getValue({ name: 'custrecord_price_chg_fin_inc_am' });
+                // var inc_price = res.getValue({ name: 'custrecord_price_chg_fin_inc_am' }); // Old Increase Price
+                // var date_eff = res.getValue({ name: 'custrecord_price_chg_fin_date_eff' }); // Old Date Effective
+                var date_eff = res.getValue({ name: 'custrecord_servicechg_date_effective', join: 'CUSTRECORD_PRICE_CHG_IT_SERV_CHG_ID' }); // Service Change: Date Effective
+                date_eff = dateNetsuiteToISO(date_eff);
+                var inc_price = res.getValue({ name: 'custrecord_servicechg_new_price', join: 'CUSTRECORD_PRICE_CHG_IT_SERV_CHG_ID' }); // Service Change: Total Amount Val
                 
                 /** IT Page List */
                 var approved = res.getValue({ name: 'custrecord_price_chg_it_approve' });
@@ -665,6 +686,33 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 });
             }
             return date_netsuite;
+        }
+
+        /**
+         * Used to set the value of the date input fields.
+         * @param   {String} date_netsuite  "1/6/2020"
+         * @returns {String} date_iso       "2020-06-01"
+         */
+        function dateNetsuiteToISO(date_netsuite) {
+            var date_iso = '';
+            if (!isNullorEmpty(date_netsuite)) {
+                // var date = nlapiStringToDate(date_netsuite);
+
+                var date = date_netsuite.split('/');
+
+                var date_day = date[0];
+                var date_month = date[1];
+                var date_year = date[2];
+                var date_utc = new Date(Date.UTC(date_year, date_month - 1, date_day));
+                date_iso = date_utc.toISOString().split('T')[0];
+
+                // var date_day = date.getDate();
+                // var date_month = date.getMonth();
+                // var date_year = date.getFullYear();
+                // var date_utc = new Date(Date.UTC(date_year, date_month, date_day));
+                // date_iso = date_utc.toISOString().split('T')[0];
+            }
+            return date_iso;
         }
 
         function isNullorEmpty(strVal) {
