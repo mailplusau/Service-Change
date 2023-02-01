@@ -24,7 +24,7 @@ function scheduleFinancialUpdate() {
 	}
 
 	//Load search - Customers Commenced (July 31st, 2022)
-	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch_comm_vs_fin_price'); // customsearch3500 - Customers Commenced (November 1st, 2020)
+	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch_spc_comm_vs_fin_price'); // customsearch3500 - Customers Commenced (November 1st, 2020)
 	var resultSet = commencedCustomers.runSearch().getResults(mainIndex, mainIndex + 999); //10
 
 	resultSet.forEach(function(customer, index) {
@@ -34,7 +34,7 @@ function scheduleFinancialUpdate() {
 		if(usageLimit < 500 || index == 999){
 			// Reschedule script
 			params = {
-				custscript_comm_vs_fin_main_index : mainIndex + index
+				custscript_comm_vs_fin_main_index : mainIndex + index - 5
 			};
 
 			reschedule = nlapiScheduleScript(ctx.getScriptId(), ctx.getDeploymentId(), params);
@@ -102,12 +102,14 @@ function scheduleFinancialUpdate() {
 						// nlapiLogExecution('DEBUG', 'serviceOldPRice', serviceOldPrice);
 						// nlapiLogExecution('DEBUG', 'financial price', price);
 						
-						if(price == serviceOldPrice && nsName.indexOf(itemServiceName) != -1){
+						if(price == serviceOldPrice && nsName.indexOf(itemServiceName) != -1){ // Price match and service name match & itemID match
 							//update
 							nlapiLogExecution('DEBUG', '(DUP) Updated to price ' , newCommPrice);
 							customerRec.setLineItemValue('itempricing', 'price', i , newCommPrice);
 							nlapiSubmitRecord(customerRec);
 							break;
+						}else {
+							nlapiLogExecution('DEBUG', 'Price is up to date', itemId);
 						}
 					}
 				}else{
@@ -117,13 +119,15 @@ function scheduleFinancialUpdate() {
 						if(itemId ==  customerRec.getLineItemValue('itempricing', 'item', i)){
 							var price =  parseFloat(customerRec.getLineItemValue('itempricing', 'price', i));
 							//There couldbe two services with the same item Id
-							if(price != newCommPrice) {
+							if(price != newCommPrice) { // Price Doesn't Match - Update
 								// nlapiLogExecution('DEBUG', 'Updating item price', itemId);
 								nlapiLogExecution('DEBUG', 'Updated to price' , newCommPrice);
 								// update price
 								customerRec.setLineItemValue('itempricing', 'price', i , newCommPrice);
 								nlapiSubmitRecord(customerRec);
 								break;
+							} else {
+								nlapiLogExecution('DEBUG', 'Price is up to date', itemId);
 							}
 						}
 					}

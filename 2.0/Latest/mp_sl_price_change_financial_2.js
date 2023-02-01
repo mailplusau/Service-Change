@@ -216,7 +216,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     displayType: ui.FieldDisplayType.HIDDEN,
                 }).defaultValue = JSON.stringify(serviceTypeObj);
 
-                // Load Allocated Zee Service Record
+                // Load Finance Allocated Zee Service Record
                 var allocatedZeeServiceRecord = loadAllocatedZeeServiceRecord(zee_id);
                 // form.addField({
                 //     id: "custpage_price_chng_fin_allocated_zee_service_record",
@@ -438,7 +438,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
         function submit() {
             // Save Edit
-            var inlineQty = '<div class="container">'; //style="margin-top: 20px;"
+            var inlineQty = '<div class="container submitSection">'; //style="margin-top: 20px;"
+
             inlineQty += '<div class="row justify-content-center">';
 
             inlineQty += '<div class="col-xs-4"></div>';
@@ -448,7 +449,18 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '</div>';
             inlineQty += '<div class="col-xs-4"></div>';
 
-            inlineQty += '</div></div>';
+            inlineQty += '</div>';
+
+            inlineQty += '<div class="row justify-content-center">';
+
+            inlineQty += '<div class="col-xs-2"></div>';
+            inlineQty += '<div class="col-xs-8">';
+            inlineQty += '<p style="color: red; font-weight: 400; text-align: center;">To ensure records are saved correctly, DO NOT LEAVE THIS PAGE or open a new tab.\nPlease Note. If page runs out of memory whilst saving, click okay, refresh page and re-input missing data. The missing data will be saved.</p>';
+            inlineQty += '<div class="col-xs-2"></div>';
+
+            inlineQty += '</div>';
+
+            inlineQty += '</div>';
 
             return inlineQty;
         }
@@ -531,12 +543,14 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 date_eff = dateNetsuiteToISO(date_eff);
                 var inc_price = res.getValue({ name: 'custrecord_servicechg_new_price', join: 'CUSTRECORD_PRICE_CHG_IT_SERV_CHG_ID' }); // Service Change: Total Amount Val
                 
+                var serv_chg_id = res.getValue({ name: 'custrecord_price_chg_it_serv_chg_id' });
+                var comm_reg_id = res.getValue({ name: 'custrecord_price_chg_fin_comm_reg' });
+
                 /** IT Page List */
                 var approved = res.getValue({ name: 'custrecord_price_chg_it_approve' });
                 var emailed = res.getValue({ name: 'custrecord_price_chg_it_email_sent' });
-                var serv_chg_id = res.getValue({ name: 'custrecord_price_chg_it_serv_chg_id' });
 
-                savedList.push({ id: internalid, custid: cust_id, zeeid: zee_id, servid: service_id, servtypeid: service_type_id, date: date_eff, incval: inc_price, approved: approved, emailed: emailed, serv_chg_id: serv_chg_id });
+                savedList.push({ id: internalid, custid: cust_id, zeeid: zee_id, servid: service_id, servtypeid: service_type_id, date: date_eff, incval: inc_price, approved: approved, emailed: emailed, serv_chg_id: serv_chg_id, comm_reg_id: comm_reg_id });
                 return true;
             });
 

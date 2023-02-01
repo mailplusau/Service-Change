@@ -112,6 +112,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
                 // Popup Modal Section
                 inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service" data-dismiss="modal">Save</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
+                inlineHtml += '<div id="myModal3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br></div><div class="modal-body">'+instructions()+'</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
 
 
                 // Click for Instructions
@@ -126,6 +127,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
                 inlineHtml += '<br>';
                 inlineHtml += zeeDropdownSection(zee_id);
+
+                // inlineHtml += instructionSection();
 
                 if (!isNullorEmpty(zee_id)) {
                     // inlineHtml += increaseAmount();
@@ -315,6 +318,76 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<div class="col-xs-4"></div>';
 
             inlineQty += '</div></div>';
+
+            return inlineQty;
+        }
+
+        function instructionSection(){
+            //Instruction Section
+            var inlineQty = '<div class="row" style="margin-top: 20px; margin-bottom: 20px;">';
+            inlineQty += '<div class="col-md-4"></div>';
+            inlineQty += '<div class="col-md-4" style="text-align: center;">';
+            inlineQty += '<input type="button" id="btn-instructions" class="col-xs-12" style="background-color: #FBEA51; border-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px;" value="Instructions"></input>';
+            inlineQty += '</div>';
+            inlineQty += '<div class="col-md-4"></div>';
+            inlineQty += '</div>';
+
+            return inlineQty;
+        }
+
+        function instructions(){
+            var inlineQty = '';
+
+            inlineQty += '<b><u>Scheduled Price Change Page Description</u></b>';
+            inlineQty += '<br>Purpose of this page is to schedule price change on services for some customers under a Franchisee (Excluding customers such as AP, SC, NeoPost)<br>';
+            inlineQty += '<br><b>There are two options:</b><br>Complete a Bulk Update of All Services under All Customers in List using: <button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" onclick="">Add/Edit All Services</button>';
+            inlineQty += '<li>Add Services, how much you want to increase the service by (ie +$1) and date effective. Make sure to click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button> button to add into the list.</li>';
+            inlineQty += '<li>To Edit Bulk Update Service Existing click on <button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button> to submit any changes made on field.<li>';
+            inlineQty += '<li>To Delete Bulk Update Service click <button class="btn btn-danger btn-sm glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button> to remove. Then click <button type="button" class="btn btn-primary" >Update All Services</button>  to update table.<li>';
+            inlineQty += '<br>OR<br>';
+            inlineQty += '<br>Update Each Customer Separately by Service in the Customer List Table below:';
+            inlineQty += '<li>Add a New Total Amount Price and Date Effective in the Fields Respective</li>';
+            inlineQty += '<br><b>Once completed. Submit for Price Changes to be Saved/Scheduled.</b><br>';
+            inlineQty += '<br>';
+            inlineQty += '<b><u>Page Functionality</u></b>';
+            inlineQty += '<br>';
+            inlineQty += '<b>Change Price on All Services (Bulk Updated All Services)</b>';
+            inlineQty += '<br>On click of button a popup appears showing a table listing services used for a bulk update of all associated services in customer list table below. Select the services, increase amount, and date effective you would like to apply to all services and click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button>. These can be amended or deleted if you do not want to bulk update services with that amount or date effective. Once happy, click <button type="button" class="btn btn-primary">Update All Services</button> to apply to all services.<br>';
+            
+            // Table Section;
+            inlineQty += '<br>';
+            inlineQty += '<!-- Table for Add/Edit List of Services --> <li> Row appears for when you add a new bulk update service. <table class="table table-responsive table-striped"><thead><tr class=""><th><b>ACTION</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th></thead><tbody>';
+            inlineQty += '<td class=""><button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button><input type="hidden" class="" value="F" /></td>';
+            inlineQty += '<td><select class="form-control"><option></option>AMPO<option></option>PMPO<option></option></select></td><td><input class="form-control" placeholder="$" type="number"/></td>';
+            inlineQty += '<td><input class="form-control" type="date"/></td>';
+            inlineQty += '</tr></tbody></table></li>';
+            inlineQty += '<br>';
+
+            // Edit Section;
+            inlineQty += '<br>';
+            inlineQty += '<!-- Table for Add/Edit List of Services --> <li> When a bulk update service exists, you can edit it to change the increase amount or date effective. <table class="table table-responsive table-striped"><thead><tr class=""><th><b>ACTION</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th></thead><tbody>';
+            inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><button class="btn btn-danger btn-sm glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="" value="F" /></td>';
+            inlineQty += '<td><select class="form-control"><option></option>AMPO<option></option>PMPO<option></option></select></td><td><input class="form-control" placeholder="$" type="number"/></td>';
+            inlineQty += '<td><input class="form-control" type="date"/></td>';
+            inlineQty += '</tr></tbody></table></li>';
+            inlineQty += '<br>';
+
+            inlineQty += '<br>';
+            inlineQty += '<br>';
+            inlineQty += '<b>Export CSV Section</b>';
+            inlineQty += '<br>';
+            inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Export CSV</button>';
+            inlineQty += '<ul><li>On click, a CSV Export of the currently scheduled price change is downloaded. Only data which has been saved will be in this export <b>(if you have made changes on the page, but have not saved, this will not be shown in the CSV).</b></li></ul>';
+            inlineQty += '<br>';
+            inlineQty += '<b>Customer List: Filters</b>';
+            inlineQty += '<br>';
+            inlineQty += '<button class="col-xs-3" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;">Reset All</button>';
+            inlineQty += '<ul><li>Reset all services to default/blank.</li></ul>';
+            inlineQty += '<br>';
+            inlineQty += '<b>Submit</b>';
+            inlineQty += '<br>';
+            inlineQty += '<button style="background-color: #095C7B; color: white; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" class="col-xs-3" onclick="">Save/Update</button>';
+            inlineQty += '<ul><li>Click to Submit all Services Data which has been filled. This will be sent to IT team to verify and schedule all services for price increase.</li></ul>';
 
             return inlineQty;
         }
