@@ -421,6 +421,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                  *  Create New Finance Allocate Record.
                                  */
                                 var financeAllocateID = createFinanceAllocateRecord(cust_id, zee_id, zee_name, service_id, service_type_id, inc_am, date_eff_raw, service_chg_id, commRegID);
+                                savedList.push({ id: financeAllocateID, custid: cust_id, zeeid: zee_id, servid: service_id, servtypeid: service_type_id, date: date_eff_raw, incval: inc_am, approved: false, emailed: false, serv_chg_id: service_chg_id, comm_reg_id: commRegID });
                             }
                             
                             alert('Record have been Saved');
@@ -433,6 +434,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                             }
 
                             $(this).closest('td').replaceWith('<td><button type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" data-incid="'+financeAllocateID+'" data-commreg="'+commRegID+'" data-servchgid="'+service_chg_id+'" data-servid="'+service_id+'" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></button><button class="miss_inc btn btn-sm btn-warning glyphicon glyphicon-edit" data-custid="'+cust_id+'" data-servid="'+service_id+'" data-servtypeid="'+service_type_id+'" title="Edit Price Increase" type="button"/><button class="save_inc btn btn-sm btn-success glyphicon glyphicon-ok" data-custid="'+cust_id+'" data-incid="'+financeAllocateID+'" data-commreg="'+commRegID+'" title="Schedule Email" type="button"/></td>')
+                            
                         } else {
                             alert('Edit Price Increase Cancelled')
                         }
