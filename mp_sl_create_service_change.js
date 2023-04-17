@@ -44,6 +44,8 @@ function serviceChange(request, response) {
         var closed_won;
         var opp_with_value;
 
+        var save_customer;
+
         var params = request.getParameter('custparam_params');
         var salesrep = request.getParameter('salesrep');
         var sendemail = null;
@@ -53,7 +55,7 @@ function serviceChange(request, response) {
         if (isNullorEmpty(salesrep)) {
             params = JSON.parse(params);
 
-            nlapiLogExecution('DEBUG', 'params', params);
+            nlapiLogExecution('DEBUG', 'params', JSON.stringify(params));
 
             var customer = (params.custid);
             commReg = (params.commreg);
@@ -65,6 +67,7 @@ function serviceChange(request, response) {
             suspects = params.suspects;
             closed_won = params.closedwon;
             opp_with_value = params.oppwithvalue;
+            save_customer = params.savecustomer;
 
             var salesrecordid = (params.salesrecordid);
         } else {
@@ -74,6 +77,7 @@ function serviceChange(request, response) {
             deploy_id = request.getParameter('customdeploy');
             closed_won = request.getParameter('closedwon');
             opp_with_value = request.getParameter('oppwithvalue');
+            save_customer = request.getParameter('savecustomer');
             var salesrecordid = request.getParameter('salesrecordid');
         }
 
@@ -137,6 +141,7 @@ function serviceChange(request, response) {
         form.addField('custpage_deployid', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(deploy_id);
         form.addField('custpage_closed_won', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(closed_won);
         form.addField('custpage_opp_with_value', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(opp_with_value);
+        form.addField('custpage_save_customer', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(save_customer);
         form.addField('custpage_service_change_delete', 'text', 'Deploy ID').setDisplayType('hidden');
         form.addField('custpage_comm_reg_delete', 'text', 'Deploy ID').setDisplayType('hidden');
 
@@ -179,6 +184,12 @@ function serviceChange(request, response) {
             var listID = res.getValue('internalId');
             if (!isNullorEmpty(sale_type) && sale_type == listID) {
                 inlineQty += '<option value="' + listID + '" selected>' + listValue + '</option>';
+            } if (save_customer == 'T') {
+                if (listID == 7) {
+                    inlineQty += '<option value="' + listID + '" selected>' + listValue + '</option>';
+                } else {
+                    inlineQty += '<option value="' + listID + '">' + listValue + '</option>';
+                }
             } else {
                 inlineQty += '<option value="' + listID + '">' + listValue + '</option>';
             }
@@ -345,7 +356,7 @@ function serviceChange(request, response) {
 
             var resultSet_service_change = searched_service_change.runSearch();
 
-            resultSet_service_change.forEachResult(function(searchResult_service_change) {
+            resultSet_service_change.forEachResult(function (searchResult_service_change) {
 
                 service_ids[service_ids.length] = searchResult_service_change.getValue('custrecord_servicechg_service');
 
@@ -400,7 +411,7 @@ function serviceChange(request, response) {
         var serviceResult = resultSet_service.getResults(0, 1);
 
         if (serviceResult.length != 0) {
-            resultSet_service.forEachResult(function(searchResult_service) {
+            resultSet_service.forEachResult(function (searchResult_service) {
                 inlineQty += '<tr>';
 
                 inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_class glyphicon glyphicon-pencil" data-servicechangeid="' + null + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><br/><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash hide" type="button" data-servicechangeid="" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
@@ -504,6 +515,7 @@ function serviceChange(request, response) {
         var sendemail = request.getParameter('custpage_sendemail');
         var salesrecordid = request.getParameter('custpage_salesrecordid');
         var closed_won = request.getParameter('custpage_closed_won');
+
         var opp_with_value = request.getParameter('custpage_opp_with_value');
         var file = request.getFile('upload_file_1');
 
@@ -691,10 +703,12 @@ function pad(s) {
 }
 
 function GetFormattedDate(stringDate) {
-
+    nlapiLogExecution('DEBUG', 'Date string', stringDate);
     var todayDate = nlapiStringToDate(stringDate);
     var month = pad(todayDate.getMonth() + 1);
     var day = pad(todayDate.getDate());
     var year = (todayDate.getFullYear());
+    var temp = year + "-" + month + "-" + day;
+    nlapiLogExecution('DEBUG', 'Date formatted', temp);
     return year + "-" + month + "-" + day;
 }

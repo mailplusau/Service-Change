@@ -1,22 +1,18 @@
 /**
  * @NApiVersion 2.x
  * @NScriptType ClientScript
+ * Author:               Ankith Ravindran
+ * Created on:           Fri Apr 14 2023
+ * Modified on:          Fri Apr 14 2023 11:23:16
+ * SuiteScript Version:  2.0
+ * Description:          Client script for the Service Change page to notify team memebrs about service changes like Cancellations/Price Changes/Frequency Changes and more. 
+ *
+ * Copyright (c) 2023 MailPlus Pty. Ltd.
  */
 
-/**
- * Module Description
- * 
- * NSVersion    Date                        Author         
- * 2.00         2020-10-15 09:33:08         Anesu
- *
- * Description:         
- * 
- * @Last Modified by:   Anesu
- * @Last Modified time: 2020-10-15 16:49:26
- */
 
 define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentRecord', 'N/email'],
-    function(runtime, search, url, record, format, currentRecord, email) { //require, factory
+    function (runtime, search, url, record, format, currentRecord, email) { //require, factory
         var baseURL = 'https://1048144.app.netsuite.com';
         if (runtime.EnvType == "SANDBOX") {
             baseURL = 'https://system.sandbox.netsuite.com';
@@ -39,22 +35,23 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             zee = 425904; //test-AR
         }
 
+        var customer_id = null;
+
         var service_change_delete = [];
         var comm_reg_delete = [];
 
         function init() {
-            $(window).load(function() {
+            $(window).load(function () {
                 // Animate loader off screen
                 $(".se-pre-con").fadeOut("slow");
             });
 
             var app = angular.module('myApp', []);
-            app.controller('myCtrl', function($scope) {
+            app.controller('myCtrl', function ($scope) {
 
             });
 
-            $(document).on('change', '.input', function(e) {
-
+            $(document).on('change', '.input', function (e) {
 
                 pdffile = document.getElementsByClassName("input");
 
@@ -63,13 +60,12 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             });
         }
 
-
         function readURL(input) {
 
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     $('#output').attr('src', e.target.result);
                 }
 
@@ -88,30 +84,68 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             document.body.scrollTop = 0; // For Safari
             document.documentElement.scrollTop = 0;
 
-            $(document).on('click', '#alert .close', function(e) {
+            $(document).on('click', '#alert .close', function (e) {
                 $(this).parent().hide();
             });
         }
 
         function pageInit() {
             $('#alert').hide();
+            $("#NS_MENU_ID0-item0").css("background-color", "#CFE0CE");
+            $("#NS_MENU_ID0-item0 a").css("background-color", "#CFE0CE");
+            $("#body").css("background-color", "#CFE0CE");
+            $(".selectator_options").css("list-style-type", "none !important");
+            $(".selectator_option_subtitle").css("font-size", "100% !important");
+            $(".selectator_option_subtitle").css("color", "#103d39 !important");
+            $(".uir-outside-fields-table").addClass('hide');
+            $(".uir-outside-fields-table").css('margin-right', '0%');
+            $(".uir-outside-fields-table").css('margin-left', '25%');
 
             var scf_upload = document.getElementsByClassName('input');
+
+            /**
+             * Show the tabs content on click of a tab
+             */
+            $(".nav-tabs").on("click", "a", function (e) {
+                $(this).tab('show');
+            });
 
             for (var i = 0; i < scf_upload.length; i++) {
                 scf_upload[i].className += " form-control";
             }
 
-            $(function() {
+            $(function () {
                 $('[data-toggle="tooltip"]').tooltip();
             });
 
-            AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
-            $('.send_to').selectator({
-                keepOpen: true,
-                showAllOptionsOnFocus: true,
-                selectFirstOptionOnSearch: false
+            var comm_typeid = $('#commencementtype option:selected').val();
+            if (comm_typeid == 13 || comm_typeid == '13') {
+                $('#send_to').val('belinda.urbani@mailplus.com.au');
+                $(".uir-outside-fields-table").removeClass('hide');
+             }
+
+            $('#commencementtype').on('change', function () {
+                if ($(this, 'option:selected').val() == 13 || $(this, 'option:selected').val() == '13') {
+                    $('.cancel_reason_div').removeClass('hide');
+                    $('.cancel_notice_div').removeClass('hide');
+                    $('.cancel_comp_div').removeClass('hide');
+                    $(".uir-outside-fields-table").removeClass('hide');
+                    $('#send_to').val('belinda.urbani@mailplus.com.au');
+                } else {
+                    $('.cancel_reason_div').addClass('hide');
+                    $('.cancel_notice_div').addClass('hide');
+                    $('.cancel_comp_div').addClass('hide');
+                    $(".uir-outside-fields-table").addClass('hide');
+                }
+
             });
+
+            // AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
+            // $('.send_to').selectator({
+            //     keepOpen: true,
+            //     showAllOptionsOnFocus: true,
+            //     selectFirstOptionOnSearch: false
+            // });
 
             var scf_upload_field = document.getElementsByClassName('uir-field');
 
@@ -122,7 +156,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             $('#upload_file_1_fs_lbl_uir_label').attr("style", "padding-left:15%;");
 
             var test_record = currentRecord.get();
-            var customer_id = parseInt(test_record.getValue({
+            customer_id = parseInt(test_record.getValue({
                 fieldId: 'custpage_customer_id'
             }));
             var customer_record = record.load({
@@ -135,599 +169,136 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 }),
                 type: 'partner'
             });
-            //Search: SMC - Services
-            var searched_jobs_search = search.load({
-                id: 'customsearch_smc_services',
-                type: 'customrecord_service'
-            });
-            searched_jobs_search.filters.push(
-                search.createFilter({
-                    name: 'custrecord_service_customer',
-                    operator: search.Operator.IS,
-                    values: customer_id
-                })
-            );
-            var searched_jobs = searched_jobs_search.run().getRange({
-                start: 0,
-                end: 100
-            });
-            searched_jobs.forEach(function(searchResult) {
-                var item_description = searchResult.getValue({ name: 'custrecord_service_description' });
-                if (isNullorEmpty(item_description)) {
-                    item_description = 0;
-                } else {
-                    item_description = item_description.replace(/\s+/g, '-').toLowerCase()
-                }
 
-                if (item_price_array[searchResult.getValue({ name: 'custrecord_service' })] == undefined) {
-                    item_price_array[searchResult.getValue({ name: 'custrecord_service' })] = [];
-                    item_price_array[searchResult.getValue({ name: 'custrecord_service' })][0] = searchResult.getValue({ name: 'custrecord_service_price' }) + '_' + item_description;
-                } else {
-                    var size = item_price_array[searchResult.getValue({ name: 'custrecord_service' })].length;
-                    item_price_array[searchResult.getValue({ name: 'custrecord_service' })][size] = searchResult.getValue({ name: 'custrecord_service_price' }) + '_' + item_description;
-                }
 
-                item_price_count++;
-                return true;
-            });
-
-            jQuery();
         }
 
-        function jQuery() {
-            $(document).on('click', '#alert .close', function(e) {
-                $(this).parent().hide();
-            });
 
-            showAlert();
-
-            $(document).on('click', '#alert .close', function(e) {
-                $(this).parent().hide();
-            });
-
-            $('#exampleModal').on('show.bs.modal', function(event) {
-                var button = $(event).relatedTarget // Button that triggered the modal
-                var recipient = button.data('whatever') // Extract info from data-* attributes
-                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                var modal = $(this)
-                modal.find('.modal-title').text('New message to ' + recipient)
-                modal.find('.modal-body input').val(recipient)
-            });
-
-            $(document).ready(function() {
-                $(".modal_display").click(function() {
-                    var link = $(this).data("whatever");
-                    $('.modal .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Information!!</label></h4></div>');
-                    $('.modal .modal-body').html("");
-                    $('.modal .modal-body').html(link);
-                    $('.modal').modal("show");
-
-
-                });
-            });
-
-            $(document).on('click', '#create_new_service', function(e) {
-
-                reset_all();
-                $('.row_service_type').removeClass('hide');
-                $('.service_descp_row').removeClass('hide');
-                $('.price_info').removeClass('hide');
-                // $('.service_change_type_section').removeClass('hide');
-                $('.frequency_info').removeClass('hide');
-                $('.row_button').removeClass('hide');
-                $('.add_service').removeClass('hide');
-                $('.old_price_section').addClass('hide');
-                $('.create_new_service_button').addClass('hide');
-                $('.edit_service_section').addClass('hide');
-                $('#service_type').prop('disabled', false);
-            });
-
-            /**
-             * [description] - On the click of the edit button
-             */
-            $(document).on('click', '.edit_class', function(event) {
-
-                reset_all();
-
-                $('.create_new_service_button').addClass('hide');
-                $('.edit_service_section').removeClass('hide');
-
-                $('.row_service_type').removeClass('hide');
-                // $('.service_change_type_section').removeClass('hide');
-                $('.service_descp_row').removeClass('hide');
-                $('.price_info').removeClass('hide');
-                $('.frequency_info').removeClass('hide');
-                $('.row_button').removeClass('hide');
-                $('.old_price_section').removeClass('hide');
-                $('.add_service_section').addClass('hide');
-
-                var servicechangeidid = $(this).attr('data-servicechangeid');
-                var rowid = $(this).attr('data-rowid');
-                var service = $(this).closest('tr').find('.service_name').val();
-                var servicetypeid = $(this).closest('tr').find('.service_name').attr('data-servicetypeid');
-                var commtypeid = $(this).closest('tr').find('.service_name').attr('data-commtypeid');
-                var serviceid = $(this).closest('tr').find('.service_name').attr('data-serviceid');
-                var service_descp = $(this).closest('tr').find('.service_descp_class').val();
-                var old_price = $(this).closest('tr').find('.old_service_price_class').val();
-                var new_price = $(this).closest('tr').find('.new_service_price_class').val();
-                // var date_effective = $(this).closest('tr').find('.date_effective_class').val();
-
-                // var formattedDateEffective = GetFormattedDate(date_effective);
-
-                // var service_type_search = serviceTypeSearch(null, [1]);
-
-                $('#descp').val(service_descp);
-                $('#new_price').val(new_price);
-                $('#old_price').val(old_price);
-                $('#service_type').val(servicetypeid);
-                $('#commencementtype').val(commtypeid);
-                $('#servicechange_id').val(servicechangeidid);
-                $('#row_id').val(rowid);
-                $('#service_id').val(serviceid);
-                // $('#date_effective').val(formattedDateEffective);
-                $('#service_type').prop('disabled', true);
-
-                // alert($(this).closest('tr').find('input.monday_class').is(':checked'));
-
-
-                if ($(this).closest('tr').find('input.monday_class').is(':checked')) {
-                    $('#monday').prop('checked', true);
-                } else {
-                    $('#monday').prop('checked', false);
-                }
-
-                if ($(this).closest('tr').find('input.tuesday_class').is(':checked')) {
-                    $('#tuesday').prop('checked', true);
-                } else {
-                    $('#tuesday').prop('checked', false);
-                }
-                if ($(this).closest('tr').find('input.wednesday_class').is(':checked')) {
-                    $('#wednesday').prop('checked', true);
-                } else {
-                    $('#monday').prop('checked', false);
-                }
-                if ($(this).closest('tr').find('input.thursday_class').is(':checked')) {
-                    $('#thursday').prop('checked', true);
-                } else {
-                    $('#thursday').prop('checked', false);
-                }
-                if ($(this).closest('tr').find('input.friday_class').is(':checked')) {
-                    $('#friday').prop('checked', true);
-                } else {
-                    $('#friday').prop('checked', false);
-                }
-                if ($(this).closest('tr').find('input.adhoc_class').is(':checked')) {
-                    $('#adhoc').prop('checked', true);
-                } else {
-                    $('#adhoc').prop('checked', false);
-                }
-
-            });
-
-            $(document).on('click', '#edit_service', function(event) {
-
-                var date_effective = $('#date_effective').val();
-                var comm_typeid = $('#commencementtype option:selected').val();
-
-                if (isNullorEmpty(date_effective)) {
-                    alert('Please Enter the Date Effective');
-                    return false;
-                } else {
-                    var splitDate = date_effective.split('-');
-                    var dateEffective = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
-                }
-
-                if (isNullorEmpty(comm_typeid)) {
-                    alert('Please Select Sale Type');
-                    return false;
-                }
-
-                var servicechange_id = $('#servicechange_id').val();
-                var rowid = $('#row_id').val();
-                var service_id = $('#service_id').val();
-                var service_typeid = $('#service_type').val();
-
-                var service_typename = $('#service_type').text();
-                var comm_typename = $('#commencementtype option:selected').text();
-                var descp = $('#descp').val();
-                var new_price = ($('#new_price').val());
-                var old_price = parseFloat($('#old_price').val());
-
-                if (isNullorEmpty(new_price) || new_price == 0) {
-                    alert('Please Enter the New Price');
-                    return false;
-                }
-
-                var service_name_elem = document.getElementsByClassName("service_name");
-                var edit_class_elem = document.getElementsByClassName("edit_class");
-                var remove_class_elem = document.getElementsByClassName("remove_class");
-                var service_descp_class_elem = document.getElementsByClassName("service_descp_class");
-                var old_service_price_class_elem = document.getElementsByClassName("old_service_price_class");
-                var new_service_price_class_elem = document.getElementsByClassName("new_service_price_class");
-                var date_effective_class = document.getElementsByClassName("date_effective_class");
-                var created_by_class = document.getElementsByClassName("created_by_class");
-                var last_modified_class = document.getElementsByClassName("last_modified_class");
-                var comm_type_class = document.getElementsByClassName("comm_type_class");
-                var monday_class_elem = document.getElementsByClassName("monday_class");
-                var tuesday_class_elem = document.getElementsByClassName("tuesday_class");
-                var wednesday_class_elem = document.getElementsByClassName("wednesday_class");
-                var thursday_class_elem = document.getElementsByClassName("thursday_class");
-                var friday_class_elem = document.getElementsByClassName("friday_class");
-                var adhoc_class_elem = document.getElementsByClassName("adhoc_class");
-
-                if (!isNullorEmpty(service_id)) {
-                    for (var i = 0; i < edit_class_elem.length; i++) {
-                        var row_service_id = service_name_elem[i].getAttribute('data-serviceid');
-                        if (service_id == row_service_id) {
-                            if ($('input.monday').is(':checked')) {
-                                monday_class_elem[i].checked = true;
-                            } else {
-                                monday_class_elem[i].checked = false;
-                            }
-
-                            if ($('input.tuesday').is(':checked')) {
-                                tuesday_class_elem[i].checked = true;
-                            } else {
-                                tuesday_class_elem[i].checked = false;
-                            }
-                            if ($('input.wednesday').is(':checked')) {
-                                wednesday_class_elem[i].checked = true;
-                            } else {
-                                wednesday_class_elem[i].checked = false;
-                            }
-                            if ($('input.thursday').is(':checked')) {
-                                thursday_class_elem[i].checked = true;
-                            } else {
-                                thursday_class_elem[i].checked = false;
-                            }
-                            if ($('input.friday').is(':checked')) {
-                                friday_class_elem[i].checked = true;
-                            } else {
-                                friday_class_elem[i].checked = false;
-                            }
-                            if ($('input.adhoc').is(':checked')) {
-                                adhoc_class_elem[i].checked = true;
-                            } else {
-                                adhoc_class_elem[i].checked = false;
-                            }
-
-                            service_descp_class_elem[i].value = descp;
-                            old_service_price_class_elem[i].value = old_price;
-                            new_service_price_class_elem[i].value = parseFloat(new_price);
-                            date_effective_class[i].value = dateEffective;
-                            created_by_class[i].setAttribute('data-userid', runtime.getCurrentUser());
-                            last_modified_class[i].value = getDate();
-                            comm_type_class[i].value = comm_typename;
-                            comm_type_class[i].setAttribute('data-commtypeid', comm_typeid);
-                            remove_class_elem[i].classList.remove("hide");
-
-                        }
-                    }
-                } else {
-                    if ($('input.monday').is(':checked')) {
-                        monday_class_elem[rowid - 1].checked = true;
-                    } else {
-                        monday_class_elem[rowid - 1].checked = false;
-                    }
-
-                    if ($('input.tuesday').is(':checked')) {
-                        tuesday_class_elem[rowid - 1].checked = true;
-                    } else {
-                        tuesday_class_elem[rowid - 1].checked = false;
-                    }
-                    if ($('input.wednesday').is(':checked')) {
-                        wednesday_class_elem[rowid - 1].checked = true;
-                    } else {
-                        wednesday_class_elem[rowid - 1].checked = false;
-                    }
-                    if ($('input.thursday').is(':checked')) {
-                        thursday_class_elem[rowid - 1].checked = true;
-                    } else {
-                        thursday_class_elem[rowid - 1].checked = false;
-                    }
-                    if ($('input.friday').is(':checked')) {
-                        friday_class_elem[rowid - 1].checked = true;
-                    } else {
-                        friday_class_elem[rowid - 1].checked = false;
-                    }
-                    if ($('input.adhoc').is(':checked')) {
-                        adhoc_class_elem[rowid - 1].checked = true;
-                    } else {
-                        adhoc_class_elem[rowid - 1].checked = false;
-                    }
-
-                    service_descp_class_elem[rowid - 1].value = descp;
-                    old_service_price_class_elem[rowid - 1].value = old_price;
-                    new_service_price_class_elem[rowid - 1].value = parseFloat(new_price);
-                    date_effective_class[rowid - 1].value = dateEffective;
-                    created_by_class[rowid - 1].setAttribute('data-userid', runtime.getCurrentUser());
-                    last_modified_class[rowid - 1].value = getDate();
-                    comm_type_class[rowid - 1].value = comm_typename;
-                    comm_type_class[rowid - 1].setAttribute('data-commtypeid', comm_typeid);
-                    remove_class_elem[rowid - 1].classList.remove("hide");
-                }
-                reset_all();
-            });
-
-            $(document).on('click', '#add_service', function(event) {
-
-                var date_effective = $('#date_effective').val();
-                var comm_typeid = $('#commencementtype option:selected').val();
-
-                if (isNullorEmpty(date_effective)) {
-                    alert('Please Enter the Date Effective');
-                    return false;
-                } else {
-                    var splitDate = date_effective.split('-');
-                    var dateEffective = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
-                }
-
-                if (isNullorEmpty(comm_typeid)) {
-                    alert('Please Select Sale Type');
-                    return false;
-                }
-
-                var servicechange_id = $('#servicechange_id').val();
-                var service_typeid = $('#service_type option:selected').val();
-
-                var service_typename = $('#service_type option:selected').text();
-                var comm_typename = $('#commencementtype option:selected').text();
-                var descp = $('#descp').val();
-                var new_price = ($('#new_price').val());
-                var old_price = $('#old_price').val();
-
-                log.debug({
-                    title: 'new_price',
-                    details: new_price
-                });
-
-                if (isNullorEmpty(new_price) || new_price == 0) {
-                    alert('Please Enter the New Price');
-                    return false;
-                }
-
-                if (!($('input.monday').is(':checked')) && !($('input.tuesday').is(':checked')) && !($('input.wednesday').is(':checked')) && !($('input.thursday').is(':checked')) && !($('input.friday').is(':checked')) && !($('input.adhoc').is(':checked'))) {
-                    alert('Please select the frequency');
-                    return false;
-                }
-
-                if (isNullorEmpty(descp)) {
-                    descp = '';
-                } else {
-                    descp = descp.replace(/\s+/g, '-').toLowerCase()
-                }
-
-                if (item_price_array[service_typeid] != undefined) {
-                    if (isNullorEmpty(item_price_array[service_typeid].length)) {
-                        return false;
-                    }
-
-                    var size = item_price_array[service_typeid].length;
-
-                    for (var x = 0; x < size; x++) {
-
-                        var price_desc = item_price_array[service_typeid][x];
-
-                        price_desc = price_desc.split('_');
-
-                        if (price_desc[0] == parseFloat(new_price) && price_desc[1] == descp) {
-                            alert('Duplicate Service with same price has been entered');
-                            // errorAlert('Error', 'Duplicate Service with same price has been entered'); 
-                            // nlapiCancelLineItem('new_services');
-                            return false;
-                        }
-                    }
-
-                    item_price_array[service_typeid][x] = parseFloat(new_price) + '_' + descp;
-
-                } else {
-                    item_price_array[service_typeid] = [];
-                    item_price_array[service_typeid][0] = parseFloat(new_price) + '_' + descp;
-                }
-
-                // alert(dateEffective)
-                var inlineQty = '';
-
-                if (isNullorEmpty(servicechange_id)) {
-                    var rowCount = $('#services tr').length;
-                    inlineQty += '<tr>';
-                    inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_class glyphicon glyphicon-pencil" data-rowid="' + (rowCount - 1) + '" data-servicechangeid="' + null + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><br/><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
-
-                    inlineQty += '<td><div class="service_name_div"><input id="service_name" class="form-control service_name" data-serviceid="' + null + '" data-servicetypeid="' + service_typeid + '" readonly value="' + service_typename + '" /></div></td>';
-                    inlineQty += '<td><div class="service_descp_div"><input class="form-control service_descp_class" disabled value="' + descp + '"  type="text" /></div></td>';
-
-                    inlineQty += '<td><div class="service_price_div input-group"><span class="input-group-addon">$</span><input class="form-control old_service_price_class" disabled value=""  type="number" step=".01" /></div></td>';
-                    inlineQty += '<td><div class="service_price_div input-group"><span class="input-group-addon">$</span><input class="form-control new_service_price_class" disabled value="' + parseFloat(new_price) + '"  type="number" step=".01" /></div></td>';
-                    inlineQty += '<td><div class="date_effective_div input-group"><input class="form-control date_effective_class text-center" disabled value="' + dateEffective + '"  type="text" /></div></td>';
-
-                    inlineQty += '<td><div class="created_by_div input-group"><input class="form-control created_by_class text-center" disabled data-userid="' + runtime.getCurrentUser() + '" value="" type="text" /></div></td>';
-                    inlineQty += '<td><div class="last_modified_div input-group"><input class="form-control last_modified_class text-center" disabled value="' + getDate() + '"  type="text" /></div></td>';
-                    inlineQty += '<td><div class="comm_type_div input-group"><input class="form-control comm_type_class text-center" disabled value="' + comm_typename + '"  type="text" data-commtypeid="' + comm_typeid + '" /></div></td>';
-
-                    if ($('input.monday').is(':checked')) {
-                        inlineQty += '<td><div class="daily"><input class="monday_class"   type="checkbox" disabled checked/></div></td>'
-                    } else {
-                        inlineQty += '<td><div class="daily"><input class="monday_class"   type="checkbox" disabled /></div></td>'
-                    }
-
-                    if ($('input.tuesday').is(':checked')) {
-                        inlineQty += '<td><div class="daily"><input class="tuesday_class" type="checkbox" disabled checked/></div></td>'
-                    } else {
-                        inlineQty += '<td><div class="daily"><input class="tuesday_class" type="checkbox" disabled /></div></td>'
-                    }
-                    if ($('input.wednesday').is(':checked')) {
-                        inlineQty += '<td><div class="daily"><input class="wednesday_class" type="checkbox" disabled checked/></div></td>'
-                    } else {
-                        inlineQty += '<td><div class="daily"><input class="wednesday_class" type="checkbox" disabled /></div></td>'
-                    }
-                    if ($('input.thursday').is(':checked')) {
-                        inlineQty += '<td><div class="daily"><input class="thursday_class" type="checkbox" disabled checked/></div></td>'
-                    } else {
-                        inlineQty += '<td><div class="daily"><input class="thursday_class" type="checkbox" disabled /></div></td>'
-                    }
-                    if ($('input.friday').is(':checked')) {
-                        inlineQty += '<td><div class="daily"><input class="friday_class" type="checkbox" disabled checked/></div></td>'
-                    } else {
-                        inlineQty += '<td><div class="daily"><input class="friday_class" type="checkbox" disabled /></div></td>'
-                    }
-                    if ($('input.adhoc').is(':checked')) {
-                        inlineQty += '<td><div class="daily"><input class="adhoc_class" type="checkbox" disabled checked/></div></td>'
-                    } else {
-                        inlineQty += '<td><div class="daily"><input class="adhoc_class" type="checkbox" disabled /></div></td>'
-                    }
-
-                    inlineQty += '</tr>';
-
-                    $('#services tr:last').after(inlineQty);
-                }
-                reset_all();
-            });
-
-            $(document).on('click', '#adhoc', function(event) {
-                if ($('input.adhoc').is(':checked')) {
-                    $('#daily').prop('checked', false);
-                    $('#monday').prop('checked', false);
-                    $('#daily').prop('disabled', true);
-                    $('#monday').prop('disabled', true);
-                    $('#tuesday').prop('checked', false);
-                    $('#tuesday').prop('disabled', true);
-                    $('#wednesday').prop('checked', false);
-                    $('#wednesday').prop('disabled', true);
-                    $('#thursday').prop('checked', false);
-                    $('#thursday').prop('disabled', true);
-                    $('#friday').prop('checked', false);
-                    $('#friday').prop('disabled', true);
-                } else {
-                    $('#daily').prop('checked', false);
-                    $('#monday').prop('checked', false);
-                    $('#daily').prop('disabled', false);
-                    $('#monday').prop('disabled', false);
-                    $('#tuesday').prop('checked', false);
-                    $('#tuesday').prop('disabled', false);
-                    $('#wednesday').prop('checked', false);
-                    $('#wednesday').prop('disabled', false);
-                    $('#thursday').prop('checked', false);
-                    $('#thursday').prop('disabled', false);
-                    $('#friday').prop('checked', false);
-                    $('#friday').prop('disabled', false);
-                }
-            });
-
-            $(document).on('click', '#daily', function(event) {
-                if ($('input.daily').is(':checked')) {
-                    $('#monday').prop('checked', true);
-                    $('#monday').prop('disabled', true);
-                    $('#tuesday').prop('checked', true);
-                    $('#tuesday').prop('disabled', true);
-                    $('#wednesday').prop('checked', true);
-                    $('#wednesday').prop('disabled', true);
-                    $('#thursday').prop('checked', true);
-                    $('#thursday').prop('disabled', true);
-                    $('#friday').prop('checked', true);
-                    $('#adhoc').prop('checked', false);
-                    $('#friday').prop('disabled', true);
-                    $('#adhoc').prop('disabled', true);
-                } else {
-                    $('#monday').prop('checked', false);
-                    $('#monday').prop('disabled', false);
-                    $('#tuesday').prop('checked', false);
-                    $('#tuesday').prop('disabled', false);
-                    $('#wednesday').prop('checked', false);
-                    $('#wednesday').prop('disabled', false);
-                    $('#thursday').prop('checked', false);
-                    $('#thursday').prop('disabled', false);
-                    $('#friday').prop('checked', false);
-                    $('#adhoc').prop('checked', false);
-                    $('#friday').prop('disabled', false);
-                    $('#adhoc').prop('disabled', false);
-                }
-            });
-
-            /**
-             * [description] - On click of the delete button
-             */
-            $(document).on('click', '.remove_class', function(event) {
-
-                var service_change_id = $(this).attr('data-servicechangeid');
-
-                if (!isNullorEmpty(service_change_id)) {
-                    // var service_change_record = nlapiLoadRecord('customrecord_servicechg', service_change_id);
-                    var service_change_record = record.load({
-                            id: service_change_id,
-                            type: 'customrecord_servicechg'
-                        })
-                        // var date_email = service_change_record.getValue('custrecord_servicechg_date_emailed');
-                    var date_email = service_change_record.getValue({
-                        fieldId: 'custrecord_servicechg_date_emailed'
-                    });
-                } else {
-                    var date_email = null;
-                }
-
-
-                if (isNullorEmpty(date_email)) {
-                    if (confirm('Are you sure you want to delete this item?\n\nThis action cannot be undone.')) {
-
-                        var service_change_id = $(this).attr('data-servicechangeid');
-
-                        // var commRegId = nlapiGetFieldValue('custpage_customer_comm_reg');
-                        var commRegId = context.currentrecord.getValue({
-                            fieldId: 'custpage_customer_comm_reg'
-                        });
-
-                        if (!isNullorEmpty(service_change_id)) {
-                            service_change_delete[service_change_delete.length] = service_change_id;
-
-                            // console.log(service_change_delete)
-
-                            // nlapiDeleteRecord('customrecord_servicechg', service_change_id);
-
-                            $(this).closest("tr").hide();
-                        } else {
-                            $(this).closest("tr").hide();
-                        }
-
-                    }
-                } else {
-                    alert('Notification of Price Increase Email already sent out to Customer.\n\n Please contact Head Office');
-                    return false;
-                }
-            });
-
-            $(document).on('click', '#clear', function(event) {
-                reset_all();
-            });
+        /**
+         * Converts the date string in the "invoice_date" table to the format of "date_selected".
+         * @param   {String}    invoice_date    ex: '4/6/2020'
+         * @returns {String}    date            ex: '2020-06-04'
+         */
+        function dateCreated2DateSelectedFormat(invoice_date) {
+            // date_created = '4/6/2020'
+            var date_array = invoice_date.split('/');
+            // date_array = ["4", "6", "2020"]
+            var year = date_array[2];
+            var month = date_array[1];
+            if (month < 10) {
+                month = '0' + month;
+            }
+            var day = date_array[0];
+            if (day < 10) {
+                day = '0' + day;
+            }
+            return year + '-' + month + '-' + day;
         }
 
-        function reset_all() {
-            $('.row_service_type').addClass('hide');
-            $('.service_descp_row').addClass('hide');
-            $('.price_info').addClass('hide');
-            $('.frequency_info').addClass('hide');
-            // $('.service_change_type_section').addClass('hide');
-            $('.row_button').addClass('hide');
-            $('.old_price_section').addClass('hide');
-            $('.create_new_service_button').removeClass('hide');
-            $('.edit_service_section').addClass('hide');
-            $('#service_type').val(0);
-            $('#descp').val('');
-            $('#new_price').val('');
-            $('#old_price').val('');
-            $('#daily').prop('checked', false);
-            $('#monday').prop('checked', false);
-            $('#tuesday').prop('checked', false);
-            $('#wednesday').prop('checked', false);
-            $('#thursday').prop('checked', false);
-            $('#friday').prop('checked', false);
-            $('#adhoc').prop('checked', false);
-            $('#daily').prop('disabled', false);
-            $('#monday').prop('disabled', false);
-            $('#tuesday').prop('disabled', false);
-            $('#wednesday').prop('disabled', false);
-            $('#thursday').prop('disabled', false);
-            $('#friday').prop('disabled', false);
-            $('#adhoc').prop('disabled', false);
+        /**
+         * @param   {Number} x
+         * @returns {String} The same number, formatted in Australian dollars.
+         */
+        function financial(x) {
+            if (typeof (x) === 'string') {
+                x = parseFloat(x);
+            }
+            if (isNullorEmpty(x)) {
+                return "$0.00";
+            } else {
+                return x.toLocaleString('en-AU', {
+                    style: 'currency',
+                    currency: 'AUD'
+                });
+            }
+        }
+        /**
+         * [AddJavascript description] - Add the JS to the postion specified in the page.
+         * @param {[type]} jsname [description]
+         * @param {[type]} pos    [description]
+         */
+        function AddJavascript(jsname, pos) {
+            var tag = document.getElementsByTagName(pos)[0];
+            var addScript = document.createElement('script');
+            addScript.setAttribute('type', 'text/javascript');
+            addScript.setAttribute('src', jsname);
+            tag.appendChild(addScript);
+        }
+
+
+        /**
+         * [AddStyle description] - Add the CSS to the position specified in the page
+         * @param {[type]} cssLink [description]
+         * @param {[type]} pos     [description]
+         */
+        function AddStyle(cssLink, pos) {
+            var tag = document.getElementsByTagName(pos)[0];
+            var addLink = document.createElement('link');
+            addLink.setAttribute('type', 'text/css');
+            addLink.setAttribute('rel', 'stylesheet');
+            addLink.setAttribute('href', cssLink);
+            tag.appendChild(addLink);
+        }
+
+        function stringToDate(val) {
+            return format.parse({
+                value: val,
+                type: format.Type.DATE
+            })
+        }
+
+        function isNullorEmpty(strVal) {
+            return (strVal == null || strVal == '' || strVal == 'null' || strVal ==
+                undefined || strVal == 'undefined' || strVal == '- None -');
+        }
+
+        /**
+         * Load the result set of the invoices records linked to the customer.
+         * @param   {String}                customer_id
+         * @param   {String}                invoice_status
+         * @return  {nlobjSearchResultSet}  invoicesResultSet
+         */
+        function loadInvoicesSearch(customer_id, invoice_status) {
+            var invoicesResultSet;
+            if (!isNullorEmpty(customer_id)) {
+                var invoicesSearch = search.load({
+                    id: 'customsearch_mp_ticket_invoices_datatabl',
+                    type: search.Type.INVOICE
+                });
+                var invoicesFilterExpression = invoicesSearch.filterExpression;
+                invoicesFilterExpression.push('AND');
+                invoicesFilterExpression.push(['entity', search.Operator.IS,
+                    customer_id
+                ]);
+
+                // Open Invoices
+                if (invoice_status == 'open' || isNullorEmpty(invoice_status)) {
+                    invoicesFilterExpression.push('AND', ["status", search.Operator.ANYOF,
+                        "CustInvc:A"
+                    ]); // Open Invoices
+                } else if (invoice_status == 'paidInFull') {
+                    invoicesFilterExpression.push('AND', ["status", search.Operator.ANYOF,
+                        "CustInvc:B"
+                    ]); // Paid in Full
+
+                    var today_date = new Date();
+                    var today_day = today_date.getDate();
+                    var today_month = today_date.getMonth();
+                    var today_year = today_date.getFullYear();
+                    var date_3_months_ago = new Date(Date.UTC(today_year, today_month -
+                        3, today_day));
+                    var date_3_months_ago_string = formatDate(date_3_months_ago);
+                    invoicesFilterExpression.push('AND', ["trandate", search.Operator.AFTER,
+                        date_3_months_ago_string
+                    ]);
+                }
+
+                invoicesSearch.filterExpression = invoicesFilterExpression;
+                invoicesResultSet = invoicesSearch.run();
+
+            }
+
+            return invoicesResultSet;
 
         }
 
@@ -737,9 +308,11 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 fieldId: 'custpage_customer_id'
             }));
 
-            // var customer = parseInt(ctx.getParameter({
-            //     name: 'custpage_customer_id'
-            // }));
+            var uploadFile = test_record.getValue({
+                fieldId: 'upload_file_1'
+            });
+
+            console.log(uploadFile);
 
             var recCustomer = record.load({
                 type: 'customer',
@@ -749,30 +322,6 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var partner = recCustomer.getValue({ fieldId: 'partner' });
             var customer_status = recCustomer.getValue({ fieldId: 'entitystatus' });
 
-            // var partner_record = nlapiLoadRecord('partner', partner);
-            var partner_record = record.load({
-                id: partner,
-                type: 'partner'
-            })
-
-            var state = partner_record.getValue({ fieldId: 'location' });
-
-            // var customer = parseInt(ctx.getParameter({ fieldId: 'custpage_customer_id' }));
-
-            var service_name_elem = document.getElementsByClassName("service_name");
-            var edit_class_elem = document.getElementsByClassName("edit_class");
-            var service_descp_class_elem = document.getElementsByClassName("service_descp_class");
-            var old_service_price_class_elem = document.getElementsByClassName("old_service_price_class");
-            var new_service_price_class_elem = document.getElementsByClassName("new_service_price_class");
-            var monday_class_elem = document.getElementsByClassName("monday_class");
-            var tuesday_class_elem = document.getElementsByClassName("tuesday_class");
-            var wednesday_class_elem = document.getElementsByClassName("wednesday_class");
-            var thursday_class_elem = document.getElementsByClassName("thursday_class");
-            var friday_class_elem = document.getElementsByClassName("friday_class");
-            var adhoc_class_elem = document.getElementsByClassName("adhoc_class");
-            var created_by_class_elem = document.getElementsByClassName("created_by_class");
-            var last_modified_class_elem = document.getElementsByClassName("last_modified_class");
-            var comm_type_class_elem = document.getElementsByClassName("comm_type_class");
 
 
             var date_effective = $('#date_effective').val();
@@ -782,7 +331,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var comm_typeid = $('#commencementtype option:selected').val();
             var send_to = $('#send_to').val();
 
-            // console.log(send_to);
+            console.log(send_to);
             // console.log($('#send_to').val());
 
             var firstName = $('#first_name').val();
@@ -791,52 +340,95 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var phone = $('#phone').val();
             var position = $('#position').val();
 
+            var alertMessage = '';
+
+            console.log(alertMessage);
+            
             if (isNullorEmpty(firstName)) {
-                alert('Please enter First Name of requester');
-                return false;
+                alertMessage += 'Please Enter First Name of Requester</br>';
+                // return false;
             }
-
+            console.log(alertMessage);
             if (isNullorEmpty(email_address)) {
-                alert('Please enter email of requester');
-                return false;
+                alertMessage += 'Please Enter email of Requester</br>';
+                // return false;
             }
-
+            console.log(alertMessage);
             if (isNullorEmpty(phone)) {
-                alert('Please enter phone of requester');
-                return false;
+                alertMessage += 'Please enter phone of requester';
+                // return false;
             }
-
+            console.log(alertMessage);
+            var saveDateEffective = null;
             if (isNullorEmpty(date_effective)) {
-                alert('Please Enter the Date Effective');
-                return false;
+                alertMessage += 'Please Enter the Date Effective</br>';
+                // return false;
             } else {
                 var resultDate = dateEffectiveCheck(date_effective);
 
                 if (resultDate == false) {
-                    alert('Entered Date Effective should be greater than today');
-                    return false;
+                    alertMessage += 'Entered Date Effective should be greater than today</br>';
+                    // return false;
                 }
                 var splitDate = date_effective.split('-');
                 var dateEffective = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+                var dateEffectiveValue = date_effective;
+                saveDateEffective = new Date(dateEffectiveValue);
+                saveDateEffective = format.parse({ value: saveDateEffective, type: format.Type.DATE });
+                var dateEffectiveValueArray = dateEffectiveValue.split('-');
+                var dateEffectiveString = dateEffectiveValueArray[2] + '/' + dateEffectiveValueArray[1] + '/' + dateEffectiveValueArray[0];
+                formatDate(dateEffectiveString)
             }
-
+            console.log(alertMessage);
             if (isNullorEmpty(comm_typeid)) {
-                alert('Please Select Sale Type');
-                return false;
+                alertMessage += 'Please Select Sale Type</br>';
+                // return false;
+            } else if (comm_typeid == 13 || comm_typeid == '13') {
+                if (isNullorEmpty($('#cancel_reason option:selected').val())) {
+                    alertMessage += 'Please Select Cancellation Reason</br>';
+                    // return false;
+                }
+                if (isNullorEmpty($('#cancel_notice option:selected').val())) {
+                    alertMessage += 'Please Select Cancellation Notice</br>';
+                    // return false;
+                }
             }
-
+            console.log(alertMessage);
             if (isNullorEmpty(send_to)) {
-                alert('Please Select who needs to be Notified');
+                alertMessage += 'Please Select who needs to be Notified</br>';
+                // return false;
+            }
+            console.log(alertMessage);
+            if (isNullorEmpty(uploadFile)) {
+                alertMessage += 'Please Upload PDF of the cancellation email. </br>';
+                // return false;
+            }
+            console.log(alertMessage);
+
+
+            if (alertMessage != '') {
+                showAlert(alertMessage);
                 return false;
+            }
+
+            if (comm_typeid == 13 || comm_typeid == '13') {
+                var emailSubject = 'Service Cancellation Requested - ' + recCustomer.getValue({
+                    fieldId: 'entityid'
+                }) + ' ' + recCustomer.getValue({
+                    fieldId: 'companyname'
+                });
+
+            } else {
+                var emailSubject = 'Service Change Notification - ' + recCustomer.getValue({
+                    fieldId: 'entityid'
+                }) + ' ' + recCustomer.getValue({
+                    fieldId: 'companyname'
+                });
+
             }
 
 
 
-            var emailSubject = 'Service Change Notification - ' + recCustomer.getValue({
-                fieldId: 'entityid'
-            }) + ' ' + recCustomer.getValue({
-                fieldId: 'companyname'
-            });
             var emailBody = 'Customer Name: ' + recCustomer.getValue({
                 fieldId: 'entityid'
             }) + ' ' + recCustomer.getValue({
@@ -850,97 +442,138 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 emailBody += 'Position: ' + position + '</br></br>';
             }
 
-            emailBody += '</br></br><u>Service Change Details:</u></br>';
-            emailBody += 'Date Effective: ' + dateEffective + '</br>';
-            for (var i = 0; i < edit_class_elem.length; i++) {
-
-                if (i > 0) {
-                    emailBody += '</br>';
-                }
-
-                var freqArray = [];
-
-                var servicetype_text = service_name_elem[i].value;
-                var old_service_price = old_service_price_class_elem[i].value;
-                var new_service_price = new_service_price_class_elem[i].value;
-                var new_service_descp = service_descp_class_elem[i].value;
-                var comm_type = comm_type_class_elem[i].value;
-
-                if (!isNullorEmpty(comm_type)) {
-
-                    emailBody += 'Service Name: ' + servicetype_text + '</br>';
-                    emailBody += 'Old Price: ' + old_service_price + '</br>';
-                    emailBody += 'New Price: ' + new_service_price + '</br>';
-                    emailBody += 'Change Type: ' + comm_type + '</br>';
-
-                    if (monday_class_elem[i].checked == true) {
-                        emailBody += 'Monday: YES</br>';
-                    }
-
-                    if (tuesday_class_elem[i].checked == true) {
-                        emailBody += 'Tuesday: YES</br>';
-                    }
-                    if (wednesday_class_elem[i].checked == true) {
-                        emailBody += 'Wednesday: YES</br>';
-                    }
-                    if (thursday_class_elem[i].checked == true) {
-                        emailBody += 'Thursday: YES</br>';
-                    }
-                    if (friday_class_elem[i].checked == true) {
-                        emailBody += 'Friday: YES</br>';
-                    }
-                    if (adhoc_class_elem[i].checked == true) {
-                        emailBody += 'Adhoc: YES</br>';
-                    }
-                }
-            }
-
             emailBody += '</br></br>Notes: </br>' + $('#note').val();
 
-            var noteBody = emailBody.replace(new RegExp('</br>', 'g'), '\n');
+            emailBody += '</br></br>Please click the below link to view the list of customers that have requested cancellation. </br><a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1719&script=1719&deploy=1&deploy=1&compid=1048144"><b>Cancellation Request - Customer List</b></a>';
 
-            var userNoteRecord = record.create({
-                type: 'note'
+            if (!isNullorEmpty($('#note').val())) {
+                var noteBody = $('#note').val().replace(new RegExp('</br>', 'g'), '\n');
+            } else {
+                var noteBody = '';
+            }
+
+
+            // test_record.setValue({
+            //     fieldId: 'custpage_note',
+            //     value: noteBody
+            // });
+
+            test_record.setValue({
+                fieldId: 'custpage_email_body',
+                value: emailBody
             });
-            userNoteRecord.setValue({
-                fieldId: 'title',
-                value: 'Service Change Notification'
+
+            test_record.setValue({
+                fieldId: 'custpage_email_subject',
+                value: emailSubject
             });
-            userNoteRecord.setValue({
-                fieldId: 'entity',
-                value: customer
+
+
+            test_record.setValue({
+                fieldId: 'custpage_send_to',
+                value: send_to
             });
-            userNoteRecord.setValue({
-                fieldId: 'direction',
-                value: 1
+            test_record.setValue({
+                fieldId: 'custpage_sale_type',
+                value: comm_typeid
             });
-            userNoteRecord.setValue({
-                fieldId: 'notetype',
-                value: 7
-            });
-            userNoteRecord.setValue({
-                fieldId: 'note',
-                value: noteBody
-            });
-            userNoteRecord.setValue({
-                fieldId: 'author',
-                value: runtime.getCurrentUser().id
-            });
-            // userNoteRecord.setValue({
-            //     fieldId: 'notedate',
-            //     value: getDate().trim()
-            //         // value: '1/2/2020'
-            // })
-            userNoteRecord.save();
+            // 
+
+            if (comm_typeid == 13 || comm_typeid == '13') {
+                var customer_record = record.load({
+                    type: record.Type.CUSTOMER,
+                    id: parseInt(customer),
+                    isDynamic: true
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_hc_mailcon_name',
+                    value: firstName + ' ' + lastName
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_hc_mailcon_phone',
+                    value: phone
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_hc_mailcon_email',
+                    value: email_address
+                });
+
+                
+
+                customer_record.setValue({
+                    fieldId: 'custentity_cancellation_requested',
+                    value: 1
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_cancellation_requested_date',
+                    value: getDateStoreNS()
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity13',
+                    value: saveDateEffective
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_service_cancellation_notice',
+                    value: $('#cancel_notice option:selected').val(),
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_service_cancellation_reason',
+                    value: $('#cancel_reason option:selected').val(),
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity14',
+                    value: $('#cancel_comp option:selected').val(),
+                });
+
+                customer_record.save();
+            }
+
+            console.log(emailSubject);
+            console.log(emailBody);
             email.send({
                 author: 112209,
-                recipients: send_to,
+                recipients: [send_to],
                 subject: emailSubject,
                 body: emailBody,
-                cc: null
+                cc: ['luke.forbes@mailplus.com.au']
             });
 
+
+
             return true;
+        }
+
+        function getDateStoreNS() {
+            var date = new Date();
+            // if (date.getHours() > 6) {
+            //     date.setDate(date.getDate() + 1);
+            // }
+
+            format.format({
+                value: date,
+                type: format.Type.DATE,
+                timezone: format.Timezone.AUSTRALIA_SYDNEY
+            })
+
+            return date;
+        }
+
+        function formatDate(testDate) {
+            console.log('testDate: ' + testDate);
+            var responseDate = format.format({
+                value: testDate,
+                type: format.Type.DATE
+            });
+            console.log('responseDate: ' + responseDate);
+            return responseDate;
         }
 
         function onclick_back() {
@@ -952,20 +585,20 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 fieldId: 'custpage_salesrecordid'
             });
 
-            var params = {
-                custid: customer,
-                sales_record_id: sales_record
-            }
-            params = JSON.stringify(params);
-            // var upload_url = baseURL + nlapiResolveURL('SUITELET', ctx.getParameter({ name: 'custpage_scriptid'}), ctx.getParameter({ name: 'custpage_deployid'}) + '&unlayered=T&custparam_params=' + params;
-            // window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
-
-            var upload_url = baseURL + url.resolveScript({
-                deploymentId: test_record.getValue({ fieldId: 'custpage_deployid' }),
-                scriptId: test_record.getValue({ fieldId: 'custpage_scriptid' }),
-                params: params,
-            });
             var upload_url = baseURL + '/app/common/entity/custjob.nl?id=' + customer;
+            window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
+        }
+
+        function onclick_reset() {
+            var test_record = currentRecord.get();
+            var customer = parseInt(test_record.getValue({
+                fieldId: 'custpage_customer_id'
+            }));
+            var sales_record = test_record.getValue({
+                fieldId: 'custpage_salesrecordid'
+            });
+
+            var upload_url = 'https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1717&deploy=1&compid=1048144&custid=' + customer;
             window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
         }
 
@@ -1047,6 +680,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
         return {
             pageInit: pageInit,
             saveRecord: saveRecord,
-            onclick_back: onclick_back
+            onclick_back: onclick_back,
+            onclick_reset: onclick_reset
         };
     });

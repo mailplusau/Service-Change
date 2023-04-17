@@ -6,8 +6,8 @@
  *
  * Description:         
  * 
- * @Last Modified by:   ankit
- * @Last Modified time: 2020-12-03 11:03:55
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2020-02-26 10:56:29
  *
  */
 
@@ -37,17 +37,17 @@ if (role == 1000) {
 var service_change_delete = [];
 var comm_reg_delete = [];
 
-$(window).load(function() {
+$(window).load(function () {
     // Animate loader off screen
     $(".se-pre-con").fadeOut("slow");
 });
 
 var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope) {
+app.controller('myCtrl', function ($scope) {
 
 });
 
-$(document).on('change', '.input', function(e) {
+$(document).on('change', '.input', function (e) {
 
 
     pdffile = document.getElementsByClassName("input");
@@ -61,7 +61,7 @@ function readURL(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             $('#output').attr('src', e.target.result);
         }
 
@@ -88,7 +88,7 @@ function pageInit() {
         scf_upload[i].className += " form-control";
     }
 
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 
@@ -117,7 +117,7 @@ function pageInit() {
     var resultSet = searched_jobs.runSearch();
 
     //Create the item_price_array and package_name_create arrays based on the existing service records
-    resultSet.forEachResult(function(searchResult) {
+    resultSet.forEachResult(function (searchResult) {
 
         var item_description = searchResult.getValue('custrecord_service_description');
         if (isNullorEmpty(item_description)) {
@@ -145,7 +145,7 @@ function pageInit() {
 
 }
 
-$(document).on('click', '#alert .close', function(e) {
+$(document).on('click', '#alert .close', function (e) {
     $(this).parent().hide();
 });
 
@@ -154,24 +154,24 @@ function showAlert(message) {
     $('#alert').show();
 }
 
-$(document).on('click', '#alert .close', function(e) {
+$(document).on('click', '#alert .close', function (e) {
     $(this).parent().hide();
 });
 
 
 
-$('#exampleModal').on('show.bs.modal', function(event) {
+$('#exampleModal').on('show.bs.modal', function (event) {
     var button = $(event).relatedTarget // Button that triggered the modal
     var recipient = button.data('whatever') // Extract info from data-* attributes
-        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
     var modal = $(this)
     modal.find('.modal-title').text('New message to ' + recipient)
     modal.find('.modal-body input').val(recipient)
 });
 
-$(document).ready(function() {
-    $(".modal_display").click(function() {
+$(document).ready(function () {
+    $(".modal_display").click(function () {
         var link = $(this).data("whatever");
         $('.modal .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Information!!</label></h4></div>');
         $('.modal .modal-body').html("");
@@ -182,7 +182,7 @@ $(document).ready(function() {
     });
 });
 
-$(document).on('click', '#create_new_service', function(e) {
+$(document).on('click', '#create_new_service', function (e) {
 
     reset_all();
     $('.row_service_type').removeClass('hide');
@@ -227,6 +227,7 @@ function reset_all() {
     $('#thursday').prop('disabled', false);
     $('#friday').prop('disabled', false);
     $('#adhoc').prop('disabled', false);
+    $('#servicechange_id').val(0);
 
 }
 
@@ -234,7 +235,7 @@ function reset_all() {
 /**
  * [description] - On the click of the edit button
  */
-$(document).on('click', '.edit_class', function(event) {
+$(document).on('click', '.edit_class', function (event) {
 
     reset_all();
 
@@ -313,7 +314,7 @@ $(document).on('click', '.edit_class', function(event) {
 
 });
 
-$(document).on('click', '#edit_service', function(event) {
+$(document).on('click', '#edit_service', function (event) {
 
     var date_effective = $('#date_effective').val();
     var comm_typeid = $('#commencementtype option:selected').val();
@@ -470,7 +471,7 @@ $(document).on('click', '#edit_service', function(event) {
 
 });
 
-$(document).on('click', '#add_service', function(event) {
+$(document).on('click', '#add_service', function (event) {
 
     var date_effective = $('#date_effective').val();
     var comm_typeid = $('#commencementtype option:selected').val();
@@ -550,7 +551,7 @@ $(document).on('click', '#add_service', function(event) {
     // alert(dateEffective)
     var inlineQty = '';
 
-    if (isNullorEmpty(servicechange_id)) {
+    if (isNullorEmpty(servicechange_id) || servicechange_id == 0) {
         var rowCount = $('#services tr').length;
         inlineQty += '<tr>';
         inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_class glyphicon glyphicon-pencil" data-rowid="' + (rowCount - 1) + '" data-servicechangeid="' + null + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><br/><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
@@ -609,7 +610,7 @@ $(document).on('click', '#add_service', function(event) {
 
 });
 
-$(document).on('click', '#adhoc', function(event) {
+$(document).on('click', '#adhoc', function (event) {
     if ($('input.adhoc').is(':checked')) {
         $('#daily').prop('checked', false);
         $('#monday').prop('checked', false);
@@ -639,7 +640,7 @@ $(document).on('click', '#adhoc', function(event) {
     }
 });
 
-$(document).on('click', '#daily', function(event) {
+$(document).on('click', '#daily', function (event) {
     if ($('input.daily').is(':checked')) {
         $('#monday').prop('checked', true);
         $('#monday').prop('disabled', true);
@@ -705,6 +706,7 @@ function saveRecord() {
 
     var monthly_service_rate = 0.0;
     var monthly_extra_service_rate = 0.0;
+    var monthly_reduction_service_rate = 0.0;
 
 
     if (isNullorEmpty(date_effective)) {
@@ -763,6 +765,9 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
 
             }
 
@@ -772,12 +777,18 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
             if (wednesday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 3;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (thursday_class_elem[i].checked == true) {
@@ -786,6 +797,9 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
             if (friday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 5;
@@ -793,12 +807,18 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
             if (adhoc_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 6;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
 
@@ -868,7 +888,12 @@ function saveRecord() {
                     new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
                     new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
                     if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                        new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
+                        } else {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                        }
+
                     } else {
                         new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                     }
@@ -904,47 +929,47 @@ function saveRecord() {
                 var service_change_date_effective = service_change_record.getFieldValues('custrecord_servicechg_new_freq');
                 var service_change_comm_reg = service_change_record.getFieldValues('custrecord_servicechg_comm_reg');
 
-                if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_new_freq, freqArray)) || (!isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_old_freq, freqArray)) || (service_change_date_effective != dateEffective)) {
+                // if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_new_freq, freqArray)) || (!isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_old_freq, freqArray)) || (service_change_date_effective != dateEffective)) {
 
-                    console.log('inside update of Service Change record');
+                console.log('inside update of Service Change record');
 
-                    if (isNullorEmpty(commRegID)) {
-                        commRegID = loadCommReg(service_change_comm_reg, dateEffective);
-                    }
-
-                    var service_id = service_name_elem[i].getAttribute('data-serviceid');
-
-                    if (!isNullorEmpty(service_id)) {
-                        service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
-
-                        if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
-                            service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
-                        } else {
-                            service_change_record.setFieldValue('custrecord_servicechg_old_price', old_service_price_class_elem[i].value);
-
-                        }
-
-                        if (isNullorEmpty(service_change_old_freq)) {
-                            if (service_change_new_freq != freqArray) {
-                                service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
-                            } else {
-                                service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_new_freq);
-                            }
-                        } else {
-                            if (service_change_old_freq != freqArray) {
-                                service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
-                            } else {
-                                service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_old_freq);
-                            }
-                        }
-                        service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
-                        if (role != 1000) {
-                            new_service_change_record.setFieldValue('custrecord_servicechg_created', user_id);
-                        }
-
-                    }
-                    nlapiSubmitRecord(service_change_record);
+                if (isNullorEmpty(commRegID)) {
+                    commRegID = loadCommReg(service_change_comm_reg, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
                 }
+
+                var service_id = service_name_elem[i].getAttribute('data-serviceid');
+
+                if (!isNullorEmpty(service_id)) {
+                    service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+
+                    if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
+                        service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
+                    } else {
+                        service_change_record.setFieldValue('custrecord_servicechg_old_price', old_service_price_class_elem[i].value);
+
+                    }
+
+                    if (isNullorEmpty(service_change_old_freq)) {
+                        if (service_change_new_freq != freqArray) {
+                            service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
+                        } else {
+                            service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_new_freq);
+                        }
+                    } else {
+                        if (service_change_old_freq != freqArray) {
+                            service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
+                        } else {
+                            service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_old_freq);
+                        }
+                    }
+                    service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
+                    if (role != 1000) {
+                        new_service_change_record.setFieldValue('custrecord_servicechg_created', user_id);
+                    }
+
+                }
+                nlapiSubmitRecord(service_change_record);
+                // }
 
             } else if (isNullorEmpty(row_service_change_id) && !isNullorEmpty(row_service_id)) {
                 var service_record = nlapiLoadRecord('customrecord_service', row_service_id);
@@ -993,7 +1018,12 @@ function saveRecord() {
                         new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
                         if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                            new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                            if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                                new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
+                            } else {
+                                new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                            }
+
                         } else {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         }
@@ -1069,6 +1099,7 @@ function saveRecord() {
         nlapiSetFieldValue('custpage_customer_comm_reg', commRegID);
         recCustomer.setFieldValue('custentity_cust_monthly_service_value', parseFloat(monthly_service_rate * 4.25));
         recCustomer.setFieldValue('custentity_monthly_extra_service_revenue', parseFloat(monthly_extra_service_rate * 4.25));
+        recCustomer.setFieldValue('custentity_monthly_reduc_service_revenue', parseFloat(monthly_reduction_service_rate * 4.25));
         nlapiSubmitRecord(recCustomer);
 
         return true;
@@ -1123,12 +1154,18 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
             if (tuesday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 2;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (wednesday_class_elem[i].checked == true) {
@@ -1137,12 +1174,18 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
             if (thursday_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 4;
                 monthly_service_rate = parseFloat(monthly_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
             }
             if (friday_class_elem[i].checked == true) {
@@ -1151,6 +1194,9 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
             if (adhoc_class_elem[i].checked == true) {
                 freqArray[freqArray.length] = 6;
@@ -1158,8 +1204,11 @@ function saveRecord() {
                 if (sale_type == 'Extra Service' || sale_type == 'Increase of Frequency') {
                     monthly_extra_service_rate = parseFloat(monthly_extra_service_rate + parseFloat(new_service_price_class_elem[i].value));
                 }
+                if (sale_type == 'Reduction of Service' || sale_type == 'Price Decrease' || sale_type == 'Decrease of Frequency') {
+                    monthly_reduction_service_rate = parseFloat(monthly_reduction_service_rate + parseFloat(new_service_price_class_elem[i].value));
+                }
             }
-
+            console.log(freqArray);
             var row_service_change_id = edit_class_elem[i].getAttribute('data-servicechangeid');
             var row_service_id = service_name_elem[i].getAttribute('data-serviceid');
             var user_id = created_by_class_elem[i].getAttribute('data-userid');
@@ -1168,11 +1217,11 @@ function saveRecord() {
             // alert(row_service_change_id);
 
             if (isNullorEmpty(row_service_id)) {
-
+                console.log(row_service_id);
                 if (isNullorEmpty(commRegID)) {
                     commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
                 } else {
-                    loadCommReg(commRegID, dateEffective);
+                    loadCommReg(commRegID, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
                 }
 
                 console.log('inside create of Service Change record for new service');
@@ -1227,7 +1276,11 @@ function saveRecord() {
                     new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
                     new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
                     if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                        new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
+                        } else {
+                            new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                        }
                     } else {
                         new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                     }
@@ -1254,7 +1307,7 @@ function saveRecord() {
                 }
 
             } else if (!isNullorEmpty(row_service_change_id)) {
-
+                console.log(row_service_change_id);
                 var service_change_record = nlapiLoadRecord('customrecord_servicechg', row_service_change_id);
                 var service_change_new_price = service_change_record.getFieldValue('custrecord_servicechg_new_price');
                 var service_change_old_freq = service_change_record.getFieldValues('custrecord_servicechg_old_freq');
@@ -1262,59 +1315,73 @@ function saveRecord() {
                 var service_change_date_effective = service_change_record.getFieldValues('custrecord_servicechg_new_freq');
                 var service_change_comm_reg = service_change_record.getFieldValues('custrecord_servicechg_comm_reg');
 
-                if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_new_freq, freqArray)) || (!isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_old_freq, freqArray)) || (service_change_date_effective != dateEffective)) {
+                // if ((!isNullorEmpty(new_service_price_class_elem[i].value) && old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) || (isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_new_freq, freqArray)) || (!isNullorEmpty(service_change_old_freq) && !arraysEqual(service_change_old_freq, freqArray)) || (service_change_date_effective != dateEffective)) {
 
-                    console.log('inside update of Service Change record');
+                console.log('inside update of Service Change record');
 
-                    if (isNullorEmpty(commRegID)) {
-                        commRegID = loadCommReg(service_change_comm_reg, dateEffective);
-                    }
-
-                    var service_id = service_name_elem[i].getAttribute('data-serviceid');
-
-                    if (!isNullorEmpty(service_id)) {
-                        console.log(dateEffective)
-                        service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
-
-                        if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
-                            console.log(new_service_price_class_elem[i].value)
-                            service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
-                        } else {
-                            console.log(old_service_price_class_elem[i].value)
-                            service_change_record.setFieldValue('custrecord_servicechg_old_price', old_service_price_class_elem[i].value);
-
-                        }
-
-                        if (isNullorEmpty(service_change_old_freq)) {
-                            if (service_change_new_freq != freqArray) {
-                                console.log(freqArray)
-                                service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
-                            } else {
-                                console.log(service_change_new_freq)
-                                service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_new_freq);
-                            }
-                        } else {
-                            if (service_change_old_freq != freqArray) {
-                                console.log(freqArray)
-                                service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
-                            } else {
-                                console.log(service_change_old_freq)
-                                service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_old_freq);
-                            }
-                        }
-                        console.log(commRegID)
-                        service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
-                        if (role != 1000) {
-                            console.log(user_id)
-                            service_change_record.setFieldValue('custrecord_servicechg_created', user_id);
-                        }
-
-                    }
-                    console.log('submit')
-                    nlapiSubmitRecord(service_change_record);
+                if (isNullorEmpty(commRegID)) {
+                    commRegID = loadCommReg(service_change_comm_reg, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
+                } else {
+                    commRegID = loadCommReg(commRegID, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
                 }
 
+                var service_id = service_name_elem[i].getAttribute('data-serviceid');
+
+                if (!isNullorEmpty(service_id)) {
+                    console.log(dateEffective)
+                    service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+
+                    if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
+                        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                            service_change_record.setFieldValue('custrecord_servicechg_status', 1);
+                        } else {
+                            service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                        }
+                    } else {
+                        service_change_record.setFieldValue('custrecord_servicechg_status', 1);
+                    }
+
+                    if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
+                        console.log(new_service_price_class_elem[i].value)
+                        service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
+                    } else {
+                        console.log(old_service_price_class_elem[i].value)
+                        service_change_record.setFieldValue('custrecord_servicechg_old_price', old_service_price_class_elem[i].value);
+
+                    }
+
+                    if (isNullorEmpty(service_change_old_freq)) {
+                        if (service_change_new_freq != freqArray) {
+                            console.log(freqArray)
+                            service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
+                        } else {
+                            console.log(service_change_new_freq)
+                            service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_new_freq);
+                        }
+                    } else {
+                        if (service_change_old_freq != freqArray) {
+                            console.log(freqArray)
+                            service_change_record.setFieldValues('custrecord_servicechg_new_freq', freqArray);
+                        } else {
+                            console.log(service_change_old_freq)
+                            service_change_record.setFieldValues('custrecord_servicechg_old_freq', service_change_old_freq);
+                        }
+                    }
+                    console.log(commRegID)
+                    service_change_record.setFieldValue('custrecord_servicechg_comm_reg', commRegID);
+                    if (role != 1000) {
+                        console.log(user_id)
+                        service_change_record.setFieldValue('custrecord_servicechg_created', user_id);
+                    }
+
+                }
+                console.log('submit')
+                nlapiSubmitRecord(service_change_record);
+                // }
+
             } else if (isNullorEmpty(row_service_change_id) && !isNullorEmpty(row_service_id)) {
+                console.log(row_service_change_id);
+                console.log(row_service_id);
                 var service_record = nlapiLoadRecord('customrecord_service', row_service_id);
 
                 var current_price = service_record.getFieldValue('custrecord_service_price');
@@ -1361,6 +1428,11 @@ function saveRecord() {
                         new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
                         if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
+                            if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                                new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
+                            } else {
+                                new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
+                            }
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
 
                         } else {
@@ -1442,6 +1514,7 @@ function saveRecord() {
 
         recCustomer.setFieldValue('custentity_cust_monthly_service_value', parseFloat(monthly_service_rate * 4.25));
         recCustomer.setFieldValue('custentity_monthly_extra_service_revenue', parseFloat(monthly_extra_service_rate * 4.25));
+        recCustomer.setFieldValue('custentity_monthly_reduc_service_revenue', parseFloat(monthly_reduction_service_rate * 4.25));
         nlapiSubmitRecord(recCustomer);
 
 
@@ -1464,7 +1537,7 @@ function saveRecord() {
 /**
  * [description] - On click of the delete button
  */
-$(document).on('click', '.remove_class', function(event) {
+$(document).on('click', '.remove_class', function (event) {
 
     var service_change_id = $(this).attr('data-servicechangeid');
 
@@ -1488,7 +1561,7 @@ $(document).on('click', '.remove_class', function(event) {
                 service_change_delete[service_change_delete.length] = service_change_id;
 
                 console.log(service_change_delete)
-                    // nlapiDeleteRecord('customrecord_servicechg', service_change_id);
+                // nlapiDeleteRecord('customrecord_servicechg', service_change_id);
 
                 $(this).closest("tr").hide();
             } else {
@@ -1502,7 +1575,7 @@ $(document).on('click', '.remove_class', function(event) {
     }
 });
 
-$(document).on('click', '#clear', function(event) {
+$(document).on('click', '#clear', function (event) {
     reset_all();
 });
 
@@ -1553,7 +1626,13 @@ function dateEffectiveCheck(dateEffective) {
 
     var today = new Date();
 
-    if (date <= today) {
+    date.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0)
+
+    console.log('date: ' + date);
+    console.log('today ' + today);
+
+    if (date < today) {
         return false;
     } else {
         return true;
@@ -1604,7 +1683,12 @@ function createCommReg(customer, dateEffective, zee, state, sendemail, customer_
     //Scheduled
     customer_comm_reg.setFieldValue('custrecord_state', state);
     if (sendemail == 'T') {
-        customer_comm_reg.setFieldValue('custrecord_trial_status', 10);
+        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+            customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
+        } else {
+            customer_comm_reg.setFieldValue('custrecord_trial_status', 10);
+        }
+
         if (!isNullorEmpty(nlapiGetFieldValue('custpage_salesrecordid'))) {
             customer_comm_reg.setFieldValue('custrecord_commreg_sales_record', parseInt(nlapiGetFieldValue('custpage_salesrecordid')));
         }
@@ -1623,12 +1707,21 @@ function createCommReg(customer, dateEffective, zee, state, sendemail, customer_
     return commRegID;
 }
 
-function loadCommReg(id, dateEffective) {
+function loadCommReg(id, dateEffective, sendemail) {
     customer_comm_reg = nlapiLoadRecord('customrecord_commencement_register', id);
     customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
     customer_comm_reg.setFieldValue('custrecord_comm_date', dateEffective);
     customer_comm_reg.setFieldValue('custrecord_sale_type', $('#commencementtype option:selected').val())
-        // customer_comm_reg.setFieldValue('custrecord_comm_date_signup', dateEffective);
+    // customer_comm_reg.setFieldValue('custrecord_comm_date_signup', dateEffective);
+    if (sendemail == 'T') {
+        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+            customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
+        } else {
+            customer_comm_reg.setFieldValue('custrecord_trial_status', 10);
+        }
+    } else {
+        customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
+    }
     var commRegID = nlapiSubmitRecord(customer_comm_reg);
 
     return commRegID;
@@ -1648,7 +1741,7 @@ function getDate() {
     return date;
 }
 
-$(document).on('change', '#commencementtype', function(event) {
+$(document).on('change', '#commencementtype', function (event) {
     if ($('#commencementtype option:selected').val() == 6) {
         $('.get_services_section').removeClass('hide');
     }
@@ -1667,7 +1760,7 @@ function onclick_GetServices(customer_id, old_customer_id, commRegID) {
     var old_package;
     var service_count = 0;
 
-    servicesResult.forEachResult(function(serviceResult) {
+    servicesResult.forEachResult(function (serviceResult) {
         var package = serviceResult.getValue('custrecord_service_package');
         var service = serviceResult.getValue("internalid");
 
@@ -1697,4 +1790,7 @@ function onclick_GetServices(customer_id, old_customer_id, commRegID) {
         return true;
     })
     window.location.reload();
+}
+function isNullorEmpty(strVal) {
+    return (strVal == null || strVal == '' || strVal == 'null' || strVal == undefined || strVal == 'undefined' || strVal == '- None -');
 }
