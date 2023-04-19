@@ -715,7 +715,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                     type: ui.FieldType.FILE
                 }).updateLayoutType({
                     layoutType: ui.FieldLayoutType.OUTSIDEBELOW
-                }).isMandatory = true;
+                })
 
                 inlineHtml +=
                     '<div class="form-group container open_invoices requester_header">';
@@ -731,7 +731,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '<div class="form-group container date_effective_section">';
                 inlineHtml += '<div class="row">';
 
-                inlineHtml += '<div class="col-xs-12 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE <span class="mandatory" style="color:red">*</span></span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
+                inlineHtml += '<div class="col-xs-12 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE </span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
 
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
@@ -767,7 +767,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
 
                 inlineHtml += '<div class="form-group container cancel_reason_div ">';
                 inlineHtml += '<div class="row">';
-                inlineHtml += '<div class="col-xs-4 cancel_reason"><div class="input-group"><span class="input-group-addon" id="cancel_reason_text">CANCELATION REASON <span class="mandatory" style="color:red">*</span></span><select id="cancel_reason" class="form-control cancel_reason" ><option></option>';
+                inlineHtml += '<div class="col-xs-4 cancel_reason"><div class="input-group"><span class="input-group-addon" id="cancel_reason_text">CANCELATION REASON </span><select id="cancel_reason" class="form-control cancel_reason" ><option></option>';
 
                 var industry_search = search.create({
                     type: 'customlist58',
@@ -790,7 +790,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 });
                 inlineHtml += '</select></div></div>';
 
-                inlineHtml += '<div class="col-xs-4 cancel_notice"><div class="input-group"><span class="input-group-addon" id="cancel_notice_text">CANCELATION NOTICE <span class="mandatory" style="color:red">*</span></span><select id="cancel_notice" class="form-control cancel_notice" ><option></option>';
+                inlineHtml += '<div class="col-xs-4 cancel_notice"><div class="input-group"><span class="input-group-addon" id="cancel_notice_text">CANCELATION NOTICE </span><select id="cancel_notice" class="form-control cancel_notice" ><option></option>';
 
                 var industry_search = search.create({
                     type: 'customlist_cancellation_notice',

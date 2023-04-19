@@ -361,8 +361,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             console.log(alertMessage);
             var saveDateEffective = null;
             if (isNullorEmpty(date_effective)) {
-                alertMessage += 'Please Enter the Date Effective</br>';
-                // return false;
+                // alertMessage += 'Please Enter the Date Effective</br>';
+                // // return false;
             } else {
                 var resultDate = dateEffectiveCheck(date_effective);
 
@@ -384,14 +384,14 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 alertMessage += 'Please Select Sale Type</br>';
                 // return false;
             } else if (comm_typeid == 13 || comm_typeid == '13') {
-                if (isNullorEmpty($('#cancel_reason option:selected').val())) {
-                    alertMessage += 'Please Select Cancellation Reason</br>';
-                    // return false;
-                }
-                if (isNullorEmpty($('#cancel_notice option:selected').val())) {
-                    alertMessage += 'Please Select Cancellation Notice</br>';
-                    // return false;
-                }
+                // if (isNullorEmpty($('#cancel_reason option:selected').val())) {
+                //     alertMessage += 'Please Select Cancellation Reason</br>';
+                //     // return false;
+                // }
+                // if (isNullorEmpty($('#cancel_notice option:selected').val())) {
+                //     alertMessage += 'Please Select Cancellation Notice</br>';
+                //     // return false;
+                // }
             }
             console.log(alertMessage);
             if (isNullorEmpty(send_to)) {
@@ -399,10 +399,10 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 // return false;
             }
             console.log(alertMessage);
-            if (isNullorEmpty(uploadFile)) {
-                alertMessage += 'Please Upload PDF of the cancellation email. </br>';
-                // return false;
-            }
+            // if (isNullorEmpty(uploadFile)) {
+            //     alertMessage += 'Please Upload PDF of the cancellation email. </br>';
+            //     // return false;
+            // }
             console.log(alertMessage);
 
 
