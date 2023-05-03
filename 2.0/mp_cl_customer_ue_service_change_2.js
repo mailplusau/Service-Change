@@ -543,7 +543,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 recipients: [send_to],
                 subject: emailSubject,
                 body: emailBody,
-                cc: ['luke.forbes@mailplus.com.au']
+                cc: ['luke.forbes@mailplus.com.au', runtime.getCurrentUser().email]
             });
 
 
