@@ -27,6 +27,9 @@ function scheduleFinancialUpdate() {
 	var commencedCustomers = nlapiLoadSearch('customer', 'customsearch_spc_comm_vs_fin_price'); // customsearch3500 - Customers Commenced (November 1st, 2020)
 	var resultSet = commencedCustomers.runSearch().getResults(mainIndex, mainIndex + 999); //10
 
+	var oldCustomerId = null;
+	var countCustomer = 0;
+
 	resultSet.forEach(function (customer, index) {
 		indexInCallback = index;
 		var usageLimit = ctx.getRemainingUsage();
@@ -45,8 +48,7 @@ function scheduleFinancialUpdate() {
 		// } else {
 		var commId = customer.getValue('internalid', "CUSTRECORD_CUSTOMER", null);
 		var customerId = customer.getId();
-		nlapiLogExecution('DEBUG', "Customer", customerId);
-
+		nlapiLogExecution('EMERGENCY', "Customer", customerId);
 
 		//Search for all service change records within a commencement record
 		var filters = new Array();
@@ -72,8 +74,6 @@ function scheduleFinancialUpdate() {
 		});
 
 		nlapiLogExecution('DEBUG', 'service change record ns items array', nsItemIds);
-
-		var oldCustomerId = null;
 
 		commencedServices.forEach(function (service) {
 			var newCommPrice = parseFloat(service.getValue('custrecord_servicechg_new_price'));
@@ -134,23 +134,38 @@ function scheduleFinancialUpdate() {
 				}
 			}
 
-			if (oldCustomerId != null && oldCustomerId != customerId) {
-				customerRec.setFieldValue("custentity_financial_tab_updated", 1);
-				nlapiSubmitRecord(customerRec);
-			}
 
-
-			oldCustomerId = customerId;
 		});
 		// }
 		params = null
 
-		reschedule = nlapiScheduleScript(ctx.getScriptId(), ctx.getDeploymentId(), params);
-		if (reschedule == false) {
-			nlapiLogExecution('DEBUG', 'Rescheduling Completed', reschedule);
-			return false;
+		if (oldCustomerId != null && oldCustomerId != customerId) {
+			var customerRec = nlapiLoadRecord('customer', oldCustomerId);
+			customerRec.setFieldValue("custentity_financial_tab_updated", 1);
+			nlapiSubmitRecord(customerRec);
+			nlapiLogExecution('EMERGENCY', 'Customer Updated');
+			reschedule = nlapiScheduleScript(ctx.getScriptId(), ctx.getDeploymentId(), params);
+			if (reschedule == false) {
+				// nlapiLogExecution('DEBUG', 'Rescheduling Completed', reschedule);
+				return false;
+			}
 		}
+
+
+		oldCustomerId = customerId;
+		countCustomer++;
+		// reschedule = nlapiScheduleScript(ctx.getScriptId(), ctx.getDeploymentId(), params);
+		// if (reschedule == false) {
+		// 	nlapiLogExecution('DEBUG', 'Rescheduling Completed', reschedule);
+		// 	return false;
+		// }
 	});
+
+	if (countCustomer > 0) {
+		var customerRec = nlapiLoadRecord('customer', oldCustomerId);
+		customerRec.setFieldValue("custentity_financial_tab_updated", 1);
+		nlapiSubmitRecord(customerRec);
+	}
 
 	//To ensure nothing was missed
 	// var will_reschedule = (indexInCallback < 999) ? false : true;
