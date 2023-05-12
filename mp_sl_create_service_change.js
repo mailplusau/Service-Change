@@ -72,7 +72,7 @@ function serviceChange(request, response) {
             var salesrecordid = (params.salesrecordid);
         } else {
             var customer = request.getParameter('custid');
-            commReg = request.getParameter('commreg');
+            commReg = String(request.getParameter('commreg'));
             script_id = request.getParameter('customid');
             deploy_id = request.getParameter('customdeploy');
             closed_won = request.getParameter('closedwon');
@@ -122,7 +122,7 @@ function serviceChange(request, response) {
         // 	return true;
         // });
 
-        form.addField('custpage_customer_id', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(customer);
+        form.addField('custpage_customer_id', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(String(customer));
         form.addField('custpage_customer_entityid', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(recCustomer.getFieldValue('entityid'));
         form.addField('custpage_customer_franchisee', 'text', 'Franchisee ID').setDisplayType('hidden').setDefaultValue(nlapiLookupField('customer', customer, 'partner'));
         if (!isNullorEmpty(commReg)) {
@@ -132,11 +132,11 @@ function serviceChange(request, response) {
             sale_type = customer_comm_reg.getFieldValue('custrecord_sale_type');
         }
         form.addField('custpage_edit_page', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(editPage);
-        form.addField('custpage_customer_comm_reg', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(commReg);
+        form.addField('custpage_customer_comm_reg', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(String(commReg));
         form.addField('custpage_date_effective', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(dateEffective);
         form.addField('custpage_salesrep', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(salesrep);
         form.addField('custpage_sendemail', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(sendemail);
-        form.addField('custpage_salesrecordid', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(salesrecordid);
+        form.addField('custpage_salesrecordid', 'text', 'Comm Reg ID').setDisplayType('hidden').setDefaultValue(String(salesrecordid));
         form.addField('custpage_scriptid', 'text', 'Script ID').setDisplayType('hidden').setDefaultValue(script_id);
         form.addField('custpage_deployid', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(deploy_id);
         form.addField('custpage_closed_won', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(closed_won);
