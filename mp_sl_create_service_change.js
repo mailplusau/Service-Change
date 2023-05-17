@@ -608,7 +608,7 @@ function serviceChange(request, response) {
 
             }
 
-            nlapiSetRedirectURL('SUITELET', 'customscript_sl_finalise_page', 'customdeploy_sl_finalise_page', null, params);
+            nlapiSetRedirectURL('SUITELET', 'customscript_sl_finalise_page_tn_v2_vue', 'customdeploy_sl_finalise_page_tn_v2_vue', null, params);
         } else if (!isNullorEmpty(salesrep) && salesrep == 'F' && !isNullorEmpty(sendemail) && sendemail == 'T') {
 
             nlapiLogExecution('DEBUG', 'suspects', suspects);
@@ -626,8 +626,8 @@ function serviceChange(request, response) {
                     sales_record_id: salesrecordid,
                     closedwon: closed_won,
                     oppwithvalue: opp_with_value,
-                    script_id: 'customscript_sl_finalise_page',
-                    script_deploy: 'customdeploy_sl_finalise_page'
+                    script_id: 'customscript_sl_finalise_page_tn_v2_vue',
+                    script_deploy: 'customdeploy_sl_finalise_page_tn_v2_vue'
                 };
                 nlapiSetRedirectURL('SUITELET', 'customscript_sl_send_email_module', 'customdeploy_sl_send_email_module', null, params);
             }
