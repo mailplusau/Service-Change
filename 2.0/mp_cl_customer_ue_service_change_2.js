@@ -479,7 +479,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             }
 
             if (comm_typeid == 21 || comm_typeid == '21') {
-                if (!isNullorEmpty($('#new_surcharge').val())) { 
+                if (!isNullorEmpty($('#new_surcharge').val())) {
                     emailBody += 'New Surcharge Rate requested by customer. </br>New Surcharge: ' + $('#new_surcharge').val();
                 }
             }
