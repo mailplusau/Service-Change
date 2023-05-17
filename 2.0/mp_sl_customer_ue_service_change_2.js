@@ -83,6 +83,8 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 var selected_invoice_cycle_id = null;
                 var status_value = null;
                 var account_manager = null;
+                var current_surcharge_rate = null;
+                var new_surcharge_rate = null;
 
                 type = context.request.parameters.type;
                 customer_id = context.request.parameters.custid;
@@ -579,6 +581,17 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                     fieldId: 'custentity_mp_toll_salesrep'
                 });
 
+
+                current_surcharge_rate = customer_record.getValue({
+                    fieldId: 'custentity_service_fuel_surcharge_percen'
+                });
+
+
+                new_surcharge_rate = customer_record.getValue({
+                    fieldId: 'custentity_old_surcharge_rate'
+                });
+
+
                 var savedNoteSearch = search.load({
                     id: 'customsearch_user_note',
                     type: 'note'
@@ -654,9 +667,11 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                  */
 
                 var inlineHtml =
-                    '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"><link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"><script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script><link rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2060796&c=1048144&h=9ee6accfd476c9cae718&_xt=.css"/><script src="https://1048144.app.netsuite.com/core/media/media.nl?id=2060797&c=1048144&h=ef2cda20731d146b5e98&_xt=.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css">';
+                    '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"><link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"><script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script><link rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2060796&c=1048144&h=9ee6accfd476c9cae718&_xt=.css"/><script src="https://1048144.app.netsuite.com/core/media/media.nl?id=2060797&c=1048144&h=ef2cda20731d146b5e98&_xt=.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css"><style>.mandatory{color:red;} .body{background-color: #CFE0CE !important;}.wrapper{position:fixed;height:2em;width:2em;overflow:show;margin:auto;top:0;left:0;bottom:0;right:0;justify-content: center; align-items: center; display: -webkit-inline-box;} .ball{width: 22px; height: 22px; border-radius: 11px; margin: 0 10px; animation: 2s bounce ease infinite;} .blue{background-color: #0f3d39; }.red{background-color: #095C7B; animation-delay: .25s;}.yellow{background-color: #387081; animation-delay: .5s}.green{background-color: #d0e0cf; animation-delay: .75s}@keyframes bounce{50%{transform: translateY(25px);}}</style >';
+                inlineHtml += loadingSection();
+
                 inlineHtml +=
-                    '<div class="container" style="padding-top: 3%;"><div id="alert" class="alert alert-danger fade in"></div></div>';
+                    '<div class="container" style="padding-top: 3%;"><div id="alert" class="alert alert-danger fade in hide"></div></div>';
 
                 // Load DataTables
                 inlineHtml +=
@@ -665,7 +680,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                     '<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>';
 
                 inlineHtml +=
-                    '<div class="form-group container open_invoices requester_header">';
+                    '<div class="form-group container requester_header hide">';
                 inlineHtml += '<div class="row">';
                 inlineHtml += '<div class="col-xs-12 heading2">';
                 inlineHtml +=
@@ -673,21 +688,21 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div></div></div>';
 
 
-                inlineHtml += '<div class="form-group container row_salutation ">';
+                inlineHtml += '<div class="form-group container first_name_row hide">';
                 inlineHtml += '<div class="row">'
 
                 inlineHtml += '<div class="col-xs-12 first_name_section"><div class="input-group"><span class="input-group-addon">FIRST NAME <span class="mandatory" style="color:red">*</span></span><input type="text" id="first_name" class="form-control " /></div></div>';
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                inlineHtml += '<div class="form-group container row_salutation ">';
+                inlineHtml += '<div class="form-group container last_name_row hide ">';
                 inlineHtml += '<div class="row">'
                 inlineHtml += '<div class="col-xs-12 last_name_section"><div class="input-group"><span class="input-group-addon">LAST NAME</span><input type="text" id="last_name" class="form-control" /></div></div>';
 
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                inlineHtml += '<div class="form-group container row_details ">';
+                inlineHtml += '<div class="form-group container email_row hide ">';
                 inlineHtml += '<div class="row">'
 
                 inlineHtml += '<div class="col-xs-12 email_section"><div class="input-group"><span class="input-group-addon">EMAIL <span class="mandatory" style="color:red">*</span></span><input type="email" id="email" class="form-control " /></div></div>';
@@ -695,7 +710,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                inlineHtml += '<div class="form-group container row_category ">';
+                inlineHtml += '<div class="form-group container position_role_row hide ">';
                 inlineHtml += '<div class="row">'
 
                 inlineHtml += '<div class="col-xs-6 position_section"><div class="input-group"><span class="input-group-addon">POSITION</span><input type="text" id="position" class="form-control " /></div></div>';
@@ -703,7 +718,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                inlineHtml += '<div class="form-group container note_section">';
+                inlineHtml += '<div class="form-group container note_section hide">';
                 inlineHtml += '<div class="row">';
                 inlineHtml += '<div class="col-xs-12 note"><div class="input-group"><span class="input-group-addon" id="note_text">NOTE </span><textarea id="note" class="form-control note" rows="4" cols="50"  /></textarea></div></div>';
                 inlineHtml += '</div>';
@@ -718,7 +733,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 })
 
                 inlineHtml +=
-                    '<div class="form-group container open_invoices requester_header">';
+                    '<div class="form-group container  service_change_header hide">';
                 inlineHtml += '<div class="row">';
                 inlineHtml += '<div class="col-xs-12 heading2">';
                 inlineHtml +=
@@ -728,7 +743,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div>';
 
 
-                inlineHtml += '<div class="form-group container date_effective_section">';
+                inlineHtml += '<div class="form-group container date_effective_section hide">';
                 inlineHtml += '<div class="row">';
 
                 inlineHtml += '<div class="col-xs-12 "><div class="input-group"><span class="input-group-addon">DATE EFFECTIVE </span><input type="date" id="date_effective" value="" class="form-control date_effective"/></div></div>';
@@ -736,7 +751,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                inlineHtml += '<div class="form-group container service_change_type_section ">';
+                inlineHtml += '<div class="form-group container service_change_type_section hide">';
                 inlineHtml += '<div class="row">';
                 inlineHtml += '<div class="col-xs-12 commencementtype"><div class="input-group"><span class="input-group-addon" id="commencementtype_text">SALE TYPE <span class="mandatory" style="color:red">*</span></span><select id="commencementtype" class="form-control commencementtype" ><option></option>';
 
@@ -755,17 +770,17 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 resResult.forEach(function (res) {
                     var listValue = res.getValue({ name: 'name' });
                     var listID = res.getValue({ name: 'internalId' });
-                    if (listID == 13) {
-                        inlineHtml += '<option value="' + listID + '" selected>' + listValue + '</option>';
+                    if (listID == 13 || listID == 21) {
+                        inlineHtml += '<option value="' + listID + '" >' + listValue + '</option>';
                     }
-                    
+
                 });
 
                 inlineHtml += '</select></div></div>';
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                inlineHtml += '<div class="form-group container cancel_reason_div ">';
+                inlineHtml += '<div class="form-group container cancel_reason_div hide">';
                 inlineHtml += '<div class="row">';
                 inlineHtml += '<div class="col-xs-4 cancel_reason"><div class="input-group"><span class="input-group-addon" id="cancel_reason_text">CANCELATION REASON </span><select id="cancel_reason" class="form-control cancel_reason" ><option></option>';
 
@@ -836,8 +851,19 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
+                inlineHtml += '<div class="form-group container surcharge_div hide">';
+                inlineHtml += '<div class="row">';
+                inlineHtml += '<div class="col-xs-6 current_surcharge_div"><div class="input-group"><span class="input-group-addon" id="cancel_reason_text">CURRENT SURCHARGE RATE (%) </span><input type="number" id="current_surcharge" class="form-control" value="' + current_surcharge_rate + '" readonly/></div></div>';
 
-                inlineHtml += '<div class="form-group container send_to_section ">';
+                inlineHtml += '<div class="col-xs-6 new_surcharge_div"><div class="input-group"><span class="input-group-addon" id="cancel_notice_text">NEW SURCHARGE RATE (%) </span><input type="number" id="new_surcharge" class="form-control " value="' + new_surcharge_rate + '"/></div></div>';
+
+
+                inlineHtml += '</div>';
+                inlineHtml += '</div>';
+
+
+
+                inlineHtml += '<div class="form-group container send_to_section hide">';
                 inlineHtml += '<div class="row">'
                 inlineHtml += '<div class="col-xs-12 send_to_section"><div class="input-group"><span class="input-group-addon">NOTIFY <span class="mandatory" style="color:red">*</span></span><select class="form-control send_to" id="send_to"><option></option>';
 
@@ -1064,8 +1090,8 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                         id: parseInt(customerId),
                         isDynamic: true
                     });
-    
-                   
+
+
 
                     if (!isNullorEmpty(proofid)) {
                         customer_record.setValue({
@@ -1073,10 +1099,10 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                             value: proofid
                         });
                     }
-    
+
                     customer_record.save();
                 }
-    
+
                 context.response.sendRedirect({
                     type: http.RedirectType.RECORD,
                     identifier: record.Type.CUSTOMER,
@@ -1639,6 +1665,25 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
             })
 
             return date;
+        }
+
+        function loadingSection() {
+
+
+            var inlineHtml = '<div class="wrapper loading_section" style="height: 10em !important;left: 50px !important">';
+            inlineHtml += '<div class="row">';
+            inlineHtml += '<div class="col-xs-12 ">';
+            inlineHtml += '<h1 style="color: #095C7B;">Loading</h1>';
+            inlineHtml += '</div></div></div></br></br>';
+            inlineHtml += '<div class="wrapper loading_section">';
+            inlineHtml += '<div class="blue ball"></div>'
+            inlineHtml += '<div class="red ball"></div>'
+            inlineHtml += '<div class="yellow ball"></div>'
+            inlineHtml += '<div class="green ball"></div>'
+
+            inlineHtml += '</div>'
+
+            return inlineHtml;
         }
 
         function getDatePDF() {

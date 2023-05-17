@@ -89,8 +89,29 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             });
         }
 
+        function beforeLoad() {
+
+        }
+
+        function afterLoad() {
+
+            $('.requester_header').removeClass('hide');
+            $('.first_name_row').removeClass('hide');
+            $('.last_name_row').removeClass('hide');
+            $('.email_row').removeClass('hide');
+            $('.position_role_row').removeClass('hide');
+            $('.note_section').removeClass('hide');
+            $('.service_change_header').removeClass('hide');
+            $('.date_effective_section').removeClass('hide');
+            $('.service_change_type_section').removeClass('hide');
+            $('.send_to_section').removeClass('hide');
+            // $('.surcharge_div').removeClass('hide');
+
+            $('.loading_section').addClass('hide');
+        }
+
         function pageInit() {
-            $('#alert').hide();
+            // $('#alert').hide();
             $("#NS_MENU_ID0-item0").css("background-color", "#CFE0CE");
             $("#NS_MENU_ID0-item0 a").css("background-color", "#CFE0CE");
             $("#body").css("background-color", "#CFE0CE");
@@ -100,6 +121,11 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             $(".uir-outside-fields-table").addClass('hide');
             $(".uir-outside-fields-table").css('margin-right', '0%');
             $(".uir-outside-fields-table").css('margin-left', '25%');
+
+            // $('.cancel_reason_div').addClass('hide');
+            // $('.cancel_notice_div').addClass('hide');
+            // $('.cancel_comp_div').addClass('hide');
+            $(".uir-outside-fields-table").addClass('hide');
 
             var scf_upload = document.getElementsByClassName('input');
 
@@ -122,7 +148,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             if (comm_typeid == 13 || comm_typeid == '13') {
                 $('#send_to').val('belinda.urbani@mailplus.com.au');
                 $(".uir-outside-fields-table").removeClass('hide');
-             }
+            }
 
             $('#commencementtype').on('change', function () {
                 if ($(this, 'option:selected').val() == 13 || $(this, 'option:selected').val() == '13') {
@@ -131,6 +157,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     $('.cancel_comp_div').removeClass('hide');
                     $(".uir-outside-fields-table").removeClass('hide');
                     $('#send_to').val('belinda.urbani@mailplus.com.au');
+                } else if ($(this, 'option:selected').val() == 21 || $(this, 'option:selected').val() == '21') {
+                    $('.surcharge_div').removeClass('hide');
                 } else {
                     $('.cancel_reason_div').addClass('hide');
                     $('.cancel_notice_div').addClass('hide');
@@ -169,6 +197,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 }),
                 type: 'partner'
             });
+
+            afterLoad();
 
 
         }
@@ -343,7 +373,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var alertMessage = '';
 
             console.log(alertMessage);
-            
+
             if (isNullorEmpty(firstName)) {
                 alertMessage += 'Please Enter First Name of Requester</br>';
                 // return false;
@@ -361,8 +391,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             console.log(alertMessage);
             var saveDateEffective = null;
             if (isNullorEmpty(date_effective)) {
-                // alertMessage += 'Please Enter the Date Effective</br>';
-                // // return false;
+                alertMessage += 'Please Enter the Date Effective</br>';
+                return false;
             } else {
                 var resultDate = dateEffectiveCheck(date_effective);
 
@@ -418,6 +448,12 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     fieldId: 'companyname'
                 });
 
+            } else if (comm_typeid == 21 || comm_typeid == '21') {
+                var emailSubject = 'Service Surcharge Enquiry - ' + recCustomer.getValue({
+                    fieldId: 'entityid'
+                }) + ' ' + recCustomer.getValue({
+                    fieldId: 'companyname'
+                });
             } else {
                 var emailSubject = 'Service Change Notification - ' + recCustomer.getValue({
                     fieldId: 'entityid'
@@ -440,6 +476,12 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             emailBody += 'Phone: ' + phone + '</br>';
             if (!isNullorEmpty(position)) {
                 emailBody += 'Position: ' + position + '</br></br>';
+            }
+
+            if (comm_typeid == 21 || comm_typeid == '21') {
+                if (!isNullorEmpty($('#new_surcharge').val())) { 
+                    emailBody += 'New Surcharge Rate requested by customer. </br>New Surcharge: ' + $('#new_surcharge').val();
+                }
             }
 
             emailBody += '</br></br>Notes: </br>' + $('#note').val();
@@ -501,7 +543,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     value: email_address
                 });
 
-                
+
 
                 customer_record.setValue({
                     fieldId: 'custentity_cancellation_requested',
@@ -534,6 +576,22 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 });
 
                 customer_record.save();
+            } else if (comm_typeid == 21 || comm_typeid == '21') {
+                if (!isNullorEmpty($('#new_surcharge').val())) {
+                    var customer_record = record.load({
+                        type: record.Type.CUSTOMER,
+                        id: parseInt(customer),
+                        isDynamic: true
+                    });
+
+                    customer_record.setValue({
+                        fieldId: 'custentity_old_surcharge_rate',
+                        value: $('#new_surcharge').val(),
+                    });
+
+                    customer_record.save();
+                }
+
             }
 
             console.log(emailSubject);
