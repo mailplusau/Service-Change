@@ -3,7 +3,7 @@
  * @NScriptType ClientScript
  * Author:               Ankith Ravindran
  * Created on:           Fri Apr 14 2023
- * Modified on:          Fri Apr 14 2023 11:23:16
+ * Modified on:          2023-05-18 09:09:21
  * SuiteScript Version:  2.0
  * Description:          Client script for the Service Change page to notify team memebrs about service changes like Cancellations/Price Changes/Frequency Changes and more. 
  *
@@ -205,7 +205,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 type: 'partner'
             });
 
-            
+
             afterLoad();
 
 

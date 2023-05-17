@@ -3,7 +3,7 @@
  * @NScriptType Suitelet
  * Author:               Ankith Ravindran
  * Created on:           Fri Apr 11 2023
- * Modified on:          Fri Apr 14 2023 11:18:57
+ * Modified on:          2023-05-18 09:09:09
  * SuiteScript Version:  2.0
  * Description:          Service Change page to notify team memebrs about service changes like Cancellations/Price Changes/Frequency Changes and more.
  *
