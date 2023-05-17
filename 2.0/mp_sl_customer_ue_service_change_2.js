@@ -889,7 +889,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '</div>';
                 inlineHtml += '</div>';
 
-                // inlineHtml += openInvoicesSection(ticket_id, selector_type);
+                inlineHtml += openInvoicesSection(customer_id);
                 // inlineHtml +=
                 //     '<div class="container"><div class="tabs" style="font-size: xx-small;"><ul class="nav nav-tabs nav-justified" style="padding-top: 3%;border-bottom: 1px solid white;">';
                 // var tab_content = '';
@@ -1118,48 +1118,117 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
          * @param   {String}    selector_type
          * @return  {String}    inlineHtml
          */
-        function openInvoicesSection(ticket_id, selector_type) {
-            if (isNullorEmpty(ticket_id)) {
-                ticket_id = ''
-            }
+        function openInvoicesSection(customer_id) {
 
-            //var hide_class_section = (isNullorEmpty(ticket_id) || selector_type != 'invoice_number') ? 'hide' : '';
-            var hide_class_section = '';
-            // Open invoices header
-            var inlineHtml =
-                '<div class="form-group container open_invoices open_invoices_header ' +
-                hide_class_section + '">';
+
+            var invoicesSearch = search.load({
+                id: 'customsearch_mp_ticket_invoices_datatabl',
+                type: search.Type.INVOICE
+            });
+
+            var today_date = new Date();
+            var today_day = today_date.getDate();
+            var today_month = today_date.getMonth();
+            var today_year = today_date.getFullYear();
+            var date_3_months_ago = new Date(Date.UTC(today_year, today_month -
+                3, today_day));
+            var date_3_months_ago_string = formatDate(date_3_months_ago);
+            // invoicesFilterExpression.push('AND', ["trandate", search.Operator.AFTER,
+            //     date_3_months_ago_string
+            // ]);
+            log.debug({
+                title: 'date_3_months_ago_string',
+                details: date_3_months_ago_string
+            })
+
+            invoicesSearch.filters.push(search.createFilter({
+                name: 'trandate',
+                join: null,
+                operator: search.Operator.ONORAFTER,
+                values: date_3_months_ago_string
+            }));
+
+            invoicesSearch.filters.push(search.createFilter({
+                name: 'internalid',
+                join: 'customer',
+                operator: search.Operator.ANYOF,
+                values: customer_id
+            }));
+
+            inlineHtml = '<div class="form-group container open_invoices_header hide">';
             inlineHtml += '<div class="row">';
-            inlineHtml += '<div class="col-xs-12 heading2">';
             inlineHtml +=
-                '<h4><span class="label label-default col-xs-12" style="background-color: #095c7b;">OPEN INVOICES</span></h4>';
-            inlineHtml += '</div></div></div>';
+                '<div class="col-xs-12 "><h4><span class="label label-default col-xs-12" style="background-color: #095c7b;">LAST 3 INVOICES</span></h4></div>';
+            inlineHtml += '</div>';
+            inlineHtml += '</div>';
 
-            // Open invoices dropdown field
-            inlineHtml +=
-                '<div class="form-group container open_invoices invoices_dropdown ' +
-                hide_class_section + '">';
+            inlineHtml += '<div class="form-group container invoices_table hide">';
             inlineHtml += '<div class="row">';
-            inlineHtml += '<div class="col-xs-12 invoices_dropdown_div">';
-            inlineHtml += '<div class="input-group">';
-            inlineHtml +=
-                '<span class="input-group-addon" id="invoices_dropdown_text">INVOICE STATUS</span>';
-            inlineHtml += '<select id="invoices_dropdown" class="form-control">';
-            inlineHtml += '<option value="open" selected>Open</option>';
-            inlineHtml +=
-                '<option value="paidInFull">Paid In Full (last 3 months)</option>';
-            inlineHtml += '</select>';
-            inlineHtml += '</div></div></div></div>';
+            inlineHtml += '<div class="col-xs-12">';
 
-            // Open Invoices Datatable
             inlineHtml +=
-                '<div class="form-group container open_invoices open_invoices_table ' +
-                hide_class_section + '">';
-            inlineHtml += '<div class="row">';
-            inlineHtml += '<div class="col-xs-12" id="open_invoice_dt_div">';
-            // It is inserted as inline html in the script mp_cl_open_ticket
-            inlineHtml += '</div></div></div>';
+                '<style>table#customer_invoice {font-size:12px; text-align:center; border-color: #24385b}</style><table border="0" cellpadding="15" id="customer_invoice" class="table table-responsive table-striped customer tablesorter cell-border compact" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #095c7b;"></tr><tr class="text-center">';
 
+            /**
+             * INVOICE DATE
+             */
+            inlineHtml +=
+                '<th style="vertical-align: middle;text-align: center;"><b>INVOICE DATE</b></th>';
+            /**
+             * INVOICE NO.
+             */
+            inlineHtml +=
+                '<th style="vertical-align: middle;text-align: center;"><b>INVOICE NO.</b></th>';
+            /**
+             * INVOICE TOTAL
+             */
+            inlineHtml +=
+                '<th style="vertical-align: middle;text-align: center;" ><b>INVOICE TOTAL</b></th>';
+
+            /**
+             * INVOICE STATUS
+             */
+            inlineHtml +=
+                '<th style="vertical-align: middle;text-align: center;"><b>STATUS</b></th></tr></thead><tbody>';
+
+
+            invoicesSearch.run().each(function (
+                invoicesSearchResultSet) {
+
+                var invoice_date = (invoicesSearchResultSet.getValue({
+                    name: 'trandate'
+                }));
+                var invoice_internal_id = (invoicesSearchResultSet.getValue({
+                    name: 'internalid'
+                }));
+                var invoice_document_number = (invoicesSearchResultSet.getValue({
+                    name: 'tranid'
+                }));
+                var invoice_total = (invoicesSearchResultSet.getValue({
+                    name: 'total'
+                }));
+                var invoice_status = (invoicesSearchResultSet.getText({
+                    name: 'statusref'
+                }));
+
+
+
+                inlineHtml += '<tr>';
+                inlineHtml += '<td>' + invoice_date + '</td>';
+                inlineHtml += '<td><a href="' + baseURL +
+                    '/app/accounting/transactions/custinvc.nl?id=' + invoice_internal_id + '" target="_blank">' + invoice_document_number + '</a></td>';
+                inlineHtml += '<td>' + invoice_total + '</td>';
+                inlineHtml += '<td>' + invoice_status + '</td>';
+                inlineHtml += '</tr>';
+
+
+                return true;
+            });
+
+            inlineHtml += '</tbody></table>';
+            inlineHtml += '</div>';
+            inlineHtml += '</div>';
+            inlineHtml += '</div>';
             return inlineHtml;
         }
         /*
@@ -1709,6 +1778,14 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
             var day = pad(todayDate.getDate());
             var year = (todayDate.getFullYear());
             return year + "-" + month + "-" + day;
+        }
+
+        function formatDate(testDate) {
+            var responseDate = format.format({
+                value: testDate,
+                type: format.Type.DATE
+            });
+            return responseDate;
         }
 
         function isNullorEmpty(val) {

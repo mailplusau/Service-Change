@@ -119,6 +119,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             $(".selectator_option_subtitle").css("font-size", "100% !important");
             $(".selectator_option_subtitle").css("color", "#103d39 !important");
             $(".uir-outside-fields-table").addClass('hide');
+            $("#preview_table_fs").removeClass('text');
             $(".uir-outside-fields-table").css('margin-right', '0%');
             $(".uir-outside-fields-table").css('margin-left', '25%');
 
@@ -157,13 +158,19 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     $('.cancel_comp_div').removeClass('hide');
                     $(".uir-outside-fields-table").removeClass('hide');
                     $('#send_to').val('belinda.urbani@mailplus.com.au');
+                    $('.open_invoices_header').addClass('hide');
+                    $('.invoices_table').addClass('hide');
                 } else if ($(this, 'option:selected').val() == 21 || $(this, 'option:selected').val() == '21') {
                     $('.surcharge_div').removeClass('hide');
+                    $('.open_invoices_header').removeClass('hide');
+                    $('.invoices_table').removeClass('hide');
                 } else {
                     $('.cancel_reason_div').addClass('hide');
                     $('.cancel_notice_div').addClass('hide');
                     $('.cancel_comp_div').addClass('hide');
                     $(".uir-outside-fields-table").addClass('hide');
+                    $('.open_invoices_header').addClass('hide');
+                    $('.invoices_table').addClass('hide');
                 }
 
             });
@@ -198,6 +205,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 type: 'partner'
             });
 
+            
             afterLoad();
 
 
@@ -585,7 +593,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     });
 
                     customer_record.setValue({
-                        fieldId: 'custentity_old_surcharge_rate',
+                        fieldId: 'custentity_new_surcharge_rate',
                         value: $('#new_surcharge').val(),
                     });
 
