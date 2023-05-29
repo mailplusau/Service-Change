@@ -85,6 +85,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 var account_manager = null;
                 var current_surcharge_rate = null;
                 var new_surcharge_rate = null;
+                var sales_rep_assigned = null;
 
                 type = context.request.parameters.type;
                 customer_id = context.request.parameters.custid;
@@ -142,6 +143,9 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                     });
                     zee_abn = zeeRecord.getValue({
                         fieldId: 'custentity_abn_franchiserecord'
+                    });
+                    sales_rep_assigned = zeeRecord.getValue({
+                        fieldId: 'custentity_sales_rep_assigned'
                     });
                 }
                 //Customer Status
@@ -999,7 +1003,15 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                     label: 'Email Body'
                 }).updateDisplayType({
                     displayType: ui.FieldDisplayType.HIDDEN
-                })
+                });
+
+                form.addField({
+                    id: 'custpage_sales_rep_assigned',
+                    type: ui.FieldType.TEXT,
+                    label: 'Sales Rep Assigned'
+                }).updateDisplayType({
+                    displayType: ui.FieldDisplayType.HIDDEN
+                }).defaultValue = sales_rep_assigned
 
                 form.addSubmitButton({
                     label: 'Submit'

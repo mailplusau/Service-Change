@@ -147,17 +147,39 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
 
             var comm_typeid = $('#commencementtype option:selected').val();
             if (comm_typeid == 13 || comm_typeid == '13') {
+                var test_record = currentRecord.get();
+                var sales_rep_assigned = (test_record.getValue({
+                    fieldId: 'custpage_sales_rep_assigned'
+                }));
+                if (sales_rep_assigned == '668711') {
+                    $('#send_to').val('lee.russell@mailplus.com.au');
+                } else if (sales_rep_assigned == '696160') {
+                    $('#send_to').val('kerina.helliwell@mailplus.com.au');
+                } else {
+                    $('#send_to').val('belinda.urbani@mailplus.com.au');
+                }
                 $('#send_to').val('belinda.urbani@mailplus.com.au');
                 $(".uir-outside-fields-table").removeClass('hide');
             }
 
             $('#commencementtype').on('change', function () {
+                var test_record = currentRecord.get();
+                var sales_rep_assigned = (test_record.getValue({
+                    fieldId: 'custpage_sales_rep_assigned'
+                }));
                 if ($(this, 'option:selected').val() == 13 || $(this, 'option:selected').val() == '13') {
                     $('.cancel_reason_div').removeClass('hide');
                     $('.cancel_notice_div').removeClass('hide');
                     $('.cancel_comp_div').removeClass('hide');
                     $(".uir-outside-fields-table").removeClass('hide');
-                    $('#send_to').val('belinda.urbani@mailplus.com.au');
+                    if (sales_rep_assigned == '668711') {
+                        $('#send_to').val('lee.russell@mailplus.com.au');
+                    } else if (sales_rep_assigned == '696160') {
+                        $('#send_to').val('kerina.helliwell@mailplus.com.au');
+                    } else {
+                        $('#send_to').val('belinda.urbani@mailplus.com.au');
+                    }
+
                     $('.open_invoices_header').addClass('hide');
                     $('.invoices_table').addClass('hide');
                 } else if ($(this, 'option:selected').val() == 21 || $(this, 'option:selected').val() == '21') {
@@ -399,8 +421,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             console.log(alertMessage);
             var saveDateEffective = null;
             if (isNullorEmpty(date_effective)) {
-                alertMessage += 'Please Enter the Date Effective</br>';
-                return false;
+                // alertMessage += 'Please Enter the Date Effective</br>';
+                // return false;
             } else {
                 var resultDate = dateEffectiveCheck(date_effective);
 
