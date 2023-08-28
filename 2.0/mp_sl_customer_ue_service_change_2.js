@@ -774,7 +774,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 resResult.forEach(function (res) {
                     var listValue = res.getValue({ name: 'name' });
                     var listID = res.getValue({ name: 'internalId' });
-                    if (listID == 13 || listID == 21) {
+                    if (listID == 13 || listID == 21 || listID == 7 || listID == 7 || listID == 15 || listID == 2) {
                         inlineHtml += '<option value="' + listID + '" >' + listValue + '</option>';
                     }
 
@@ -859,7 +859,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
                 inlineHtml += '<div class="row">';
                 inlineHtml += '<div class="col-xs-6 current_surcharge_div"><div class="input-group"><span class="input-group-addon" id="cancel_reason_text">CURRENT SURCHARGE RATE (%) </span><input type="number" id="current_surcharge" class="form-control" value="' + current_surcharge_rate + '" readonly/></div></div>';
 
-                inlineHtml += '<div class="col-xs-6 new_surcharge_div"><div class="input-group"><span class="input-group-addon" id="cancel_notice_text">NEW SURCHARGE RATE (%) </span><input type="number" id="new_surcharge" class="form-control " value="' + new_surcharge_rate + '"/></div></div>';
+                inlineHtml += '<div class="col-xs-6 new_surcharge_div"><div class="input-group"><span class="input-group-addon" id="cancel_notice_text">NEW SURCHARGE RATE (%) </span><input type="number" step="any" id="new_surcharge" class="form-control " value="' + new_surcharge_rate + '"/></div></div>';
 
 
                 inlineHtml += '</div>';

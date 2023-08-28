@@ -182,10 +182,22 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
 
                     $('.open_invoices_header').addClass('hide');
                     $('.invoices_table').addClass('hide');
+                    $('.send_to_section').removeClass('hide');
+                    $('.surcharge_div').removeClass('hide');
+                    $('.open_invoices_header').removeClass('hide');
+                    $('.invoices_table').removeClass('hide');
+
+                    
+
+            // $('.surcharge_div').removeClass('hide');
                 } else if ($(this, 'option:selected').val() == 21 || $(this, 'option:selected').val() == '21') {
                     $('.surcharge_div').removeClass('hide');
                     $('.open_invoices_header').removeClass('hide');
                     $('.invoices_table').removeClass('hide');
+                    $('.cancel_reason_div').addClass('hide');
+                    $('.cancel_notice_div').addClass('hide');
+                    $('.cancel_comp_div').addClass('hide');
+                    $('.send_to_section').addClass('hide');
                 } else {
                     $('.cancel_reason_div').addClass('hide');
                     $('.cancel_notice_div').addClass('hide');
@@ -193,6 +205,14 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     $(".uir-outside-fields-table").addClass('hide');
                     $('.open_invoices_header').addClass('hide');
                     $('.invoices_table').addClass('hide');
+                    $('.send_to_section').removeClass('hide');
+                    if (sales_rep_assigned == '668711') {
+                        $('#send_to').val('lee.russell@mailplus.com.au');
+                    } else if (sales_rep_assigned == '696160') {
+                        $('#send_to').val('kerina.helliwell@mailplus.com.au');
+                    } else {
+                        $('#send_to').val('belinda.urbani@mailplus.com.au');
+                    }
                 }
 
             });
@@ -626,15 +646,18 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
 
             console.log(emailSubject);
             console.log(emailBody);
-            email.send({
-                author: 112209,
-                recipients: [send_to],
-                subject: emailSubject,
-                body: emailBody,
-                cc: ['luke.forbes@mailplus.com.au', runtime.getCurrentUser().email]
-            });
 
-
+            if (comm_typeid != 21 || comm_typeid != '21') {
+                email.send({
+                    author: 112209,
+                    recipients: [send_to],
+                    subject: emailSubject,
+                    body: emailBody,
+                    cc: ['luke.forbes@mailplus.com.au', runtime.getCurrentUser().email]
+                });
+    
+            }
+            
 
             return true;
         }
