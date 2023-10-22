@@ -41,6 +41,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
         var comm_reg_delete = [];
 
         function init() {
+            $('#alert').hide();
             $(window).load(function () {
                 // Animate loader off screen
                 $(".se-pre-con").fadeOut("slow");
@@ -111,7 +112,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
         }
 
         function pageInit() {
-            // $('#alert').hide();
+            $('#alert').hide();
             $("#NS_MENU_ID0-item0").css("background-color", "#CFE0CE");
             $("#NS_MENU_ID0-item0 a").css("background-color", "#CFE0CE");
             $("#body").css("background-color", "#CFE0CE");
@@ -122,6 +123,16 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             $("#preview_table_fs").removeClass('text');
             $(".uir-outside-fields-table").css('margin-right', '0%');
             $(".uir-outside-fields-table").css('margin-left', '25%');
+            // $('select[multiple]').multiselect();
+
+            // $('#send_to').multiselect({
+            //     columns: 1,
+            //     texts: {
+            //         placeholder: 'Please select who you want to notify',
+            //         search     : 'Search User'
+            //     },
+            //     search: true
+            // });
 
             // $('.cancel_reason_div').addClass('hide');
             // $('.cancel_notice_div').addClass('hide');
@@ -187,9 +198,9 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     $('.open_invoices_header').removeClass('hide');
                     $('.invoices_table').removeClass('hide');
 
-                    
 
-            // $('.surcharge_div').removeClass('hide');
+
+                    // $('.surcharge_div').removeClass('hide');
                 } else if ($(this, 'option:selected').val() == 21 || $(this, 'option:selected').val() == '21') {
                     $('.surcharge_div').removeClass('hide');
                     $('.open_invoices_header').removeClass('hide');
@@ -199,6 +210,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     $('.cancel_comp_div').addClass('hide');
                     $('.send_to_section').addClass('hide');
                 } else {
+                    $('.surcharge_div').addClass('hide');
                     $('.cancel_reason_div').addClass('hide');
                     $('.cancel_notice_div').addClass('hide');
                     $('.cancel_comp_div').addClass('hide');
@@ -411,6 +423,8 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var comm_typeid = $('#commencementtype option:selected').val();
             var send_to = $('#send_to').val();
 
+            
+
             console.log(send_to);
             // console.log($('#send_to').val());
 
@@ -425,17 +439,23 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             console.log(alertMessage);
 
             if (isNullorEmpty(firstName)) {
-                alertMessage += 'Please Enter First Name of Requester</br>';
+                alertMessage += 'Please Enter First Name of Requester';
+                showAlert(alertMessage);
+                return false;
                 // return false;
             }
             console.log(alertMessage);
             if (isNullorEmpty(email_address)) {
-                alertMessage += 'Please Enter email of Requester</br>';
+                alertMessage += 'Please Enter email of Requester';
+                showAlert(alertMessage);
+                return false;
                 // return false;
             }
             console.log(alertMessage);
             if (isNullorEmpty(phone)) {
                 alertMessage += 'Please enter phone of requester';
+                showAlert(alertMessage);
+                return false;
                 // return false;
             }
             console.log(alertMessage);
@@ -461,7 +481,9 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             }
             console.log(alertMessage);
             if (isNullorEmpty(comm_typeid)) {
-                alertMessage += 'Please Select Sale Type</br>';
+                alertMessage += 'Please Select Sale Type';
+                showAlert(alertMessage);
+                return false;
                 // return false;
             } else if (comm_typeid == 13 || comm_typeid == '13') {
                 // if (isNullorEmpty($('#cancel_reason option:selected').val())) {
@@ -474,9 +496,13 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                 // }
             }
             console.log(alertMessage);
-            if (isNullorEmpty(send_to)) {
-                alertMessage += 'Please Select who needs to be Notified</br>';
-                // return false;
+            if (comm_typeid != 21 || comm_typeid != '21') {
+                if (isNullorEmpty(send_to)) {
+                    alertMessage += 'Please Select who needs to be Notified';
+                    showAlert(alertMessage);
+                    return false;
+                    // return false;
+                }
             }
             console.log(alertMessage);
             // if (isNullorEmpty(uploadFile)) {
@@ -486,10 +512,10 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             console.log(alertMessage);
 
 
-            if (alertMessage != '') {
-                showAlert(alertMessage);
-                return false;
-            }
+            // if (alertMessage != '') {
+            //     showAlert(alertMessage);
+            //     return false;
+            // }
 
             if (comm_typeid == 13 || comm_typeid == '13') {
                 var emailSubject = 'Service Cancellation Requested - ' + recCustomer.getValue({
@@ -536,7 +562,9 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
 
             emailBody += '</br></br>Notes: </br>' + $('#note').val();
 
-            emailBody += '</br></br>Please click the below link to view the list of customers that have requested cancellation. </br><a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1719&script=1719&deploy=1&deploy=1&compid=1048144"><b>Cancellation Request - Customer List</b></a>';
+            if (comm_typeid == 13 || comm_typeid == '13') {
+                emailBody += '</br></br>Please click the below link to view the list of customers that have requested cancellation. </br><a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1719&script=1719&deploy=1&deploy=1&compid=1048144"><b>Cancellation Request - Customer List</b></a>';
+            }
 
             if (!isNullorEmpty($('#note').val())) {
                 var noteBody = $('#note').val().replace(new RegExp('</br>', 'g'), '\n');
@@ -650,14 +678,14 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             if (comm_typeid != 21 || comm_typeid != '21') {
                 email.send({
                     author: 112209,
-                    recipients: [send_to],
+                    recipients: send_to,
                     subject: emailSubject,
                     body: emailBody,
-                    cc: ['luke.forbes@mailplus.com.au', runtime.getCurrentUser().email]
+                    cc: [runtime.getCurrentUser().email]
                 });
-    
-            }
-            
+
+            } 
+
 
             return true;
         }
