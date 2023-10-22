@@ -318,6 +318,9 @@ $(document).on('click', '#edit_service', function (event) {
 
     var date_effective = $('#date_effective').val();
     var comm_typeid = $('#commencementtype option:selected').val();
+    var salesRecordId = parseInt(nlapiGetFieldValue('custpage_salesrecordid'));
+    var salesRecord = nlapiLoadRecord('customrecord_sales', salesRecordId);
+    var salesCampaign = salesRecord.getFieldValue('custrecord_sales_campaign');
 
     if (isNullorEmpty(date_effective)) {
         alert('Please Enter the Date Effective');
@@ -343,9 +346,24 @@ $(document).on('click', '#edit_service', function (event) {
     var new_price = ($('#new_price').val());
     var old_price = parseFloat($('#old_price').val());
 
-    if (isNullorEmpty(new_price) || new_price == 0) {
-        alert('Please Enter the New Price');
-        return false;
+    if (isNullorEmpty(new_price)) {
+        if (service_typeid != 24) {
+            alert('Please Enter the New Price');
+            return false;
+        }
+        // if (service_typeid != 24 && service_typeid != 4) {
+        //     alert('Please Enter the New Price');
+        //     return false;
+        // }
+    } else if (salesCampaign != 69 && new_price == 0) {
+        if (service_typeid != 24 ) {
+            alert('Please Enter the New Price');
+            return false;
+        }
+        // if (service_typeid != 24 && service_typeid != 4) {
+        //     alert('Please Enter the New Price');
+        //     return false;
+        // }
     }
 
     var service_name_elem = document.getElementsByClassName("service_name");
@@ -475,6 +493,9 @@ $(document).on('click', '#add_service', function (event) {
 
     var date_effective = $('#date_effective').val();
     var comm_typeid = $('#commencementtype option:selected').val();
+    var salesRecordId = parseInt(nlapiGetFieldValue('custpage_salesrecordid'));
+    var salesRecord = nlapiLoadRecord('customrecord_sales', salesRecordId);
+    var salesCampaign = salesRecord.getFieldValue('custrecord_sales_campaign');
 
     if (isNullorEmpty(date_effective)) {
         alert('Please Enter the Date Effective');
@@ -500,11 +521,25 @@ $(document).on('click', '#add_service', function (event) {
 
     console.log(new_price);
 
-    if (isNullorEmpty(new_price) || new_price == 0) {
+    if (isNullorEmpty(new_price)) {
+        if (service_typeid != 24 ) {
+            alert('Please Enter the New Price');
+            return false;
+        }
+        // if (service_typeid != 24 && service_typeid != 4) {
+        //     alert('Please Enter the New Price');
+        //     return false;
+        // }
+    } else if (salesCampaign != 69 && new_price == 0) {
         if (service_typeid != 24) {
             alert('Please Enter the New Price');
             return false;
         }
+
+        // if (service_typeid != 24 && service_typeid != 4) {
+        //     alert('Please Enter the New Price');
+        //     return false;
+        // }
     }
 
     if (!($('input.monday').is(':checked')) && !($('input.tuesday').is(':checked')) && !($('input.wednesday').is(':checked')) && !($('input.thursday').is(':checked')) && !($('input.friday').is(':checked')) && !($('input.adhoc').is(':checked'))) {
