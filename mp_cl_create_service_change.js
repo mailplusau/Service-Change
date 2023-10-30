@@ -317,6 +317,7 @@ $(document).on('click', '.edit_class', function (event) {
 $(document).on('click', '#edit_service', function (event) {
 
     var date_effective = $('#date_effective').val();
+    var date_trial_end = $('#date_trial_end').val();
     var comm_typeid = $('#commencementtype option:selected').val();
     var salesRecordId = parseInt(nlapiGetFieldValue('custpage_salesrecordid'));
     var salesRecord = nlapiLoadRecord('customrecord_sales', salesRecordId);
@@ -328,6 +329,22 @@ $(document).on('click', '#edit_service', function (event) {
     } else {
         var splitDate = date_effective.split('-');
         var dateEffective = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+    }
+
+    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+        if (isNullorEmpty(date_trial_end)) {
+            alert('Please Enter the Trial End Date');
+            return false;
+        } else {
+            var resultDate = dateEffectiveCheck(date_trial_end);
+
+            if (resultDate == false) {
+                alert('Entered Trial End Date should be greater than today');
+                return false;
+            }
+            var splitDate = date_trial_end.split('-');
+            var date_trial_end = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+        }
     }
 
     if (isNullorEmpty(comm_typeid)) {
@@ -356,7 +373,7 @@ $(document).on('click', '#edit_service', function (event) {
         //     return false;
         // }
     } else if (salesCampaign != 69 && new_price == 0) {
-        if (service_typeid != 24 ) {
+        if (service_typeid != 24) {
             alert('Please Enter the New Price');
             return false;
         }
@@ -373,6 +390,9 @@ $(document).on('click', '#edit_service', function (event) {
     var old_service_price_class_elem = document.getElementsByClassName("old_service_price_class");
     var new_service_price_class_elem = document.getElementsByClassName("new_service_price_class");
     var date_effective_class = document.getElementsByClassName("date_effective_class");
+    var trial_end_date_class = document.getElementsByClassName("trial_end_date_class");
+
+
     var created_by_class = document.getElementsByClassName("created_by_class");
     var last_modified_class = document.getElementsByClassName("last_modified_class");
     var comm_type_class = document.getElementsByClassName("comm_type_class");
@@ -429,6 +449,7 @@ $(document).on('click', '#edit_service', function (event) {
                 old_service_price_class_elem[i].value = old_price;
                 new_service_price_class_elem[i].value = parseFloat(new_price);
                 date_effective_class[i].value = dateEffective;
+                trial_end_date_class[i].value = date_trial_end;
                 created_by_class[i].setAttribute('data-userid', ctx.getUser());
                 last_modified_class[i].value = getDate();
                 comm_type_class[i].value = comm_typename;
@@ -474,6 +495,7 @@ $(document).on('click', '#edit_service', function (event) {
         old_service_price_class_elem[rowid - 1].value = old_price;
         new_service_price_class_elem[rowid - 1].value = parseFloat(new_price);
         date_effective_class[rowid - 1].value = dateEffective;
+        trial_end_date_class[rowid - 1].value = date_trial_end;
         created_by_class[rowid - 1].setAttribute('data-userid', ctx.getUser());
         last_modified_class[rowid - 1].value = getDate();
         comm_type_class[rowid - 1].value = comm_typename;
@@ -492,6 +514,7 @@ $(document).on('click', '#edit_service', function (event) {
 $(document).on('click', '#add_service', function (event) {
 
     var date_effective = $('#date_effective').val();
+    var date_trial_end = $('#date_trial_end').val();
     var comm_typeid = $('#commencementtype option:selected').val();
     var salesRecordId = parseInt(nlapiGetFieldValue('custpage_salesrecordid'));
     var salesRecord = nlapiLoadRecord('customrecord_sales', salesRecordId);
@@ -503,6 +526,22 @@ $(document).on('click', '#add_service', function (event) {
     } else {
         var splitDate = date_effective.split('-');
         var dateEffective = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+    }
+
+    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+        if (isNullorEmpty(date_trial_end)) {
+            alert('Please Enter the Trial End Date');
+            return false;
+        } else {
+            var resultDate = dateEffectiveCheck(date_trial_end);
+
+            if (resultDate == false) {
+                alert('Entered Trial End Date should be greater than today');
+                return false;
+            }
+            var splitDate = date_trial_end.split('-');
+            var date_trial_end = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+        }
     }
 
     if (isNullorEmpty(comm_typeid)) {
@@ -522,7 +561,7 @@ $(document).on('click', '#add_service', function (event) {
     console.log(new_price);
 
     if (isNullorEmpty(new_price)) {
-        if (service_typeid != 24 ) {
+        if (service_typeid != 24) {
             alert('Please Enter the New Price');
             return false;
         }
@@ -597,6 +636,9 @@ $(document).on('click', '#add_service', function (event) {
         inlineQty += '<td><div class="service_price_div input-group"><span class="input-group-addon">$</span><input class="form-control old_service_price_class" disabled value=""  type="number" step=".01" /></div></td>';
         inlineQty += '<td><div class="service_price_div input-group"><span class="input-group-addon">$</span><input class="form-control new_service_price_class" disabled value="' + parseFloat(new_price) + '"  type="number" step=".01" /></div></td>';
         inlineQty += '<td><div class="date_effective_div input-group"><input class="form-control date_effective_class text-center" disabled value="' + dateEffective + '"  type="text" /></div></td>';
+        if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+            inlineQty += '<td><div class="date_effective_div input-group"><input class="form-control trial_end_date_class text-center" disabled value="' + date_trial_end + '"  type="text" /></div></td>';
+        }
 
         inlineQty += '<td><div class="created_by_div input-group"><input class="form-control created_by_class text-center" disabled data-userid="' + ctx.getUser() + '" value="" type="text" /></div></td>';
         inlineQty += '<td><div class="last_modified_div input-group"><input class="form-control last_modified_class text-center" disabled value="' + getDate() + '"  type="text" /></div></td>';
@@ -737,7 +779,9 @@ function saveRecord() {
 
 
     var date_effective = $('#date_effective').val();
+    var date_trial_end = $('#date_trial_end').val();
     var old_date_effective = $('#date_effective').attr('data-olddate');
+    var old_date_trial_end = $('#date_trial_end').attr('data-olddate');
 
     var monthly_service_rate = 0.0;
     var monthly_extra_service_rate = 0.0;
@@ -756,6 +800,22 @@ function saveRecord() {
         }
         var splitDate = date_effective.split('-');
         var dateEffective = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+    }
+
+    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+        if (isNullorEmpty(date_trial_end)) {
+            alert('Please Enter the Trial End Date');
+            return false;
+        } else {
+            var resultDate = dateEffectiveCheck(date_trial_end);
+
+            if (resultDate == false) {
+                alert('Entered Trial End Date should be greater than today');
+                return false;
+            }
+            var splitDate = date_trial_end.split('-');
+            var date_trial_end = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+        }
     }
 
     var commRegID = nlapiGetFieldValue('custpage_customer_comm_reg');
@@ -867,7 +927,7 @@ function saveRecord() {
             if (isNullorEmpty(row_service_id)) {
 
                 if (isNullorEmpty(commRegID)) {
-                    commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                    commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status, date_trial_end);
                 }
 
                 console.log('inside create of Service Change record for new service');
@@ -921,9 +981,13 @@ function saveRecord() {
                 if (!isNullorEmpty(new_service_id)) {
                     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
                     new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+                        new_service_change_record.setFieldValue('custrecord_trial_end_date', date_trial_end);
+                    }
+
                     new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
                     if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                        if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         } else {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
@@ -969,13 +1033,16 @@ function saveRecord() {
                 console.log('inside update of Service Change record');
 
                 if (isNullorEmpty(commRegID)) {
-                    commRegID = loadCommReg(service_change_comm_reg, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
+                    commRegID = loadCommReg(service_change_comm_reg, dateEffective, nlapiGetFieldValue('custpage_sendemail'), date_trial_end);
                 }
 
                 var service_id = service_name_elem[i].getAttribute('data-serviceid');
 
                 if (!isNullorEmpty(service_id)) {
                     service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+                        new_service_change_record.setFieldValue('custrecord_trial_end_date', date_trial_end);
+                    }
 
                     if (old_service_price_class_elem[i].value != new_service_price_class_elem[i].value) {
                         service_change_record.setFieldValue('custrecord_servicechg_new_price', new_service_price_class_elem[i].value);
@@ -1043,7 +1110,7 @@ function saveRecord() {
 
                     console.log('inside create new Service Change record for existing Service');
                     if (isNullorEmpty(commRegID)) {
-                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status, date_trial_end);
                     }
                     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
 
@@ -1051,9 +1118,12 @@ function saveRecord() {
 
                     if (!isNullorEmpty(service_id)) {
                         new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                        if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+                            new_service_change_record.setFieldValue('custrecord_trial_end_date', date_trial_end);
+                        }
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
                         if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                            if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                            if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
                                 new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                             } else {
                                 new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
@@ -1100,7 +1170,7 @@ function saveRecord() {
                 } else if ($('#commencementtype option:selected').val() == 6) { //COE - Service imported from old customer and not edited
                     console.log('inside create new Service Change record for existing Service - COE not edited');
                     if (isNullorEmpty(commRegID)) {
-                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status, date_trial_end);
                     }
                     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
 
@@ -1256,7 +1326,7 @@ function saveRecord() {
                 if (isNullorEmpty(commRegID)) {
                     commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
                 } else {
-                    loadCommReg(commRegID, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
+                    loadCommReg(commRegID, dateEffective, nlapiGetFieldValue('custpage_sendemail'), date_trial_end);
                 }
 
                 console.log('inside create of Service Change record for new service');
@@ -1309,9 +1379,12 @@ function saveRecord() {
                 if (!isNullorEmpty(new_service_id)) {
                     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
                     new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+                        new_service_change_record.setFieldValue('custrecord_trial_end_date', date_trial_end);
+                    }
                     new_service_change_record.setFieldValue('custrecord_servicechg_service', new_service_id);
                     if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                        if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         } else {
                             new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
@@ -1355,9 +1428,9 @@ function saveRecord() {
                 console.log('inside update of Service Change record');
 
                 if (isNullorEmpty(commRegID)) {
-                    commRegID = loadCommReg(service_change_comm_reg, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
+                    commRegID = loadCommReg(service_change_comm_reg, dateEffective, nlapiGetFieldValue('custpage_sendemail'), date_trial_end);
                 } else {
-                    commRegID = loadCommReg(commRegID, dateEffective, nlapiGetFieldValue('custpage_sendemail'));
+                    commRegID = loadCommReg(commRegID, dateEffective, nlapiGetFieldValue('custpage_sendemail'), date_trial_end);
                 }
 
                 var service_id = service_name_elem[i].getAttribute('data-serviceid');
@@ -1365,9 +1438,11 @@ function saveRecord() {
                 if (!isNullorEmpty(service_id)) {
                     console.log(dateEffective)
                     service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
-
+                    if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+                        new_service_change_record.setFieldValue('custrecord_trial_end_date', date_trial_end);
+                    }
                     if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                        if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
                             service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                         } else {
                             service_change_record.setFieldValue('custrecord_servicechg_status', 4);
@@ -1453,7 +1528,7 @@ function saveRecord() {
 
                     console.log('inside create new Service Change record for existing Service');
                     if (isNullorEmpty(commRegID)) {
-                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status, date_trial_end);
                     }
                     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
 
@@ -1461,9 +1536,12 @@ function saveRecord() {
 
                     if (!isNullorEmpty(service_id)) {
                         new_service_change_record.setFieldValue('custrecord_servicechg_date_effective', dateEffective);
+                        if (nlapiGetFieldValue('custpage_free_trial') == 'T') {
+                            new_service_change_record.setFieldValue('custrecord_trial_end_date', date_trial_end);
+                        }
                         new_service_change_record.setFieldValue('custrecord_servicechg_service', service_id);
                         if (nlapiGetFieldValue('custpage_sendemail') == 'T') {
-                            if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+                            if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
                                 new_service_change_record.setFieldValue('custrecord_servicechg_status', 1);
                             } else {
                                 new_service_change_record.setFieldValue('custrecord_servicechg_status', 4);
@@ -1506,7 +1584,7 @@ function saveRecord() {
                 } else if ($('#commencementtype option:selected').val() == 6) { //COE - Service imported from old customer and not edited
                     console.log('inside create new Service Change record for existing Service - COE not edited');
                     if (isNullorEmpty(commRegID)) {
-                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status);
+                        commRegID = createCommReg(customer, dateEffective, partner, state, nlapiGetFieldValue('custpage_sendemail'), customer_status, null);
                     }
                     var new_service_change_record = nlapiCreateRecord('customrecord_servicechg');
 
@@ -1696,10 +1774,11 @@ function arraysEqual(arr1, arr2) {
     
  */
 
-function createCommReg(customer, dateEffective, zee, state, sendemail, customer_status) {
+function createCommReg(customer, dateEffective, zee, state, sendemail, customer_status, date_trial_end) {
     customer_comm_reg = nlapiCreateRecord('customrecord_commencement_register');
     customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
     customer_comm_reg.setFieldValue('custrecord_comm_date', dateEffective);
+    customer_comm_reg.setFieldValue('custrecord_trial_expiry', date_trial_end);
     customer_comm_reg.setFieldValue('custrecord_comm_date_signup', dateEffective);
     customer_comm_reg.setFieldValue('custrecord_customer', customer);
     if (sendemail == 'T') {
@@ -1718,7 +1797,7 @@ function createCommReg(customer, dateEffective, zee, state, sendemail, customer_
     //Scheduled
     customer_comm_reg.setFieldValue('custrecord_state', state);
     if (sendemail == 'T') {
-        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+        if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
             customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
         } else {
             customer_comm_reg.setFieldValue('custrecord_trial_status', 10);
@@ -1742,14 +1821,15 @@ function createCommReg(customer, dateEffective, zee, state, sendemail, customer_
     return commRegID;
 }
 
-function loadCommReg(id, dateEffective, sendemail) {
+function loadCommReg(id, dateEffective, sendemail, date_trial_end) {
     customer_comm_reg = nlapiLoadRecord('customrecord_commencement_register', id);
     customer_comm_reg.setFieldValue('custrecord_date_entry', getDate());
     customer_comm_reg.setFieldValue('custrecord_comm_date', dateEffective);
+    customer_comm_reg.setFieldValue('custrecord_trial_expiry', date_trial_end);
     customer_comm_reg.setFieldValue('custrecord_sale_type', $('#commencementtype option:selected').val())
     // customer_comm_reg.setFieldValue('custrecord_comm_date_signup', dateEffective);
     if (sendemail == 'T') {
-        if (nlapiGetFieldValue('custpage_closed_won') == 'T') {
+        if (nlapiGetFieldValue('custpage_closed_won') == 'T' || nlapiGetFieldValue('custpage_free_trial') == 'T') {
             customer_comm_reg.setFieldValue('custrecord_trial_status', 9);
         } else {
             customer_comm_reg.setFieldValue('custrecord_trial_status', 10);

@@ -42,6 +42,7 @@ function serviceChange(request, response) {
         var editPage = 'F';
 
         var closed_won;
+        var free_trial;
         var opp_with_value;
 
         var save_customer;
@@ -62,10 +63,12 @@ function serviceChange(request, response) {
             salesrep = (params.salesrep);
             sendemail = (params.sendemail);
             dateEffective = (params.date);
+            trialEndDate = (params.enddate);
             script_id = params.customid;
             deploy_id = params.customdeploy;
             suspects = params.suspects;
             closed_won = params.closedwon;
+            free_trial = params.free_trial;
             opp_with_value = params.oppwithvalue;
             save_customer = params.savecustomer;
 
@@ -76,6 +79,7 @@ function serviceChange(request, response) {
             script_id = request.getParameter('customid');
             deploy_id = request.getParameter('customdeploy');
             closed_won = request.getParameter('closedwon');
+            free_trial = request.getParameter('free_trial');
             opp_with_value = request.getParameter('oppwithvalue');
             save_customer = request.getParameter('savecustomer');
             var salesrecordid = request.getParameter('salesrecordid');
@@ -140,6 +144,7 @@ function serviceChange(request, response) {
         form.addField('custpage_scriptid', 'text', 'Script ID').setDisplayType('hidden').setDefaultValue(script_id);
         form.addField('custpage_deployid', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(deploy_id);
         form.addField('custpage_closed_won', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(closed_won);
+        form.addField('custpage_free_trial', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(free_trial);
         form.addField('custpage_opp_with_value', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(opp_with_value);
         form.addField('custpage_save_customer', 'text', 'Deploy ID').setDisplayType('hidden').setDefaultValue(save_customer);
         form.addField('custpage_service_change_delete', 'text', 'Deploy ID').setDisplayType('hidden');
@@ -170,6 +175,21 @@ function serviceChange(request, response) {
 
         inlineQty += '</div>';
         inlineQty += '</div>';
+
+        if (free_trial == 'T') {
+            inlineQty += '<div class="form-group container date_trial_end_section">';
+            inlineQty += '<div class="row">';
+            if (isNullorEmpty(trialEndDate)) {
+                inlineQty += '<div class="col-xs-7 "><div class="input-group"><span class="input-group-addon">TRIAL END DATE <span class="mandatory">*</span></span><input type="date" id="date_trial_end" value="" class="form-control date_effective"/></div></div>';
+            } else {
+                end_date = GetFormattedDate(trialEndDate);
+                inlineQty += '<div class="col-xs-7 "><div class="input-group"><span class="input-group-addon">TRIAL END DATE <span class="mandatory">*</span></span><input type="date" id="date_trial_end" value="' + end_date + '" data-olddate="' + trialEndDate + '" class="form-control date_effective"/></div></div>';
+            }
+
+            inlineQty += '</div>';
+            inlineQty += '</div>';
+        }
+
 
         inlineQty += '<div class="form-group container service_change_type_section ">';
         inlineQty += '<div class="row">';
@@ -300,6 +320,12 @@ function serviceChange(request, response) {
          * DATE EFFECTIVE ROW
          */
         inlineQty += '<th style="vertical-align: middle;text-align: center;" class=""><b>DATE EFFECTIVE<span class="modal_display btn-sm glyphicon glyphicon-info-sign" style="cursor: pointer;padding: 3px 3px 3px 3px;color: orange;" data-whatever=""></span></b></th>';
+        if (free_trial == 'T') {
+            /**
+             * DATE EFFECTIVE ROW
+             */
+            inlineQty += '<th style="vertical-align: middle;text-align: center;" class=""><b>TRIAL END DATE<span class="modal_display btn-sm glyphicon glyphicon-info-sign" style="cursor: pointer;padding: 3px 3px 3px 3px;color: orange;" data-whatever=""></span></b></th>';
+        }
 
         /**
          * CREATED BY ROW
@@ -515,6 +541,7 @@ function serviceChange(request, response) {
         var sendemail = request.getParameter('custpage_sendemail');
         var salesrecordid = request.getParameter('custpage_salesrecordid');
         var closed_won = request.getParameter('custpage_closed_won');
+        var free_trial = request.getParameter('custpage_free_trial');
 
         var opp_with_value = request.getParameter('custpage_opp_with_value');
         var file = request.getFile('upload_file_1');
@@ -625,6 +652,7 @@ function serviceChange(request, response) {
                     custid: customer,
                     sales_record_id: salesrecordid,
                     closedwon: closed_won,
+                    freetrial: free_trial,
                     oppwithvalue: opp_with_value,
                     script_id: 'customscript_sl_finalise_page_tn_v2_vue',
                     script_deploy: 'customdeploy_sl_finalise_page_tn_v2_vue'
