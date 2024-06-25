@@ -757,7 +757,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/search', 'N/record', 'N/log', 'N/re
 
                 inlineHtml += '<div class="form-group container service_change_type_section hide">';
                 inlineHtml += '<div class="row">';
-                inlineHtml += '<div class="col-xs-12 commencementtype"><div class="input-group"><span class="input-group-addon" id="commencementtype_text">SALE TYPE <span class="mandatory" style="color:red">*</span></span><select id="commencementtype" class="form-control commencementtype" ><option></option>';
+                inlineHtml += '<div class="col-xs-12 commencementtype"><div class="input-group"><span class="input-group-addon" id="commencementtype_text">  <span class="mandatory" style="color:red">*</span></span><select id="commencementtype" class="form-control commencementtype" ><option></option>';
 
                 var results = search.create({
                     type: 'customlist_sale_type',

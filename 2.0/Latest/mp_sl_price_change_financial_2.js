@@ -24,7 +24,7 @@
  */
 
 define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/http', 'N/log', 'N/redirect', 'N/task', 'N/format'],
-    function(ui, email, runtime, search, record, http, log, redirect, task, format) {
+    function (ui, email, runtime, search, record, http, log, redirect, task, format) {
         var zee = 0;
         var role = 0;
 
@@ -119,7 +119,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 if (role != 1000) { // If Page is not Opened By Zee, Name Finance Team. Else if Zee. Use Zee Name
                     inlineHtml += '<h1 id="title"style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change: Finance Team</h1>';
                 } else {
-                    inlineHtml += '<h1 id="title"style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change '+zee_name+'</h1>';
+                    inlineHtml += '<h1 id="title"style="text-align: center; color: #103D39; font-size: 22px; font-weight: bold; line-height: 33px; vertical-align: top; margin-bottom: 4px; ">Scheduled Price Change ' + zee_name + '</h1>';
                 }
 
                 inlineHtml += '<style>.nav > li.active > a, .nav > li.active > a:focus, .nav > li.active > a:hover { background-color: #095C7B; color: #fff }';
@@ -140,14 +140,14 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 // Popup Modal Section
                 inlineHtml += '<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service" data-dismiss="modal">Update All Services</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
                 inlineHtml += '<div id="myModal2" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-primary save_service_2" data-dismiss="modal">Update  Services For All Franchisees</button><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
-                inlineHtml += '<div id="myModal3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br></div><div class="modal-body">'+instructions()+'</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
+                inlineHtml += '<div id="myModal3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document" style="width :max-content"><div class="modal-content" style="width :max-content; max-width: 900px"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Notes Section</h4><br></div><div class="modal-body">' + instructions() + '</div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div>';
 
                 inlineHtml += '<br>';
 
-                if (role != 1000){ // Only Show Dropdown if Not a Zee
+                if (role != 1000) { // Only Show Dropdown if Not a Zee
                     inlineHtml += zeeDropdownSection(zee_id);
                 }
-                
+
                 inlineHtml += instructionSection();
 
                 if (!isNullorEmpty(zee_id)) {
@@ -229,7 +229,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 var allocatedZeeServiceRecordString = JSON.stringify(allocatedZeeServiceRecord);
                 var allocatedZeeServiceRecordStringArray = [];
                 var allocatedZeeServiceRecordStringArrayIndex = 0;
-                var allocatedZeeServiceRecordStringArrayLength = 0; 
+                var allocatedZeeServiceRecordStringArrayLength = 0;
                 var allocatedZeeServiceRecordStringArrayLength = Math.ceil(allocatedZeeServiceRecordString.length / 10000);
                 for (var i = 0; i < allocatedZeeServiceRecordStringArrayLength; i++) {
                     allocatedZeeServiceRecordStringArray[i] = allocatedZeeServiceRecordString.substring(allocatedZeeServiceRecordStringArrayIndex, allocatedZeeServiceRecordStringArrayIndex + 10000);
@@ -303,7 +303,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 form.clientScriptFileId = 5604134; //Sandbox 5605927 // Prod - 5604134
 
                 context.response.writePage(form);
-            } else {}
+            } else { }
         }
 
         function zeeDropdownSection(zeeid) {
@@ -325,7 +325,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 title: 'JSON Stringify - zeesSearchResults',
                 details: JSON.stringify(zeesSearchResults)
             })
-            zeesSearchResults.each(function(zeesSearchResult) {
+            zeesSearchResults.each(function (zeesSearchResult) {
                 var zee_id = zeesSearchResult.getValue({ name: 'internalid', summmary: search.Summary.GROUP });
                 var zee_name = zeesSearchResult.getValue({ name: 'companyname', summmary: search.Summary.GROUP });
                 var zee_state = zeesSearchResult.getText({ name: 'location' });
@@ -428,8 +428,8 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<input type="button" id="reset-all" class="col-xs-12 hide" type="button" style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px;" value="Reset All"></input>';
             inlineQty += '</div>';
 
-            
-            
+
+
             inlineQty += '</div>';
             inlineQty += '</div>';
 
@@ -455,7 +455,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
 
             inlineQty += '<div class="col-xs-2"></div>';
             inlineQty += '<div class="col-xs-8">';
-            inlineQty += '<p style="color: red; font-weight: 400; text-align: center;">To ensure records are saved correctly, DO NOT LEAVE THIS PAGE or open a new tab.\nPlease Note. If page runs out of memory whilst saving, click okay, refresh page and re-input missing data. The missing data will be saved.</p>';
+            inlineQty += '<p style="color: red; font-weight: 200; text-align: center;">To ensure records are saved correctly, DO NOT LEAVE THIS PAGE or open a new tab.\nPlease Note. If page runs out of memory whilst saving, click okay, refresh page and re-input missing data. The missing data will be saved.</p>';
             inlineQty += '<div class="col-xs-2"></div>';
 
             inlineQty += '</div>';
@@ -465,7 +465,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function loadMaxInvoice(zee_id){
+        function loadMaxInvoice(zee_id) {
             var maxInvID = []; // Max Invoice ID
             var maxInvItem = [];
             var maxInvCust = [];
@@ -481,7 +481,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 operator: search.Operator.ANYOF,
                 values: zee_id
             }))
-            maxInvSearch.run().each(function(res){
+            maxInvSearch.run().each(function (res) {
                 var companyname = res.getValue({
                     name: 'internalid',
                     summary: 'GROUP'
@@ -491,11 +491,11 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                     join: 'transaction',
                     summary: 'GROUP'
                 });
-                if (maxInvCust.indexOf(companyname) == -1 || cust_index == 0){
+                if (maxInvCust.indexOf(companyname) == -1 || cust_index == 0) {
                     maxInvCust.push(companyname);
                     maxInvItem = [];
                 }
-                if (maxInvItem.indexOf(netSuiteItem) == -1){
+                if (maxInvItem.indexOf(netSuiteItem) == -1) {
                     maxInvItem.push(netSuiteItem);
 
                     var internalid = res.getValue({
@@ -521,7 +521,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return maxInvVal;
         }
 
-        function loadAllocatedZeeServiceRecord(zee_id){
+        function loadAllocatedZeeServiceRecord(zee_id) {
             var savedList = [];
             var currAllocatedSearch = search.load({
                 id: 'customsearch_spc_finance_alloc',
@@ -532,7 +532,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 operator: search.Operator.IS,
                 values: zee_id
             }));
-            currAllocatedSearch.run().each(function(res) {
+            currAllocatedSearch.run().each(function (res) {
                 var internalid = res.getValue({ name: 'internalid' });
                 var cust_id = res.getValue({ name: 'custrecord_price_chg_fin_cust_id' });
                 var service_id = res.getValue({ name: 'custrecord_price_chg_fin_serv' });
@@ -542,7 +542,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
                 var date_eff = res.getValue({ name: 'custrecord_servicechg_date_effective', join: 'CUSTRECORD_PRICE_CHG_IT_SERV_CHG_ID' }); // Service Change: Date Effective
                 date_eff = dateNetsuiteToISO(date_eff);
                 var inc_price = res.getValue({ name: 'custrecord_servicechg_new_price', join: 'CUSTRECORD_PRICE_CHG_IT_SERV_CHG_ID' }); // Service Change: Total Amount Val
-                
+
                 var serv_chg_id = res.getValue({ name: 'custrecord_price_chg_it_serv_chg_id' });
                 var comm_reg_id = res.getValue({ name: 'custrecord_price_chg_fin_comm_reg' });
 
@@ -557,12 +557,12 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return savedList;
         }
 
-        function loadServiceType(){
+        function loadServiceType() {
             // Load Service Record
             var serviceTypeSea = search.load({ type: 'customrecord_service_type', id: 'customsearch_rta_service_types_2' })
             var serviceTypeRes = serviceTypeSea.run();
             var serviceTypeList = [];
-            serviceTypeRes.each(function(res) {
+            serviceTypeRes.each(function (res) {
                 var internalid = res.getValue({ name: 'internalid' });
                 var name = res.getValue({ name: 'name' })
                 serviceTypeList.push({
@@ -579,7 +579,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             var inlineQty = '<div class="form-group container loading_section"></div>';
             inlineQty += '<style> .loading_section { border: 14px solid #f3f3f3; border-radius: 50%; border-top: 14px solid #095C7B; width: 90px; height: 90px; -webkit-animation: spin 2s linear infinite; /* Safari */ animation: spin 2s linear infinite;';
             inlineQty += 'left: 50%; }' //position: fixed; z-index: 1000; 
-                /* Safari */
+            /* Safari */
             inlineQty += '@-webkit-keyframes spin {0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }';
 
             inlineQty += '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
@@ -590,7 +590,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function instructionSection(){
+        function instructionSection() {
             //Instruction Section
             var inlineQty = '<div class="row" style="margin-top: 20px; margin-bottom: 20px;">';
             inlineQty += '<div class="col-md-4"></div>';
@@ -603,11 +603,11 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function instructions(){
+        function instructions() {
             var inlineQty = '';
 
             inlineQty += '<b><u>Scheduled Price Change Page Description</u></b>';
-            inlineQty += role == 1000 ? '<br>Purpose of this page is to schedule price change on services for some  of your customers' : '<br>Purpose of this page is to schedule price change on services for some customers under a Franchisee' +' (Excluding customers such as AP, SC, NeoPost)<br>';
+            inlineQty += role == 1000 ? '<br>Purpose of this page is to schedule price change on services for some  of your customers' : '<br>Purpose of this page is to schedule price change on services for some customers under a Franchisee' + ' (Excluding customers such as AP, SC, NeoPost)<br>';
             inlineQty += '<br><b>There are two options:</b><br>Complete a Bulk Update of All Services under All Customers in List using: <button style="background-color: #FBEA51; color: #103D39; font-weight: 700; border-color: transparent; border-width: 2px; border-radius: 15px; height: 30px" type="button" onclick="">Add/Edit All Services</button>';
             inlineQty += '<li>Add Services, how much you want to increase the service by (ie +$1) and date effective. Make sure to click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button> button to add into the list.</li>';
             inlineQty += '<li>To Edit Bulk Update Service Existing click on <button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button> to submit any changes made on field.<li>';
@@ -621,7 +621,7 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             inlineQty += '<br>';
             inlineQty += '<b>Change Price on All Services (Bulk Updated All Services)</b>';
             inlineQty += '<br>On click of button a popup appears showing a table listing services used for a bulk update of all associated services in customer list table below. Select the services, increase amount, and date effective you would like to apply to all services and click <button class="btn btn-success btn-sm glyphicon glyphicon-plus" data-serviceid="" data-zeeservid="" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button>. These can be amended or deleted if you do not want to bulk update services with that amount or date effective. Once happy, click <button type="button" class="btn btn-primary">Update All Services</button> to apply to all services.<br>';
-            
+
             // Table Section;
             inlineQty += '<br>';
             inlineQty += '<!-- Table for Add/Edit List of Services --> <li> Row appears for when you add a new bulk update service. <table class="table table-responsive table-striped"><thead><tr class=""><th><b>ACTION</b></th><th><b>SERVICE NAME</b></th><th><b>INCREASE AMOUNT</b></th><th><b>DATE EFFECTIVE</b></th></thead><tbody>';
@@ -665,20 +665,20 @@ define(['N/ui/serverWidget', 'N/email', 'N/runtime', 'N/search', 'N/record', 'N/
             return inlineQty;
         }
 
-        function todayDate(){
+        function todayDate() {
             // Date Today n Date Tomorrow
             var today_date = new Date(); // Test Time 6:00pm - '2022-06-29T18:20:00.000+10:00'
             today_date.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
             var hour_time = today_date.getHours();
 
-            if (hour_time < 17){ // If Current Time is Before 5:00pm
+            if (hour_time < 17) { // If Current Time is Before 5:00pm
                 today_date = today_date.toISOString().split('T')[0];
             } else { // If Current Time is After 5:00pm, Change Date as Tomorrow.
                 var today_year = today_date.getFullYear();
                 var today_month = today_date.getMonth();
                 var today_day = today_date.getDate();
                 var today_in_day = new Date(Date.UTC(today_year, today_month, today_day + 1));
-                today_date = today_in_day.toISOString().split('T')[0]; 
+                today_date = today_in_day.toISOString().split('T')[0];
             }
 
             return today_date;

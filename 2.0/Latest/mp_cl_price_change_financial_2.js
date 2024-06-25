@@ -19,12 +19,12 @@
  */
 
 define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/email', 'N/currentRecord'],
-    function(error, runtime, search, url, record, format, email, currentRecord) {
+    function (error, runtime, search, url, record, format, email, currentRecord) {
         var baseURL = 'https://1048144.app.netsuite.com';
         if (runtime.envType == "SANDBOX") {
             baseURL = 'https://1048144-sb3.app.netsuite.com';
         }
-        
+
         var role = runtime.getCurrentUser().role;
         var currRec = currentRecord.get();
         var ctx = runtime.getCurrentScript();
@@ -68,7 +68,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         }
         maxInvVal = JSON.parse(maxInvVal); // Parse Max Invoice String
         console.log(maxInvVal)
-        const maxInvID = [new Set(maxInvVal.map(function(item) { return item.invid }))];
+        const maxInvID = [new Set(maxInvVal.map(function (item) { return item.invid }))];
         console.log(maxInvID);
 
         // Date Today n Date Tomorrow
@@ -117,7 +117,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 }
             }
 
-            $(document).on("change", "#zee_filter_dropdown", function() {
+            $(document).on("change", "#zee_filter_dropdown", function () {
                 var zee_id_dropdown = $(this).find("option:selected").val();
                 var params = {
                     zeeid: zee_id_dropdown,
@@ -145,7 +145,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 window.location.href = upload_url;
             });
 
-            $(document).on("click", "#spc_it_page", function() {
+            $(document).on("click", "#spc_it_page", function () {
                 var zee_id_dropdown = $(this).find("option:selected").val();
                 var params = {
                     zeeid: zee_id_dropdown,
@@ -166,37 +166,37 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     pageLength: 1000,
                     order: [],
                     columns: [{
-                            title: 'Expand',
-                            className: 'dt-control',
-                            orderable: false,
-                            data: null,
-                            defaultContent: '',
-                        },
-                        { title: "Internal ID" }, // 1
-                        { title: "Customer ID" }, // 2
-                        { title: "Company Name" }, // 3
-                        { title: "Franchisee" }, // 4,
-                        { title: "Date Last Price Increase" }, // 5,
-                        { title: 'Child Object' } // 6 Child Object for Child Table
+                        title: 'Expand',
+                        className: 'dt-control',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '',
+                    },
+                    { title: "Internal ID" }, // 1
+                    { title: "Customer ID" }, // 2
+                    { title: "Company Name" }, // 3
+                    { title: "Franchisee" }, // 4,
+                    { title: "Date Last Price Increase" }, // 5,
+                    { title: 'Child Object' } // 6 Child Object for Child Table
                     ],
                     columnDefs: [{
-                            targets: [0, 1, 6], // Hide Expand
-                            visible: false,
-                        }
+                        targets: [0, 1, 6], // Hide Expand
+                        visible: false,
+                    }
                     ],
                     autoWidth: false,
                 });
 
                 // Load with All Child Cells Open
-                dataTable.rows().every(function() {
+                dataTable.rows().every(function () {
                     // this.child(format(this.data())).show();
                     this.child(createChild(this)).show();
                 });
 
                 // Handle click on "Expand All" button
-                $('#btn-show-all-children').on('click', function() {
+                $('#btn-show-all-children').on('click', function () {
                     // Enumerate all rows
-                    dataTable.rows().every(function() {
+                    dataTable.rows().every(function () {
                         // If row has details collapsed
                         if (!this.child.isShown()) {
                             // Open this row
@@ -207,9 +207,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 });
 
                 // Handle click on "Collapse All" button
-                $('#btn-hide-all-children').on('click', function() {
+                $('#btn-hide-all-children').on('click', function () {
                     // Enumerate all rows
-                    dataTable.rows().every(function() {
+                    dataTable.rows().every(function () {
                         // If row has details expanded
                         if (this.child.isShown()) {
                             // Collapse row details
@@ -220,10 +220,10 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 });
 
                 // Remove all Increase Amount Data
-                $('#reset-all').on('click', function() {
+                $('#reset-all').on('click', function () {
                     // Open Data Table
                     dataTable.page.len(-1).draw();
-                    dataTable.rows().every(function() {
+                    dataTable.rows().every(function () {
                         this.child.show();
                     });
 
@@ -231,12 +231,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     $('.total_amount').val('');
                     $('.increase_amount').text('$0.00')
                     $('.new_date_eff').val('');
-                    
+
                     $('.total_amount').closest('tr').css('background-color', ''); // Reset CSS
 
                     // Redraw Data Table with Rows Closed.
                     dataTable.page.len(1000).draw();
-                    dataTable.rows().every(function() {
+                    dataTable.rows().every(function () {
                         // If row has details expanded
                         if (this.child.isShown()) {
                             // Collapse row details
@@ -247,12 +247,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 });
 
                 // CSV Export Button
-                $('#btn-export-csv').on('click', function() {
+                $('#btn-export-csv').on('click', function () {
                     downloadCsv();
                 });
 
                 // Add event listener for opening and closing child table details on button.
-                $('#debt_preview tbody').on('click', 'td.dt-control', function() {
+                $('#debt_preview tbody').on('click', 'td.dt-control', function () {
                     var tr = $(this).closest('tr');
                     var row = dataTable.row(tr);
 
@@ -271,7 +271,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             }
 
             // Submitter
-            $('#submit').on('click', function() {
+            $('#submit').on('click', function () {
                 // Unhide loading section
                 $('.loading_section').appendTo('.submitSection');
                 $('.loading_section').show();
@@ -282,24 +282,24 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             /** 
              *  Popup - Modal: Select Services
              */
-            $(document).on('click', '#servicesAll', function() {
+            $(document).on('click', '#servicesAll', function () {
                 onclick_listOfServices();
             });
-            $(document).on('click', '#bulkUpdate', function() {
+            $(document).on('click', '#bulkUpdate', function () {
                 onclick_bulkUpdate();
             });
-            $(document).on('click', '#btn-instructions', function() {
+            $(document).on('click', '#btn-instructions', function () {
                 onclick_instructions();
             });
             /* On click of the Add button */
-            $(document).on('click', '.add_class', function(event) {
+            $(document).on('click', '.add_class', function (event) {
                 if (!isNullorEmpty($(this).closest('tr').find('.service_name').val()) || !isNullorEmpty($(this).closest('tr').find('.inc_amount').val()) || !isNullorEmpty($(this).closest('tr').find('.date_eff_all').val())) {
                     var create_service_html = '';
 
                     create_service_html += '<tr><td class="first_col"><button class="btn btn-success btn-sm add_class glyphicon glyphicon-plus" data-serviceid="' + $(this).closest('tr').find('.service_name').val() + '" type="button" data-toggle="tooltip" data-placement="right" title="Add New Service"></button><input type="hidden" class="delete_service" value="F" /></td>';
                     create_service_html += '<td><select class="form-control service_name" >';
                     create_service_html += '<option></option>'
-                    serviceTypeList.forEach(function(searchResult) {
+                    serviceTypeList.forEach(function (searchResult) {
                         var operator_internal_id = searchResult.id;
                         var operator_name = searchResult.name;
                         create_service_html += '<option value="' + operator_internal_id + '">' + operator_name + '</option>';
@@ -311,7 +311,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     // Increase Amount
                     create_service_html += '<td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
                     //Date Effective
-                    create_service_html += '<td><input id="date_eff_all" class="form-control date_eff_all" type="date" min="'+today_date+'" value="' + $('#date_effective').val() + '"/></td>';
+                    create_service_html += '<td><input id="date_eff_all" class="form-control date_eff_all" type="date" min="' + today_date + '" value="' + $('#date_effective').val() + '"/></td>';
 
                     create_service_html += '</tr>';
 
@@ -342,7 +342,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 }
             });
             // Edit Services
-            $(document).on('click', '.edit_service_class', function(event) {
+            $(document).on('click', '.edit_service_class', function (event) {
 
                 $(this).closest('tr').find('.inc_amount').removeAttr("disabled");
                 $(this).closest('tr').find('.service_name').removeAttr("disabled");
@@ -354,7 +354,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             });
             // Save Services
-            $(document).on('click', '.save_edit_class', function(event) {
+            $(document).on('click', '.save_edit_class', function (event) {
 
                 $(this).closest('tr').find('.inc_amount').attr("disabled", "disabled");
                 $(this).closest('tr').find('.service_name').attr("disabled", "disabled");
@@ -369,7 +369,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             });
             // [description] - On click of the delete button
-            $(document).on('click', '.remove_class', function(event) {
+            $(document).on('click', '.remove_class', function (event) {
                 if (confirm('Are you sure you want to delete this item?\n\nThis action cannot be undone.')) {
 
                     $(this).closest('tr').find('.delete_service').val("T");
@@ -378,7 +378,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 }
             });
             // Save Services List - Modal 1
-            $(document).on('click', '.save_service', function(event) {
+            $(document).on('click', '.save_service', function (event) {
                 var delete_service_elem = document.getElementsByClassName("delete_service");
                 var edit_class_elem = document.getElementsByClassName("edit_service_class");
                 var inc_amount_elem = document.getElementsByClassName("inc_amount");
@@ -442,19 +442,19 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 dataTable.page.len(-1).draw();
 
                 for (var x = 0; x < service_name_elem.length - 1; x++) {
-                    dataTable.rows().eq(0).each(function(index) {
+                    dataTable.rows().eq(0).each(function (index) {
                         var row = dataTable.row(index)
                         var data = row.data();
                         var child_row = data[6];
 
-                        child_row.forEach(function(child) {
+                        child_row.forEach(function (child) {
                             if (child.type_id == service_name_elem[x].value) {
                                 var inv_price = child.curr_inv_price;
                                 var inv_price_split = inv_price.split('$')[1];
                                 var format_price = Number(inv_price_split.replace(/[^0-9.-]+/g, ""));
                                 var total_val = (format_price + parseFloat(inc_amount_elem[x].value));
 
-                                $('input[data-inv-price="' + child.curr_inv_price + '"]').each(function() {
+                                $('input[data-inv-price="' + child.curr_inv_price + '"]').each(function () {
                                     if ($(this).attr('id') == child.id) {
                                         $(this).val(total_val).trigger("change");
                                         if ($(this).closest('tr').hasClass('odd')) {
@@ -477,7 +477,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 console.log('All Service Increase Amounts have been Updated')
             });
             // Save Bulk Service Update - Modal 2
-            $(document).on('click', '.save_service_2', function(event) {
+            $(document).on('click', '.save_service_2', function (event) {
 
                 var zee_elem = document.getElementsByClassName('zee_bulk_dropdown')
                 var delete_service_elem = document.getElementsByClassName("delete_service");
@@ -489,7 +489,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     var servInternalID = edit_class_elem[i].getAttribute('data-zeeservid');
                     var zeeList = zee_elem[i];
 
-                    zeeList.forEach(function(res) {
+                    zeeList.forEach(function (res) {
 
                         if (isNullorEmpty(serviceID)) {
                             console.log('New');
@@ -528,7 +528,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             /**
              *  Page Functionality - DataTable.
              */
-            $(document).on('change', '.total_amount', function() {
+            $(document).on('change', '.total_amount', function () {
                 var tot_amount = $(this).val(); // Total Amount Integer | col 4
                 var inv_amount = $(this).closest('td').prev().prev().text(); // Current invoice Amount | col 2
                 var inv_amount_val = inv_amount.split('$')[1];
@@ -545,23 +545,23 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 }
             });
             // On Change of Total Amount or Date Effective
-            $(document).on('change', '.total_amount, .new_date_eff', function() {
+            $(document).on('change', '.total_amount, .new_date_eff', function () {
                 // Set data-increase under class="services" to False
                 $(this).closest('tr').find('.services').attr('data-increase-set', 'F');
 
-                if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())){
+                if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())) {
                     if ($(this).hasClass('odd')) {
                         $(this).closest('tr').css('background-color', 'rgba(144, 238, 144, 0.75)'); // LightGreen
                     } else {
                         $(this).closest('tr').css('background-color', 'rgba(152, 251, 152, 0.75)'); // YellowGreen
                     }
-                } else if (isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())){ 
+                } else if (isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && !isNullorEmpty($(this).closest('tr').find('.total_amount').val())) {
                     if ($(this).hasClass('odd')) {
                         $(this).closest('tr').css('background-color', 'rgba(255, 249, 190, 1)'); // LightGoldenRodYellow
                     } else {
                         $(this).closest('tr').css('background-color', 'rgba(255, 249, 210, 1)'); // Ivory
                     }
-                } else if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && isNullorEmpty($(this).closest('tr').find('.total_amount').val())){
+                } else if (!isNullorEmpty($(this).closest('tr').find('.new_date_eff').val()) && isNullorEmpty($(this).closest('tr').find('.total_amount').val())) {
                     if ($(this).hasClass('odd')) {
                         $(this).closest('tr').css('background-color', 'rgba(255, 249, 190, 1)'); // LightGoldenRodYellow
                     } else {
@@ -574,14 +574,14 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             })
 
             // Remove Scheduled Price Increase on click of delete button
-            $(document).on('click', '.remove_service_row', function() {
+            $(document).on('click', '.remove_service_row', function () {
                 var fin_alloc_id = $(this).attr('data-incid'); // Finance Allocate Record ID
                 var cust_id = $(this).attr('data-custid');
                 var commRegID = $(this).attr('data-commregid');
                 var servChgID = $(this).attr('data-servchg');
 
                 // if comm reg is null, just reset css and total_amount and new_date_eff
-                if (isNullorEmpty(commRegID)){ // If Stoill using old system, just default to null. On Save, will delete. isNullorEmpty(commRegID) && isNullorEmpty(servChgID)
+                if (isNullorEmpty(commRegID)) { // If Stoill using old system, just default to null. On Save, will delete. isNullorEmpty(commRegID) && isNullorEmpty(servChgID)
                     console.log('commRegID is null')
                     // Reset CSS & Line Item
                     $(this).closest('tr').css('background-color', '');
@@ -590,7 +590,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     $(this).closest('tr').find('.increase_amount').text('$0.00');
                     return;
                 } else {
-                    if(confirm('Are you sure you want to remove this price increase?\n\nThis will delete "Quote" Commencement Register and Service Change Records Accordingly')){
+                    if (confirm('Are you sure you want to remove this price increase?\n\nThis will delete "Quote" Commencement Register and Service Change Records Accordingly')) {
                         console.log('commRegID is not null');
                         /**
                          *  Delete Records
@@ -598,12 +598,12 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         // Delete Finance Allocate Record
                         record.delete({
                             type: 'customrecord_spc_finance_alloc',
-                            id: fin_alloc_id, 
-                            isDynamic: true 
+                            id: fin_alloc_id,
+                            isDynamic: true
                         });
 
                         // Delete Service Change
-                        delServiceChg(servChgID); 
+                        delServiceChg(servChgID);
 
                         // Delete/Set To Quote Comm Reg
                         // delCommReg(commRegID);
@@ -620,7 +620,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             });
 
             // On Click of 
-            $(document).on("click", ".remove_check", function() {
+            $(document).on("click", ".remove_check", function () {
                 alert('Service Line Item has Already Been Scheduled for Price Increase. Please Contact IT for Further Review') // Sechduled Service Change Record
             });
 
@@ -631,40 +631,40 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             // This is the table we'll convert into a DataTable
             var table = $('<table class="display" width="50%"/>');
             var childSet = [];
-            row.data()[6].forEach(function(el) {
-                if (el.approved == true){
+            row.data()[6].forEach(function (el) {
+                if (el.approved == true) {
                     childSet.push([el.item, //0
-                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p>' + el.inv_date + '</p></a>', //1
-                        '<label type="text">' + el.curr_inv_price + '</label>', //2
-                        '<label class="form-control" disabled>' + financial(el.inc_price) + '</label>', //3
-                        '<input class="form-control" placeholder="$" type="number" value="' + el.tot_price + '" disabled/>', //4
-                        '<input type="date" class="form-control" value="' + el.date_eff + '" disabled/>', //5
+                    '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p>' + el.inv_date + '</p></a>', //1
+                    '<label type="text">' + el.curr_inv_price + '</label>', //2
+                    '<label class="form-control" disabled>' + financial(el.inc_price) + '</label>', //3
+                    '<input class="form-control" placeholder="$" type="number" value="' + el.tot_price + '" disabled/>', //4
+                    '<input type="date" class="form-control" value="' + el.date_eff + '" disabled/>', //5
                         '',//'<input type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></input>', //6
-                        el.complete, //7
-                        el.approved //8
+                    el.complete, //7
+                    el.approved //8
                     ]);
                 } else {
-                    if (el.complete == true){ // If Complete, but not Approved
+                    if (el.complete == true) { // If Complete, but not Approved
                         childSet.push([el.item, //0
-                            '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
-                            '<label id="' + el.item + '" class="services" data-increase-set="T" data-servid="' + el.id + '" data-servtypeid="'+el.type_id+'" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>', //2
-                            '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
-                            '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>', //4
-                            '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>', //5 
-                            '<button type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" data-custid="'+el.custid+'" data-incid="'+el.inc_id+'" data-commregid="'+el.comm_reg_id+'" data-servchg="'+el.servchgid+'" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></button>', //6
-                            el.complete, //7
-                            el.approved //8
+                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
+                        '<label id="' + el.item + '" class="services" data-increase-set="T" data-servid="' + el.id + '" data-servtypeid="' + el.type_id + '" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>', //2
+                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
+                        '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>', //4
+                        '<input type="date" min="' + today_date + '" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>', //5 
+                        '<button type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" data-custid="' + el.custid + '" data-incid="' + el.inc_id + '" data-commregid="' + el.comm_reg_id + '" data-servchg="' + el.servchgid + '" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></button>', //6
+                        el.complete, //7
+                        el.approved //8
                         ]);
                     } else {
                         childSet.push([el.item, //0
-                            '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
-                            '<label id="' + el.item + '" class="services" data-increase-set="F" data-servid="' + el.id + '" data-servtypeid="'+el.type_id+'" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>', //2
-                            '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
-                            '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>', //4
-                            '<input type="date" min="'+today_date+'" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>', //5 
-                            '<button type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" data-custid="'+el.custid+'" data-incid="'+el.inc_id+'" data-commregid="'+el.comm_reg_id+'" data-servchg="'+el.servchgid+'" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></button>', //6
-                            el.complete, //7
-                            el.approved //8
+                        '<a href="' + baseURL + "/app/accounting/transactions/custinvc.nl?id=" + el.inv_id + '" target="_blank"><p class="entityid">' + el.inv_date + '</p></a>', //1
+                        '<label id="' + el.item + '" class="services" data-increase-set="F" data-servid="' + el.id + '" data-servtypeid="' + el.type_id + '" data-custid="' + el.custid + '" type="text">' + el.curr_inv_price + '</label>', //2
+                        '<label id="' + el.id + '" class="form-control increase_amount ' + el.id + '"disabled>' + financial(el.inc_price) + '</label>', //3
+                        '<input id="' + el.id + '" class="form-control total_amount ' + el.id + '" placeholder="$" type="number" data-inv-price="' + el.curr_inv_price + '" data-custid="' + el.custid + '" value="' + el.tot_price + '"/>', //4
+                        '<input type="date" min="' + today_date + '" class="form-control new_date_eff new_date_eff_' + el.id + '" ' + el.date_eff + ' value="' + el.date_eff + '"/>', //5 
+                        '<button type="button" class="btn btn-danger btn-sm remove_service_row glyphicon glyphicon-trash" data-custid="' + el.custid + '" data-incid="' + el.inc_id + '" data-commregid="' + el.comm_reg_id + '" data-servchg="' + el.servchgid + '" title="Delete Data in Service Row"><i class="fa fa-trash-o" style="color:white;"></i></button>', //6
+                        el.complete, //7
+                        el.approved //8
                         ]);
                     }
                 }
@@ -683,25 +683,25 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 data: childSet,
                 columns: [
                     { title: 'Item' }, //0
-                    { title: 'Latest Invoice Date'}, // 1
+                    { title: 'Latest Invoice Date' }, // 1
                     { title: 'Latest Invoice Price' }, //2
                     { title: 'Increase Amount' }, //3
                     { title: 'New Total Price' }, //4
                     { title: 'Date Effective' }, //5
                     { title: 'Action' }, //6
                     { title: 'Complete?' }, //7
-                    { title: 'Approved By IT?'} //8
+                    { title: 'Approved By IT?' } //8
                 ],
                 columnDefs: [{
-                    targets: [7,8],
+                    targets: [7, 8],
                     visible: false
-                }, ],
-                rowCallback: function(row, data) {
+                },],
+                rowCallback: function (row, data) {
                     if (data[8] == true) {
                         // Row Color Blank
                         $(row).css('background-color', '');
 
-                        $(row).find("td").eq(6).replaceWith('<td><button class="remove_check btn btn-sm glyphicon glyphicon-minus" data-custid="'+data[9]+'" data-incid="'+data[8]+'" data-commreg="'+data[13]+'" data-servchgid="'+data[14]+'" title="Price Increase Scheduled" type="button"/></td>') // 
+                        $(row).find("td").eq(6).replaceWith('<td><button class="remove_check btn btn-sm glyphicon glyphicon-minus" data-custid="' + data[9] + '" data-incid="' + data[8] + '" data-commreg="' + data[13] + '" data-servchgid="' + data[14] + '" title="Price Increase Scheduled" type="button"/></td>') // 
                     } else if (data[7] == true) {
                         if ($(row).hasClass('odd')) {
                             $(row).css('background-color', 'rgba(144, 238, 144, 0.75)'); // LightGreen
@@ -743,7 +743,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 operator: search.Operator.ANYOF,
                 values: zee_id,
             }));
-            if (maxInvID.length > 0){ // If there are invoices for the Zee
+            if (maxInvID.length > 0) { // If there are invoices for the Zee
                 customerSearch.filters.push(search.createFilter({
                     name: "internalid",
                     operator: search.Operator.ANYOF,
@@ -766,7 +766,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             var total_index = 0;
             for (var x = 0; x < customerServiceList.length; x++) {
-                customerServiceList[x].forEach(function(searchResult, index, arr) {
+                customerServiceList[x].forEach(function (searchResult, index, arr) {
                     total_index++;
                     // console.log('Index: ' + index);
                     console.log("Total Index: " + total_index);
@@ -792,7 +792,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         prev_entity_id.push(entityid);
                         prev_comp_name.push(companyname);
                     }
-                    
+
                     /**
                      *  List of Services
                      */
@@ -801,9 +801,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         join: 'CUSTRECORD_SERVICE_CUSTOMER',
                         summary: "GROUP"
                     });
-                     /**
-                     *  List of Current Service Inline HTML
-                     */
+                    /**
+                    *  List of Current Service Inline HTML
+                    */
                     var service_price = searchResult.getValue({ // Service Item Rate
                         name: "custrecord_service_price",
                         join: 'CUSTRECORD_SERVICE_CUSTOMER',
@@ -839,9 +839,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         join: "transaction",
                         summary: search.Summary.GROUP
                     });
-                     
+
                     // Number of Services Matches that on Invoice.
-                    var nonmatching_ServiceOnInvoice = maxInvVal.filter(function(el) { if (inv_id == el.invid && service_netsuite_item == parseInt(el.itemid) && parseFloat(service_price) != parseFloat(el.itemrate)) { return el } });
+                    var nonmatching_ServiceOnInvoice = maxInvVal.filter(function (el) { if (inv_id == el.invid && service_netsuite_item == parseInt(el.itemid) && parseFloat(service_price) != parseFloat(el.itemrate)) { return el } });
                     // console.log(service_netsuite_item, service_price)
 
                     service_price = financial(service_price); // Add $ Formatting to Service Price 
@@ -860,11 +860,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                         var inc_price = '';
                         var tot_price = '';
                         var stored_date_eff = '';
-    
-                        var service_type_id = serviceTypeList.filter(function(el) { if (el.name == service) { return el } })[0].id;
+
+                        var service_type_id = serviceTypeList.filter(function (el) { if (el.name == service) { return el } })[0].id;
                         if (!isNullorEmpty(savedList)) {
                             // var savedListFiltered = savedList.filter(function(el) { if (el.custid == custid && el.servtypeid == service_type_id) { return el } });
-                            var savedListFiltered = savedList.filter(function(el) { if (el.custid == custid && el.servid == service_id) { return el } });
+                            var savedListFiltered = savedList.filter(function (el) { if (el.custid == custid && el.servid == service_id) { return el } });
                             if (savedListFiltered.length > 0) {
                                 var inv_price_val = inv_price.split('$')[1];
                                 inv_price_val = Number(inv_price_val.replace(/[^0-9.-]+/g, ""));
@@ -881,29 +881,29 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id, inc_id: null, comm_reg_id: null, serv_chg_id: null });
                             }
                         } else {
-                            childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id, inc_id: null, comm_reg_id: null, serv_chg_id: null});
+                            childObject.push({ id: service_id, type_id: service_type_id, item: service, curr_inv_price: inv_price, inc_price: inc_price, tot_price: tot_price, date_eff: stored_date_eff, serv_price: service_price, custid: custid, complete: false, approved: false, inv_date: inv_date, inv_id: inv_id, inc_id: null, comm_reg_id: null, serv_chg_id: null });
                         }
-                        
+
                         if (prev_cust_id.indexOf(custid) == -1) {
                             const tempChildObj = childObject[childObject.length - 1];
                             childObject.pop();
-    
+
                             dataSet.push(['',
-                                '<p id="internalID" class="internalID">' + prev_cust_id[prev_cust_id.length-1] + '</p>',
-                                '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + prev_cust_id[prev_cust_id.length-1] + '" target="_blank"><p class="entityid">' +  prev_entity_id[prev_entity_id.length-1] + "</p></a>",
-                                '<p internalid="companyname" class="companyname">' +  prev_comp_name[prev_comp_name.length-1] + '</p>',
+                                '<p id="internalID" class="internalID">' + prev_cust_id[prev_cust_id.length - 1] + '</p>',
+                                '<a href="' + baseURL + "/app/common/entity/custjob.nl?id=" + prev_cust_id[prev_cust_id.length - 1] + '" target="_blank"><p class="entityid">' + prev_entity_id[prev_entity_id.length - 1] + "</p></a>",
+                                '<p internalid="companyname" class="companyname">' + prev_comp_name[prev_comp_name.length - 1] + '</p>',
                                 zee_name,
                                 last_price_increase,
                                 childObject
                             ]);
-    
+
                             childObject = [tempChildObj];
-    
+
                             prev_cust_id.push(custid);
                             prev_entity_id.push(entityid);
                             prev_comp_name.push(companyname);
                         }
-                        if (total_index == (customerSearchResLength)){ // Index of Last Item in List if Ran Once, or Total Index of Last Item in List if Ran Multiple Times | OLD INDEX - index == (customerSearchResLength - 1) || 
+                        if (total_index == (customerSearchResLength)) { // Index of Last Item in List if Ran Once, or Total Index of Last Item in List if Ran Multiple Times | OLD INDEX - index == (customerSearchResLength - 1) || 
                             console.log('E Don Cast, Last Last...')
                             if (serv_id_list.includes(service_id)) { // If SAME Service HAS ALREADY Ben Added to ChildTable, Remove it from the ChildTable
                                 childObject.pop();
@@ -916,15 +916,15 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 last_price_increase,
                                 childObject
                             ]);
-                        } 
-    
+                        }
+
                         // Push Invoice Line Item to CSV Set
-                        csvSet.push([custid, entityid, companyname, zee_name, last_price_increase, service, service_price, inv_price, inv_date, inv_id, tot_price, inc_price, stored_date_eff]);    
-                    }           
+                        csvSet.push([custid, entityid, companyname, zee_name, last_price_increase, service, service_price, inv_price, inv_date, inv_id, tot_price, inc_price, stored_date_eff]);
+                    }
 
                     return true;
                 });
-                
+
                 saveCsv(csvSet);
             }
         }
@@ -946,14 +946,14 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             /**
              *  Existing Services
              */
-            resultSet_Service.each(function(searchResult_Service) {
+            resultSet_Service.each(function (searchResult_Service) {
 
                 service_html += '<tr>';
 
                 service_html += '<td class="first_col"><button class="btn btn-warning btn-sm edit_service_class glyphicon glyphicon-pencil" data-serviceid="' + searchResult_Service.getValue({ name: 'custrecord_spc_zee_serv_id' }) + '" data-zeeservid="' + searchResult_Service.getValue({ name: "internalid" }) + '" type="button" data-toggle="tooltip" data-placement="right" title="Edit"></button><button class="btn btn-danger btn-sm remove_class glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" data-serviceid="' + searchResult_Service.getValue({ name: 'custrecord_spc_zee_serv_id' }) + '" title="Delete"></button><input type="hidden" class="delete_service" value="F" /></td>';
 
                 service_html += '<td><select class="form-control service_name" disabled>';
-                serviceTypeList.forEach(function(searchResult) {
+                serviceTypeList.forEach(function (searchResult) {
                     var operator_internal_id = searchResult.id;
                     var operator_name = searchResult.name;
 
@@ -968,7 +968,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
                 service_html += '<td><input id="inc_amount" class="form-control inc_amount" placeholder="$" type="number" value="' + searchResult_Service.getValue({ name: 'custrecord_spc_zee_serv_inc_am' }) + '" disabled/></td>';
 
-                service_html += '<td><input id="" class="form-control date_eff_all" type="date" min="'+today_date+'" value="' + searchResult_Service.getValue({ name: 'custrecord_spc_zee_date_eff' }) + '" disabled/></td>';
+                service_html += '<td><input id="" class="form-control date_eff_all" type="date" min="' + today_date + '" value="' + searchResult_Service.getValue({ name: 'custrecord_spc_zee_date_eff' }) + '" disabled/></td>';
 
                 service_html += '</select></td>';
                 service_html += '</tr>';
@@ -987,7 +987,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             // Service Name
             service_html += '<td><select class="form-control service_name" >';
             service_html += '<option></option>';
-            serviceTypeList.forEach(function(searchResult) {
+            serviceTypeList.forEach(function (searchResult) {
                 var operator_internal_id = searchResult.id;
                 var operator_name = searchResult.name;
                 service_html += '<option value="' + operator_internal_id + '">' + operator_name + '</option>';
@@ -998,7 +998,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             // Increase Amount
             service_html += '<td><input class="form-control inc_amount" placeholder="$" type="number"/></td>';
 
-            service_html += '<td><input class="form-control date_eff_all" type="date" min="'+today_date+'"/></td>';
+            service_html += '<td><input class="form-control date_eff_all" type="date" min="' + today_date + '"/></td>';
 
             service_html += '</tr>';
 
@@ -1081,7 +1081,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
         //     $('select').selectpicker();
         // }
 
-        function onclick_instructions(){
+        function onclick_instructions() {
             $('#myModal3 .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Instructions for Scheduled Price Change</label></h4></div>');
             // $('#myModal3 .modal-body').html(instructions());
             $('#myModal3').modal("show");
@@ -1096,7 +1096,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             /** Dynamic Update of DataTable to Display all Line Items */
             var dataTable = $("#debt_preview").DataTable();
             dataTable.page.len(-1).draw();
-            dataTable.rows().every(function() {
+            dataTable.rows().every(function () {
                 this.child.show();
             });
 
@@ -1107,9 +1107,9 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             var service_id_list = [];
 
-            if (inv_price_elem.length > 0){
+            if (inv_price_elem.length > 0) {
                 // Try Catch Error and Display Error Message
-                try {                 
+                try {
                     var cust_id_list = [];
                     for (var x = 0; x < inv_price_elem.length; x++) { // -1
                         if (inv_price_elem[x].getAttribute('data-increase-set') != 'T') { // If Increase Has been Edited or Doesn't Exist. Run through Loop.
@@ -1137,51 +1137,14 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                      * Search for Existing Record on Finance Allocate Record.
                                      */
                                     // var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servtypeid == service_type_id) { return el } });
-                                    var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servid == service_id) { return el } });
+                                    var savedListFiltered = savedList.filter(function (el) { if (el.custid == cust_id && el.servid == service_id) { return el } });
                                     if (savedListFiltered.length > 0) { // If Exists, Update Record.
-                                            console.log('If Exists, Update Record.')
-                                            var recID = savedListFiltered[0].id;
+                                        console.log('If Exists, Update Record.')
+                                        var recID = savedListFiltered[0].id;
 
-                                            /**
-                                             *  Update Existing Comm Reg | Still Create as Some Most New Price Increases Ones Will Not Have This Set Up Yet.
-                                            */ 
-                                            var commRegSearch = search.load({ type: 'customrecord_commencement_register', id: 'customsearch_comm_reg_signed_2' });
-                                            commRegSearch.filters.push(search.createFilter({
-                                                name: 'custrecord_customer',
-                                                operator: search.Operator.IS,
-                                                values: cust_id // 517563
-                                            }));
-                                            var commRegRes = commRegSearch.run().getRange({ start: 0, end: 1 });
-                                            console.log(commRegRes.length, commRegRes);
-                                            if (commRegRes.length > 0){
-                                                console.log('Commencement Date: ' + commRegRes[0].getValue('custrecord_comm_date'));
-                                                if (date_eff_netsuite == commRegRes[0].getValue('custrecord_comm_date')){
-                                                    var commRegID = updateCommReg(commRegRes[0].getValue('internalid'), date_eff);
-                                                } else {
-                                                    console.log('NEED TO CREATE New Comm Reg: ' + commRegID)
-                                                    var commRegID = createCommReg(cust_id, date_eff, zee_id, zee_state);
-                                                }
-                                            }
-                                            
-                                            /**
-                                             *  Update Service Change Record.
-                                            */
-                                            if (!isNullorEmpty(savedListFiltered[0].serv_chg_id)){ // If Service Change Record Exists - Update
-                                                var service_chg_id = updateServiceChg(savedListFiltered[0].serv_chg_id, date_eff, inc_am, commRegID);
-                                            } else {
-                                                var service_chg_id = createServiceChg(date_eff, service_id, zee_id, inc_am, commRegID, user_id, financeAllocateID);
-                                            }
-
-                                            /**
-                                             *  Update Finance Allocate Record.
-                                             *  This is NOT mandatory. DO I KEEP? As this will update those with an increase already as well.
-                                             */
-                                            var financeAllocateID = updateFinanceAllocateRecord(recID, date_eff_raw, inc_am, service_chg_id, commRegID); // This will default line item with New Comm Reg and Add Service Change to it. Processing of New Code.
-                                    } else { // IF Doesn't Exist, Create New Record.
-                                        console.log('Doesnt Exist, Create New Record.')
                                         /**
-                                         *  Create New Comm Reg
-                                         */ 
+                                         *  Update Existing Comm Reg | Still Create as Some Most New Price Increases Ones Will Not Have This Set Up Yet.
+                                        */
                                         var commRegSearch = search.load({ type: 'customrecord_commencement_register', id: 'customsearch_comm_reg_signed_2' });
                                         commRegSearch.filters.push(search.createFilter({
                                             name: 'custrecord_customer',
@@ -1190,9 +1153,46 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                         }));
                                         var commRegRes = commRegSearch.run().getRange({ start: 0, end: 1 });
                                         console.log(commRegRes.length, commRegRes);
-                                        if (commRegRes.length > 0){ // Only create new comm reg if customer has comm reg record already.
+                                        if (commRegRes.length > 0) {
                                             console.log('Commencement Date: ' + commRegRes[0].getValue('custrecord_comm_date'));
-                                            if (date_eff_netsuite == commRegRes[0].getValue('custrecord_comm_date')){
+                                            if (date_eff_netsuite == commRegRes[0].getValue('custrecord_comm_date')) {
+                                                var commRegID = updateCommReg(commRegRes[0].getValue('internalid'), date_eff);
+                                            } else {
+                                                console.log('NEED TO CREATE New Comm Reg: ' + commRegID)
+                                                var commRegID = createCommReg(cust_id, date_eff, zee_id, zee_state);
+                                            }
+                                        }
+
+                                        /**
+                                         *  Update Service Change Record.
+                                        */
+                                        if (!isNullorEmpty(savedListFiltered[0].serv_chg_id)) { // If Service Change Record Exists - Update
+                                            var service_chg_id = updateServiceChg(savedListFiltered[0].serv_chg_id, date_eff, inc_am, commRegID);
+                                        } else {
+                                            var service_chg_id = createServiceChg(date_eff, service_id, zee_id, inc_am, commRegID, user_id, financeAllocateID);
+                                        }
+
+                                        /**
+                                         *  Update Finance Allocate Record.
+                                         *  This is NOT mandatory. DO I KEEP? As this will update those with an increase already as well.
+                                         */
+                                        var financeAllocateID = updateFinanceAllocateRecord(recID, date_eff_raw, inc_am, service_chg_id, commRegID); // This will default line item with New Comm Reg and Add Service Change to it. Processing of New Code.
+                                    } else { // IF Doesn't Exist, Create New Record.
+                                        console.log('Doesnt Exist, Create New Record.')
+                                        /**
+                                         *  Create New Comm Reg
+                                         */
+                                        var commRegSearch = search.load({ type: 'customrecord_commencement_register', id: 'customsearch_comm_reg_signed_2' });
+                                        commRegSearch.filters.push(search.createFilter({
+                                            name: 'custrecord_customer',
+                                            operator: search.Operator.IS,
+                                            values: cust_id // 517563
+                                        }));
+                                        var commRegRes = commRegSearch.run().getRange({ start: 0, end: 1 });
+                                        console.log(commRegRes.length, commRegRes);
+                                        if (commRegRes.length > 0) { // Only create new comm reg if customer has comm reg record already.
+                                            console.log('Commencement Date: ' + commRegRes[0].getValue('custrecord_comm_date'));
+                                            if (date_eff_netsuite == commRegRes[0].getValue('custrecord_comm_date')) {
                                                 var commRegID = updateCommReg(commRegRes[0].getValue('internalid'), date_eff);
                                             } else {
                                                 console.log('NEED TO CREATE New Comm Reg: ' + commRegID)
@@ -1220,8 +1220,8 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                 var service_id = inv_price_elem[x].getAttribute('data-servid');
 
                                 // var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servtypeid == service_type_id) { return el } });
-                                var savedListFiltered = savedList.filter(function(el) { if (el.custid == cust_id && el.servid == service_id) { return el } });
-                                if (savedListFiltered[0]){
+                                var savedListFiltered = savedList.filter(function (el) { if (el.custid == cust_id && el.servid == service_id) { return el } });
+                                if (savedListFiltered[0]) {
                                     console.log('Increase Deleted.')
 
                                     // Delete Finance Allocate Record
@@ -1231,7 +1231,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                     });
 
                                     // Delete Service Change
-                                    delServiceChg(savedListFiltered[0].serv_chg_id); 
+                                    delServiceChg(savedListFiltered[0].serv_chg_id);
 
                                     // Delete Comm Reg
                                     var commRegSearch = search.load({ type: 'customrecord_commencement_register', id: 'customsearch_comm_reg_signed_2' });
@@ -1241,14 +1241,14 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                                         values: cust_id // 517563
                                     }));
                                     var commRegRes = commRegSearch.run().getRange({ start: 0, end: 1 });
-                                    if (commRegRes.length > 0){
+                                    if (commRegRes.length > 0) {
                                         // delCommReg(commRegRes[0].getValue('internalid'));
                                         changeCommReg(commRegRes[0].getValue('internalid'));
                                     }
                                 }
                             } else {
                                 alert('Please fill out all fields');
-                                
+
                                 $('.loading_section').hide();
                                 $('.submit_btn').show();
 
@@ -1264,7 +1264,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                     // Run Email Script to notify IT Team
                     email.send({
                         author: 112209, // 25537
-                        body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + '. Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1465&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: '+JSON.stringify(cust_id_list)+'</p1><br><p1>Price Change Processed by: '+userName+' '+user_id+'</p1></body></html>',
+                        body: '<html><body><p1><strong>Hi IT Team,</strong><br><br>New Scheduled Price Increase Submitted for ' + zee_name + '. Please visit <a href="https://1048144.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1465&deploy=1&custparam_params={%22zeeid%22:%22' + zee_id + '%22}">Scheduled Price Change: IT Page</a> to view/edit/process changes.</p1>\n<p1>List of Customer IDs: ' + JSON.stringify(cust_id_list) + '</p1><br><p1>Price Change Processed by: ' + userName + ' ' + user_id + '</p1></body></html>',
                         subject: 'Scheduled Price Increase Added for ' + zee_name + ' (Finance Page)',
                         recipients: ['anesu.chakaingesu@mailplus.com.au', 'popie.popie@mailplus.com.au'], // , 
                         cc: ['ankith.ravindran@mailplus.com.au', 'fiona.harrison@mailplus.com.au'] //,
@@ -1278,7 +1278,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             } else {
                 alert('No Records have been Saved. Please Fill Out Valid Price Increases')
             }
-            
+
             // Re-add Submit Button
             $('.loading_section').hide();
             $('.submit_btn').show();
@@ -1304,29 +1304,29 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
                 isDynamic: true
             });
             financeAlloc.setValue({ fieldId: "name", value: zee_name, label: "Name" }),
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_zee", value: zee_id, label: "Franchisee"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_cust_id", value: cust_id, label: "Customer ID"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_date_eff", value: date_eff, label: "Date Effective"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_serv", value: service_id, label: "Service ID"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_serv_type_id", value: service_type_id, label: "Service Type ID"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_inc_am", value: priceIncreaseAmount, label: "New Service Price"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_it_serv_chg_id", value: service_chg_id, label: "Service Change ID"});
-            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_comm_reg", value: comm_reg_id, label: "Commencement Register ID"});
+                financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_zee", value: zee_id, label: "Franchisee" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_cust_id", value: cust_id, label: "Customer ID" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_date_eff", value: date_eff, label: "Date Effective" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_serv", value: service_id, label: "Service ID" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_serv_type_id", value: service_type_id, label: "Service Type ID" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_inc_am", value: priceIncreaseAmount, label: "New Service Price" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_it_serv_chg_id", value: service_chg_id, label: "Service Change ID" });
+            financeAlloc.setValue({ fieldId: "custrecord_price_chg_fin_comm_reg", value: comm_reg_id, label: "Commencement Register ID" });
             var finAllocateID = financeAlloc.save();
             // finAllocateID = '1' //Test
-            
+
             return finAllocateID;
         }
-        function updateFinanceAllocateRecord(recID, date_eff, inc_am, service_chg_id, comm_reg_id){
+        function updateFinanceAllocateRecord(recID, date_eff, inc_am, service_chg_id, comm_reg_id) {
             var financeAlloc = record.load({
                 type: 'customrecord_spc_finance_alloc',
                 id: recID
             });
             financeAlloc.setValue({ fieldId: 'custrecord_price_chg_fin_date_eff', value: date_eff });
-            financeAlloc.setValue({ fieldId: 'custrecord_price_chg_fin_inc_am', value: inc_am }); 
+            financeAlloc.setValue({ fieldId: 'custrecord_price_chg_fin_inc_am', value: inc_am });
             financeAlloc.setValue({ fieldId: "custrecord_price_chg_it_approve", value: false }) // Change to False as Status has Changed from IT Original Value.
-            financeAlloc.setValue({ fieldId: 'custrecord_price_chg_it_serv_chg_id', value: service_chg_id})
-            financeAlloc.setValue({ fieldId: 'custrecord_price_chg_fin_comm_reg', value: comm_reg_id})
+            financeAlloc.setValue({ fieldId: 'custrecord_price_chg_it_serv_chg_id', value: service_chg_id })
+            financeAlloc.setValue({ fieldId: 'custrecord_price_chg_fin_comm_reg', value: comm_reg_id })
             finAllocateID = financeAlloc.save();
 
             return finAllocateID;
@@ -1348,11 +1348,11 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             customer_comm_reg.setValue({ fieldId: 'custrecord_comm_date_signup', value: dateEffective });
             customer_comm_reg.setValue({ fieldId: 'custrecord_customer', value: customer });
             customer_comm_reg.setValue({ fieldId: 'custrecord_salesrep', value: 109783 });
-            customer_comm_reg.setValue({ fieldId: 'custrecord_std_equiv', value:1 });
+            customer_comm_reg.setValue({ fieldId: 'custrecord_std_equiv', value: 1 });
             if (role != 1000) {
                 customer_comm_reg.setValue({ fieldId: 'custrecord_franchisee', value: zee });//Franchisee
             }
-            customer_comm_reg.setValue({ fieldId: 'custrecord_wkly_svcs', value:'5' });
+            customer_comm_reg.setValue({ fieldId: 'custrecord_wkly_svcs', value: '5' });
             customer_comm_reg.setValue({ fieldId: 'custrecord_in_out', value: 2 }); // Inbound
             customer_comm_reg.setValue({ fieldId: 'custrecord_state', value: state });
             customer_comm_reg.setValue({ fieldId: 'custrecord_trial_status', value: 10 }); // Quote = 10 | Scheduled = 9
@@ -1378,7 +1378,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
 
             return commRegID;
         }
-        function changeCommReg(id){
+        function changeCommReg(id) {
             var commReg = record.load({
                 type: 'customrecord_commencement_register',
                 id: id
@@ -1389,7 +1389,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             console.log('Delete Existing Comm Reg: ' + id);
             return true;
         }
-        function delCommReg(id){
+        function delCommReg(id) {
             record.delete({
                 type: 'customrecord_commencement_register',
                 id: id
@@ -1442,7 +1442,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
             });
             console.log('Delete Existing Service Chg: ' + id);
             return true;
-        }           
+        }
 
         /**
          * Create the CSV and store it in the hidden field 'custpage_table_csv' as a string.
@@ -1492,7 +1492,7 @@ define(['N/error', 'N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/
          * @returns {String} The same number, formatted in Australian dollars.
          */
         function financial(x) {
-            if (typeof(x) == 'string') {
+            if (typeof (x) == 'string') {
                 x = parseFloat(x);
             }
             if (isNullorEmpty(x) || isNaN(x)) {

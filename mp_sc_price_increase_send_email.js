@@ -48,11 +48,11 @@ function schedulePriceIncreaseEmail() {
 
   var serviceChangeCommReg;
 
-  resultSet_service_change.forEachResult(function(searchResult_service_change) {
+  resultSet_service_change.forEachResult(function (searchResult_service_change) {
 
 
     nlapiLogExecution('DEBUG', 'count', count);
-    
+
 
     var freqArray = [];
 
@@ -70,11 +70,15 @@ function schedulePriceIncreaseEmail() {
     var NSItem = searchResult_service_change.getText("custrecord_service_ns_item", "CUSTRECORD_SERVICECHG_SERVICE", null);
 
     nlapiLogExecution('DEBUG', 'customerID', customerID);
+    nlapiLogExecution('DEBUG', 'serviceChangeDateEffective', serviceChangeDateEffective);
+    nlapiLogExecution('DEBUG', 'serviceChangeNewPrice', serviceChangeNewPrice);
+    nlapiLogExecution('DEBUG', 'servicePrice', servicePrice);
 
 
     if (count == 0) {
 
       price_difference = serviceChangeNewPrice - servicePrice;
+      nlapiLogExecution('DEBUG', 'price_difference', price_difference);
       service_table += service_table_header;
       service_rows += '<tr><th>' + NSItem + '</th><th>$' + price_difference + '</th></tr>';
       service_table += service_rows;
@@ -91,22 +95,22 @@ function schedulePriceIncreaseEmail() {
       * 		Set Value to Inactive.
       * 		Save Record.
      */
-           var financeAllocateSearch = nlapiLoadSearch('customrecord_spc_finance_alloc', 'customsearch_spc_finance_alloc');
-           financeAllocateSearch.addFilter(new nlobjSearchFilter('custrecord_price_chg_it_serv_chg_id', null, 'is', serviceChangeID));
-           var financeAllocateRun = financeAllocateSearch.runSearch();
-           nlapiLogExecution('DEBUG', 'Finance Allocate Search', financeAllocateRun);
-           var financeAllocateGetResults = financeAllocateRun.getResults(0,1);
-           nlapiLogExecution('DEBUG', 'Finance Alloc Result Length', financeAllocateGetResults.length);
+      var financeAllocateSearch = nlapiLoadSearch('customrecord_spc_finance_alloc', 'customsearch_spc_finance_alloc');
+      financeAllocateSearch.addFilter(new nlobjSearchFilter('custrecord_price_chg_it_serv_chg_id', null, 'is', serviceChangeID));
+      var financeAllocateRun = financeAllocateSearch.runSearch();
+      nlapiLogExecution('DEBUG', 'Finance Allocate Search', financeAllocateRun);
+      var financeAllocateGetResults = financeAllocateRun.getResults(0, 1);
+      nlapiLogExecution('DEBUG', 'Finance Alloc Result Length', financeAllocateGetResults.length);
 
-           if (!isNullorEmpty(financeAllocateGetResults.length > 0)){
-               nlapiLogExecution('DEBUG', 'Finance Alloc Length > 0', financeAllocateGetResults.length);
-               var financeID = financeAllocateGetResults[0].getValue('internalid');
-           
-               // Set Record Inactive.
-               var financeAllocateRecord = nlapiLoadRecord('customrecord_spc_finance_alloc', financeID);
-               financeAllocateRecord.setFieldValue('custrecord_price_chg_it_email_sent', 'T'); // Set Date Emailed to Todays Date.
-               nlapiSubmitRecord(financeAllocateRecord);
-           }
+      if (!isNullorEmpty(financeAllocateGetResults.length > 0)) {
+        nlapiLogExecution('DEBUG', 'Finance Alloc Length > 0', financeAllocateGetResults.length);
+        var financeID = financeAllocateGetResults[0].getValue('internalid');
+
+        // Set Record Inactive.
+        var financeAllocateRecord = nlapiLoadRecord('customrecord_spc_finance_alloc', financeID);
+        financeAllocateRecord.setFieldValue('custrecord_price_chg_it_email_sent', 'T'); // Set Date Emailed to Todays Date.
+        nlapiSubmitRecord(financeAllocateRecord);
+      }
 
       var serviceChangeRecord = nlapiLoadRecord('customrecord_servicechg', serviceChangeID);
       serviceChangeRecord.setFieldValue('custrecord_servicechg_date_emailed', getDate());
@@ -214,11 +218,11 @@ function schedulePriceIncreaseEmail() {
 
         var records = new Object();
         records['entity'] = oldCustomerID;
-        
+
         if (!isNullorEmpty(account_email)) {
-         nlapiSendEmail(35031, account_email, subject, message, null, null, records, null); //nlapiSendEmail(35031, 'popie.popie@mailplus.com.au', subject, message, null, null, records, null);//
+          nlapiSendEmail(35031, account_email, subject, message, null, null, records, null); //nlapiSendEmail(35031, 'popie.popie@mailplus.com.au', subject, message, null, null, records, null);//
         }
-        
+
 
         var params = {
           custscript_prev_deploy_email: ctx.getDeploymentId(),
@@ -245,21 +249,21 @@ function schedulePriceIncreaseEmail() {
 
         /** Finance Allocate: Set Email Sent to True */
         var financeAllocateSearch = nlapiLoadSearch('customrecord_spc_finance_alloc', 'customsearch_spc_finance_alloc');
-                financeAllocateSearch.addFilter(new nlobjSearchFilter('custrecord_price_chg_it_serv_chg_id', null, 'is', serviceChangeID));
-                var financeAllocateRun = financeAllocateSearch.runSearch();
-                nlapiLogExecution('DEBUG', 'Finance Allocate Search', financeAllocateRun);
-                var financeAllocateGetResults = financeAllocateRun.getResults(0,1);
-                nlapiLogExecution('DEBUG', 'Finance Alloc Result Length', financeAllocateGetResults.length);
-    
-                if (!isNullorEmpty(financeAllocateGetResults.length > 0)){
-                    nlapiLogExecution('DEBUG', 'Finance Alloc Length > 0', financeAllocateGetResults.length);
-                    var financeID = financeAllocateGetResults[0].getValue('internalid');
-                
-                    // Set Record Inactive.
-                    var financeAllocateRecord = nlapiLoadRecord('customrecord_spc_finance_alloc', financeID);
-                    financeAllocateRecord.setFieldValue('custrecord_price_chg_it_email_sent', 'T'); // Set Date Emailed to Todays Date.
-                    nlapiSubmitRecord(financeAllocateRecord);
-                }
+        financeAllocateSearch.addFilter(new nlobjSearchFilter('custrecord_price_chg_it_serv_chg_id', null, 'is', serviceChangeID));
+        var financeAllocateRun = financeAllocateSearch.runSearch();
+        nlapiLogExecution('DEBUG', 'Finance Allocate Search', financeAllocateRun);
+        var financeAllocateGetResults = financeAllocateRun.getResults(0, 1);
+        nlapiLogExecution('DEBUG', 'Finance Alloc Result Length', financeAllocateGetResults.length);
+
+        if (!isNullorEmpty(financeAllocateGetResults.length > 0)) {
+          nlapiLogExecution('DEBUG', 'Finance Alloc Length > 0', financeAllocateGetResults.length);
+          var financeID = financeAllocateGetResults[0].getValue('internalid');
+
+          // Set Record Inactive.
+          var financeAllocateRecord = nlapiLoadRecord('customrecord_spc_finance_alloc', financeID);
+          financeAllocateRecord.setFieldValue('custrecord_price_chg_it_email_sent', 'T'); // Set Date Emailed to Todays Date.
+          nlapiSubmitRecord(financeAllocateRecord);
+        }
 
         var serviceChangeRecord = nlapiLoadRecord('customrecord_servicechg', serviceChangeID);
         serviceChangeRecord.setFieldValue('custrecord_servicechg_date_emailed', getDate());
@@ -267,6 +271,7 @@ function schedulePriceIncreaseEmail() {
 
       } else {
         price_difference = serviceChangeNewPrice - servicePrice;
+        nlapiLogExecution('DEBUG', 'price_difference', price_difference);
         service_rows += '<tr><th>' + NSItem + '</th><th>$' + price_difference + '</th></tr>';
         service_table += service_rows;
         price_difference = 0.0;
@@ -278,21 +283,21 @@ function schedulePriceIncreaseEmail() {
 
         /** Finance Allocate: Set Email Sent to True */
         var financeAllocateSearch = nlapiLoadSearch('customrecord_spc_finance_alloc', 'customsearch_spc_finance_alloc');
-                financeAllocateSearch.addFilter(new nlobjSearchFilter('custrecord_price_chg_it_serv_chg_id', null, 'is', serviceChangeID));
-                var financeAllocateRun = financeAllocateSearch.runSearch();
-                nlapiLogExecution('DEBUG', 'Finance Allocate Search', financeAllocateRun);
-                var financeAllocateGetResults = financeAllocateRun.getResults(0,1);
-                nlapiLogExecution('DEBUG', 'Finance Alloc Result Length', financeAllocateGetResults.length);
-    
-                if (!isNullorEmpty(financeAllocateGetResults.length > 0)){
-                    nlapiLogExecution('DEBUG', 'Finance Alloc Length > 0', financeAllocateGetResults.length);
-                    var financeID = financeAllocateGetResults[0].getValue('internalid');
-                
-                    // Set Record Inactive.
-                    var financeAllocateRecord = nlapiLoadRecord('customrecord_spc_finance_alloc', financeID);
-                    financeAllocateRecord.setFieldValue('custrecord_price_chg_it_email_sent', 'T'); // Set Date Emailed to Todays Date.
-                    nlapiSubmitRecord(financeAllocateRecord);
-                }
+        financeAllocateSearch.addFilter(new nlobjSearchFilter('custrecord_price_chg_it_serv_chg_id', null, 'is', serviceChangeID));
+        var financeAllocateRun = financeAllocateSearch.runSearch();
+        nlapiLogExecution('DEBUG', 'Finance Allocate Search', financeAllocateRun);
+        var financeAllocateGetResults = financeAllocateRun.getResults(0, 1);
+        nlapiLogExecution('DEBUG', 'Finance Alloc Result Length', financeAllocateGetResults.length);
+
+        if (!isNullorEmpty(financeAllocateGetResults.length > 0)) {
+          nlapiLogExecution('DEBUG', 'Finance Alloc Length > 0', financeAllocateGetResults.length);
+          var financeID = financeAllocateGetResults[0].getValue('internalid');
+
+          // Set Record Inactive.
+          var financeAllocateRecord = nlapiLoadRecord('customrecord_spc_finance_alloc', financeID);
+          financeAllocateRecord.setFieldValue('custrecord_price_chg_it_email_sent', 'T'); // Set Date Emailed to Todays Date.
+          nlapiSubmitRecord(financeAllocateRecord);
+        }
 
         var serviceChangeRecord = nlapiLoadRecord('customrecord_servicechg', serviceChangeID);
         serviceChangeRecord.setFieldValue('custrecord_servicechg_date_emailed', getDate());
@@ -306,6 +311,8 @@ function schedulePriceIncreaseEmail() {
     count++;
     return true;
   });
+
+  nlapiLogExecution('DEBUG', 'End of Loop -> service_table:', service_table);
 
   if (count > 0 && rescheduled == null) {
     service_table += service_table_footer;
@@ -377,7 +384,7 @@ function schedulePriceIncreaseEmail() {
 
     emailMerger.setEntity('customer', oldCustomerID);
 
-    var mergeResult = emailMerger.merge();   
+    var mergeResult = emailMerger.merge();
 
     var subject = mergeResult.getSubject();
     var message = mergeResult.getBody();
@@ -403,8 +410,8 @@ function schedulePriceIncreaseEmail() {
     var records = new Object();
     records['entity'] = oldCustomerID;
 
-        if (!isNullorEmpty(account_email)) {
-     nlapiSendEmail(35031, account_email, subject, message, null, null, records, null); //nlapiSendEmail(35031, 'popie.popie@mailplus.com.au', subject, message, null, null, records, null);//
+    if (!isNullorEmpty(account_email)) {
+      nlapiSendEmail(35031, account_email, subject, message, null, null, records, null); //nlapiSendEmail(35031, 'popie.popie@mailplus.com.au', subject, message, null, null, records, null);//
     }
 
   }

@@ -423,7 +423,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
             var comm_typeid = $('#commencementtype option:selected').val();
             var send_to = $('#send_to').val();
 
-            
+
 
             console.log(send_to);
             // console.log($('#send_to').val());
@@ -653,6 +653,12 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     value: $('#cancel_comp option:selected').val(),
                 });
 
+                customer_record.setValue({
+                    fieldId: 'custentity_cust_service_change_type',
+                    value: comm_typeid
+                });
+
+
                 customer_record.save();
             } else if (comm_typeid == 21 || comm_typeid == '21') {
                 if (!isNullorEmpty($('#new_surcharge').val())) {
@@ -663,6 +669,26 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     });
 
                     customer_record.setValue({
+                        fieldId: 'custentity_hc_mailcon_name',
+                        value: firstName + ' ' + lastName
+                    });
+
+                    customer_record.setValue({
+                        fieldId: 'custentity_hc_mailcon_phone',
+                        value: phone
+                    });
+
+                    customer_record.setValue({
+                        fieldId: 'custentity_hc_mailcon_email',
+                        value: email_address
+                    });
+
+                    customer_record.setValue({
+                        fieldId: 'custentity_cust_service_change_type',
+                        value: comm_typeid
+                    });
+
+                    customer_record.setValue({
                         fieldId: 'custentity_new_surcharge_rate',
                         value: $('#new_surcharge').val(),
                     });
@@ -670,6 +696,34 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     customer_record.save();
                 }
 
+            } else if (comm_typeid == 15 || comm_typeid == '15' || comm_typeid == 2 || comm_typeid == '2' || comm_typeid == 7 || comm_typeid == '7') {
+                var customer_record = record.load({
+                    type: record.Type.CUSTOMER,
+                    id: parseInt(customer),
+                    isDynamic: true
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_hc_mailcon_name',
+                    value: firstName + ' ' + lastName
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_hc_mailcon_phone',
+                    value: phone
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_hc_mailcon_email',
+                    value: email_address
+                });
+
+                customer_record.setValue({
+                    fieldId: 'custentity_cust_service_change_type',
+                    value: comm_typeid
+                });
+
+                customer_record.save();
             }
 
             console.log(emailSubject);
@@ -684,7 +738,7 @@ define(['N/runtime', 'N/search', 'N/url', 'N/record', 'N/format', 'N/currentReco
                     cc: [runtime.getCurrentUser().email]
                 });
 
-            } 
+            }
 
 
             return true;
